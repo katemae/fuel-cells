@@ -1,5 +1,5 @@
 
-(function(l, r) { if (!l || l.getElementById('livereloadscript')) return; r = l.createElement('script'); r.async = 1; r.src = '//' + (self.location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1'; r.id = 'livereloadscript'; l.getElementsByTagName('head')[0].appendChild(r) })(self.document);
+(function(l, r) { if (!l || l.getElementById('livereloadscript')) return; r = l.createElement('script'); r.async = 1; r.src = '//' + (self.location.host || 'localhost').split(':')[0] + ':35730/livereload.js?snipver=1'; r.id = 'livereloadscript'; l.getElementsByTagName('head')[0].appendChild(r) })(self.document);
 var app = (function () {
     'use strict';
 
@@ -4441,7 +4441,7 @@ var app = (function () {
     		c: function create() {
     			svg_1 = svg_element("svg");
     			attr_dev(svg_1, "class", "svelte-1fft9vn");
-    			add_location(svg_1, file$1, 63, 0, 1839);
+    			add_location(svg_1, file$1, 63, 0, 1838);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -4484,7 +4484,7 @@ var app = (function () {
     	const lineData = derived([m, b], ([$m, $b]) => {
     		const data = [];
 
-    		for (let x = -10; x <= 10; x += 0.1) {
+    		for (let x = 0; x <= 20; x += 0.05) {
     			data.push({ x, y: $m * x + $b });
     		}
 

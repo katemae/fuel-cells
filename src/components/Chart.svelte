@@ -14,7 +14,7 @@
     // Create derived store for line data
     const lineData = derived([m, b], ([$m, $b]) => {
         const data = [];
-        for (let x = -10; x <= 10; x += 0.1) {
+        for (let x = 0; x <= 20; x += 0.05) {
             data.push({ x, y: $m * x + $b });
         }
         return data;
