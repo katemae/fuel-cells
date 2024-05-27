@@ -27,7 +27,7 @@
             <span>{$m}</span>
         </label>
         <label>
-            Intercept (b): <input type="range" min="0" max="10" step="0.05" bind:value={$b} />
+            Intercept (b): <input type="range" min="0" max="20" step="0.05" bind:value={$b} />
             <span>{$b}</span>
         </label>
     </div>
