@@ -1,5 +1,7 @@
 <script>
     import Chart from './components/Chart.svelte';
+    import VariablesScrolly from './components/VariablesScrolly.svelte';
+
     import { writable } from 'svelte/store';
     import katexify from './katexify';
 
@@ -48,6 +50,7 @@
     </div>
     
     <Chart {E0} {b} {R} {m} {n} />
+    <VariablesScrolly />
 </main>
 
 <style>
