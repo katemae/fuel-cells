@@ -19,8 +19,8 @@
             {@html katexify("E = E_0 - b \\log(i) - Ri - m \\exp(ni)")}
         </p>
         <h3 id="intro_date">
-			<a href="https://github.com/katemae">Katelyn</a>
-			and <a href="https://github.com/jman2-go">Jonathan</a>
+			<a href="https://github.com/katemae" target="_blank">Katelyn</a>
+			and <a href="https://github.com/jman2-go" target="_blank">Jonathan</a>
 			<br>
             May - June 2024
         </h3>
