@@ -1,4 +1,5 @@
-import katex from "katex";
+import katex from 'katex';
+import 'katex/dist/katex.min.css'; // Ensure this import is here
 
 export default function katexify(math, displayMode = false) {
   const options = {

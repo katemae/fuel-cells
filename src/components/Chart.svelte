@@ -3,33 +3,37 @@
     import { scaleLinear, select, axisBottom, axisLeft, line } from 'd3';
     import { derived } from 'svelte/store';
 
-    export let m;
+    export let E0;
     export let b;
+    export let R;
+    export let m;
+    export let n;
 
     let svg;
     const margin = { top: 20, right: 30, bottom: 30, left: 40 };
     const width = 600 - margin.left - margin.right;
     const height = 400 - margin.top - margin.bottom;
 
-    // Create derived store for line data
-    const lineData = derived([m, b], ([$m, $b]) => {
+    const lineData = derived([E0, b, R, m, n], ([$E0, $b, $R, $m, $n]) => {
         const data = [];
-        for (let x = 0; x <= 20; x += 0.05) {
-            data.push({ x, y: $m * x + $b });
+        for (let i = 0.001; i <= 10; i += 0.1) {
+            const E = $E0 - $b * Math.log10(i) - $R * i - $m * Math.exp($n * i);
+            // create data to plot based on given slider values
+            data.push({ i, E });
         }
         return data;
     });
 
     function drawChart(data) {
-        const xScale = scaleLinear().domain([0, 20]).range([0, width]);
-        const yScale = scaleLinear().domain([0, 20]).range([height, 0]);
+        const xScale = scaleLinear().domain([0, 10]).range([0, width]);
+        const yScale = scaleLinear().domain([0, 50]).range([height, 0]);
 
         const xAxis = axisBottom(xScale);
         const yAxis = axisLeft(yScale);
 
         const lineGenerator = line()
-            .x(d => xScale(d.x))
-            .y(d => yScale(d.y));
+            .x(d => xScale(d.i))
+            .y(d => yScale(d.E));
 
         select(svg).selectAll('*').remove();
 
@@ -57,7 +61,7 @@
     $: lineData.subscribe(drawChart);
 
     onMount(() => {
-        drawChart([]);
+        drawChart($lineData);
     });
 </script>
 

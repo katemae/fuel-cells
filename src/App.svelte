@@ -1,38 +1,53 @@
 <script>
     import Chart from './components/Chart.svelte';
     import { writable } from 'svelte/store';
+    import katexify from './katexify';
 
-    // Define writable stores for m and b
-    const m = writable(1);
-    const b = writable(0);
+    const E0 = writable(30);
+    const b = writable(2);
+    const R = writable(0.001);
+    const m = writable(0.01);
+    const n = writable(0.7);
 </script>
 
 <main>
     <div class="intro">
         <h1 id="intro-hed">Fuel Cells: ...</h1>
-        <p id="desc">description here...</p>
+        <p id="desc">
+            {@html katexify("E = E_0 - b \\log(i) - Ri - m \\exp(ni)")}
+        </p>
         <h3 id="intro_date">
 			<a href="https://github.com/katemae">Katelyn</a>
 			and <a href="https://github.com/jman2-go">Jonathan</a>
-
 			<br>
-
             May - June 2024
         </h3>
     </div>
 
     <div class="controls">
         <label>
-            Slope (m): <input type="range" min="-5" max="5" step="0.05" bind:value={$m} />
+            {@html katexify("E_0:")} <input type="range" min="0" max="45" step="0.5" bind:value={$E0} />
+            <span>{$E0}</span>
+        </label>
+        <label>
+            {@html katexify("b:")} <input type="range" min="0.01" max="10" step="0.01" bind:value={$b} />
+            <span>{$b}</span>
+        </label>
+        <label>
+            {@html katexify("R:")} <input type="range" min="0.001" max="1" step="0.001" bind:value={$R} />
+            <span>{$R}</span>
+        </label>
+        <label>
+            {@html katexify("m:")} <input type="range" min="0.001" max="0.1" step="0.001" bind:value={$m} />
             <span>{$m}</span>
         </label>
         <label>
-            Intercept (b): <input type="range" min="0" max="20" step="0.05" bind:value={$b} />
-            <span>{$b}</span>
+            {@html katexify("n:")} <input type="range" min="0.01" max="1" step="0.01" bind:value={$n} />
+            <span>{$n}</span>
         </label>
     </div>
-
-    <Chart {m} {b} />
+    
+    <Chart {E0} {b} {R} {m} {n} />
 </main>
 
 <style>
@@ -76,22 +91,17 @@
         max-width: 600px;
         margin: 1rem auto;
         display: flex;
-        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+        justify-content: center;
     }
     .controls label {
         display: flex;
         flex-direction: column;
         align-items: center;
+        margin-bottom: 0.5rem;
     }
     .controls input {
         margin-top: 0.5rem;
-    }
-    @media screen and (max-width: 950px) {
-        #intro-hed {
-            font-size: 3.5rem;
-        }
-        .intro-sub {
-            font-size: 1.5rem;
-        }
     }
 </style>
