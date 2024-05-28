@@ -4,6 +4,7 @@ var app = (function () {
     'use strict';
 
     function noop$1() { }
+    const identity$4 = x => x;
     function assign(tar, src) {
         // @ts-ignore
         for (const k in src)
@@ -94,8 +95,61 @@ var app = (function () {
         }
         return -1;
     }
+
+    const is_client = typeof window !== 'undefined';
+    let now$1 = is_client
+        ? () => window.performance.now()
+        : () => Date.now();
+    let raf = is_client ? cb => requestAnimationFrame(cb) : noop$1;
+
+    const tasks = new Set();
+    function run_tasks(now) {
+        tasks.forEach(task => {
+            if (!task.c(now)) {
+                tasks.delete(task);
+                task.f();
+            }
+        });
+        if (tasks.size !== 0)
+            raf(run_tasks);
+    }
+    /**
+     * Creates a new task that runs on each raf frame
+     * until it returns a falsy value or is aborted
+     */
+    function loop(callback) {
+        let task;
+        if (tasks.size === 0)
+            raf(run_tasks);
+        return {
+            promise: new Promise(fulfill => {
+                tasks.add(task = { c: callback, f: fulfill });
+            }),
+            abort() {
+                tasks.delete(task);
+            }
+        };
+    }
     function append$1(target, node) {
         target.appendChild(node);
+    }
+    function get_root_for_style(node) {
+        if (!node)
+            return document;
+        const root = node.getRootNode ? node.getRootNode() : node.ownerDocument;
+        if (root && root.host) {
+            return root;
+        }
+        return node.ownerDocument;
+    }
+    function append_empty_stylesheet(node) {
+        const style_element = element('style');
+        append_stylesheet(get_root_for_style(node), style_element);
+        return style_element.sheet;
+    }
+    function append_stylesheet(node, style) {
+        append$1(node.head || node, style);
+        return style.sheet;
     }
     function insert(target, node, anchor) {
         target.insertBefore(node, anchor || null);
@@ -141,6 +195,14 @@ var app = (function () {
     }
     function set_input_value(input, value) {
         input.value = value == null ? '' : value;
+    }
+    function set_style(node, key, value, important) {
+        if (value == null) {
+            node.style.removeProperty(key);
+        }
+        else {
+            node.style.setProperty(key, value, important ? 'important' : '');
+        }
     }
     function toggle_class(element, name, toggle) {
         element.classList[toggle ? 'add' : 'remove'](name);
@@ -188,6 +250,71 @@ var app = (function () {
         d() {
             this.n.forEach(detach);
         }
+    }
+
+    // we need to store the information for multiple documents because a Svelte application could also contain iframes
+    // https://github.com/sveltejs/svelte/issues/3624
+    const managed_styles = new Map();
+    let active = 0;
+    // https://github.com/darkskyapp/string-hash/blob/master/index.js
+    function hash(str) {
+        let hash = 5381;
+        let i = str.length;
+        while (i--)
+            hash = ((hash << 5) - hash) ^ str.charCodeAt(i);
+        return hash >>> 0;
+    }
+    function create_style_information(doc, node) {
+        const info = { stylesheet: append_empty_stylesheet(node), rules: {} };
+        managed_styles.set(doc, info);
+        return info;
+    }
+    function create_rule(node, a, b, duration, delay, ease, fn, uid = 0) {
+        const step = 16.666 / duration;
+        let keyframes = '{\n';
+        for (let p = 0; p <= 1; p += step) {
+            const t = a + (b - a) * ease(p);
+            keyframes += p * 100 + `%{${fn(t, 1 - t)}}\n`;
+        }
+        const rule = keyframes + `100% {${fn(b, 1 - b)}}\n}`;
+        const name = `__svelte_${hash(rule)}_${uid}`;
+        const doc = get_root_for_style(node);
+        const { stylesheet, rules } = managed_styles.get(doc) || create_style_information(doc, node);
+        if (!rules[name]) {
+            rules[name] = true;
+            stylesheet.insertRule(`@keyframes ${name} ${rule}`, stylesheet.cssRules.length);
+        }
+        const animation = node.style.animation || '';
+        node.style.animation = `${animation ? `${animation}, ` : ''}${name} ${duration}ms linear ${delay}ms 1 both`;
+        active += 1;
+        return name;
+    }
+    function delete_rule(node, name) {
+        const previous = (node.style.animation || '').split(', ');
+        const next = previous.filter(name
+            ? anim => anim.indexOf(name) < 0 // remove specific animation
+            : anim => anim.indexOf('__svelte') === -1 // remove all Svelte animations
+        );
+        const deleted = previous.length - next.length;
+        if (deleted) {
+            node.style.animation = next.join(', ');
+            active -= deleted;
+            if (!active)
+                clear_rules();
+        }
+    }
+    function clear_rules() {
+        raf(() => {
+            if (active)
+                return;
+            managed_styles.forEach(info => {
+                const { ownerNode } = info.stylesheet;
+                // there is no ownerNode if it runs on jsdom.
+                if (ownerNode)
+                    detach(ownerNode);
+            });
+            managed_styles.clear();
+        });
     }
 
     let current_component;
@@ -320,6 +447,20 @@ var app = (function () {
         targets.forEach((c) => c());
         render_callbacks = filtered;
     }
+
+    let promise;
+    function wait() {
+        if (!promise) {
+            promise = Promise.resolve();
+            promise.then(() => {
+                promise = null;
+            });
+        }
+        return promise;
+    }
+    function dispatch$1(node, direction, kind) {
+        node.dispatchEvent(custom_event(`${direction ? 'intro' : 'outro'}${kind}`));
+    }
     const outroing = new Set();
     let outros;
     function transition_in(block, local) {
@@ -346,6 +487,71 @@ var app = (function () {
         else if (callback) {
             callback();
         }
+    }
+    const null_transition = { duration: 0 };
+    function create_in_transition(node, fn, params) {
+        const options = { direction: 'in' };
+        let config = fn(node, params, options);
+        let running = false;
+        let animation_name;
+        let task;
+        let uid = 0;
+        function cleanup() {
+            if (animation_name)
+                delete_rule(node, animation_name);
+        }
+        function go() {
+            const { delay = 0, duration = 300, easing = identity$4, tick = noop$1, css } = config || null_transition;
+            if (css)
+                animation_name = create_rule(node, 0, 1, duration, delay, easing, css, uid++);
+            tick(0, 1);
+            const start_time = now$1() + delay;
+            const end_time = start_time + duration;
+            if (task)
+                task.abort();
+            running = true;
+            add_render_callback(() => dispatch$1(node, true, 'start'));
+            task = loop(now => {
+                if (running) {
+                    if (now >= end_time) {
+                        tick(1, 0);
+                        dispatch$1(node, true, 'end');
+                        cleanup();
+                        return running = false;
+                    }
+                    if (now >= start_time) {
+                        const t = easing((now - start_time) / duration);
+                        tick(t, 1 - t);
+                    }
+                }
+                return running;
+            });
+        }
+        let started = false;
+        return {
+            start() {
+                if (started)
+                    return;
+                started = true;
+                delete_rule(node);
+                if (is_function(config)) {
+                    config = config(options);
+                    wait().then(go);
+                }
+                else {
+                    go();
+                }
+            },
+            invalidate() {
+                started = false;
+            },
+            end() {
+                if (running) {
+                    cleanup();
+                    running = false;
+                }
+            }
+        };
     }
 
     function bind(component, name, callback) {
@@ -4552,16 +4758,16 @@ var app = (function () {
     }
 
     /* src\components\Chart.svelte generated by Svelte v3.59.2 */
-    const file$3 = "src\\components\\Chart.svelte";
+    const file$4 = "src\\components\\Chart.svelte";
 
-    function create_fragment$3(ctx) {
+    function create_fragment$4(ctx) {
     	let svg_1;
 
     	const block = {
     		c: function create() {
     			svg_1 = svg_element("svg");
     			attr_dev(svg_1, "class", "svelte-1fft9vn");
-    			add_location(svg_1, file$3, 67, 0, 2020);
+    			add_location(svg_1, file$4, 68, 0, 2052);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -4581,7 +4787,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_fragment$3.name,
+    		id: create_fragment$4.name,
     		type: "component",
     		source: "",
     		ctx
@@ -4590,7 +4796,9 @@ var app = (function () {
     	return block;
     }
 
-    function instance$3($$self, $$props, $$invalidate) {
+    const x_lim = 1000;
+
+    function instance$4($$self, $$props, $$invalidate) {
     	let $lineData;
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('Chart', slots, []);
@@ -4607,7 +4815,7 @@ var app = (function () {
     	const lineData = derived([E0, b, R, m, n], ([$E0, $b, $R, $m, $n]) => {
     		const data = [];
 
-    		for (let i = 0.001; i <= 10; i += 0.1) {
+    		for (let i = 0.001; i <= x_lim; i += 0.1) {
     			const E = $E0 - $b * Math.log10(i) - $R * i - $m * Math.exp($n * i);
 
     			// create data to plot based on given slider values
@@ -4621,8 +4829,8 @@ var app = (function () {
     	component_subscribe($$self, lineData, value => $$invalidate(8, $lineData = value));
 
     	function drawChart(data) {
-    		const xScale = linear().domain([0, 10]).range([0, width]);
-    		const yScale = linear().domain([0, 50]).range([height, 0]);
+    		const xScale = linear().domain([0, x_lim]).range([0, width]);
+    		const yScale = linear().domain([0, 1.5]).range([height, 0]);
     		const xAxis = axisBottom(xScale);
     		const yAxis = axisLeft(yScale);
     		const lineGenerator = line().x(d => xScale(d.i)).y(d => yScale(d.E));
@@ -4697,6 +4905,7 @@ var app = (function () {
     		margin,
     		width,
     		height,
+    		x_lim,
     		lineData,
     		drawChart,
     		$lineData
@@ -4722,13 +4931,13 @@ var app = (function () {
     class Chart extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init$1(this, options, instance$3, create_fragment$3, safe_not_equal, { E0: 2, b: 3, R: 4, m: 5, n: 6 });
+    		init$1(this, options, instance$4, create_fragment$4, safe_not_equal, { E0: 2, b: 3, R: 4, m: 5, n: 6 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
     			tagName: "Chart",
     			options,
-    			id: create_fragment$3.name
+    			id: create_fragment$4.name
     		});
     	}
 
@@ -4774,9 +4983,9 @@ var app = (function () {
     }
 
     /* src\components\Scrolly.svelte generated by Svelte v3.59.2 */
-    const file$2 = "src\\components\\Scrolly.svelte";
+    const file$3 = "src\\components\\Scrolly.svelte";
 
-    function create_fragment$2(ctx) {
+    function create_fragment$3(ctx) {
     	let div;
     	let current;
     	const default_slot_template = /*#slots*/ ctx[7].default;
@@ -4786,7 +4995,7 @@ var app = (function () {
     		c: function create() {
     			div = element("div");
     			if (default_slot) default_slot.c();
-    			add_location(div, file$2, 80, 2, 2142);
+    			add_location(div, file$3, 80, 2, 2222);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -4835,7 +5044,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_fragment$2.name,
+    		id: create_fragment$3.name,
     		type: "component",
     		source: "",
     		ctx
@@ -4844,7 +5053,7 @@ var app = (function () {
     	return block;
     }
 
-    function instance$2($$self, $$props, $$invalidate) {
+    function instance$3($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('Scrolly', slots, ['default']);
     	let { root = null } = $$props;
@@ -4971,7 +5180,7 @@ var app = (function () {
     	constructor(options) {
     		super(options);
 
-    		init$1(this, options, instance$2, create_fragment$2, safe_not_equal, {
+    		init$1(this, options, instance$3, create_fragment$3, safe_not_equal, {
     			root: 2,
     			top: 3,
     			bottom: 4,
@@ -4983,7 +5192,7 @@ var app = (function () {
     			component: this,
     			tagName: "Scrolly",
     			options,
-    			id: create_fragment$2.name
+    			id: create_fragment$3.name
     		});
     	}
 
@@ -23492,7 +23701,7 @@ var app = (function () {
     }
 
     /* src\components\VariablesScrolly.svelte generated by Svelte v3.59.2 */
-    const file$1 = "src\\components\\VariablesScrolly.svelte";
+    const file$2 = "src\\components\\VariablesScrolly.svelte";
 
     function get_each_context(ctx, list, i) {
     	const child_ctx = ctx.slice();
@@ -23519,13 +23728,13 @@ var app = (function () {
     			t = space();
     			p = element("p");
     			attr_dev(h1, "class", "step-title");
-    			add_location(h1, file$1, 61, 28, 2148);
-    			add_location(p, file$1, 62, 28, 2233);
+    			add_location(h1, file$2, 61, 28, 2209);
+    			add_location(p, file$2, 62, 28, 2295);
     			attr_dev(div0, "class", "step-content svelte-172ib1e");
-    			add_location(div0, file$1, 60, 24, 2093);
+    			add_location(div0, file$2, 60, 24, 2153);
     			attr_dev(div1, "class", "step svelte-172ib1e");
     			toggle_class(div1, "active", /*value*/ ctx[0] === /*i*/ ctx[6]);
-    			add_location(div1, file$1, 59, 20, 2023);
+    			add_location(div1, file$2, 59, 20, 2082);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div1, anchor);
@@ -23579,7 +23788,7 @@ var app = (function () {
     			t = space();
     			div = element("div");
     			attr_dev(div, "class", "spacer svelte-172ib1e");
-    			add_location(div, file$1, 66, 16, 2359);
+    			add_location(div, file$2, 66, 16, 2425);
     		},
     		m: function mount(target, anchor) {
     			for (let i = 0; i < each_blocks.length; i += 1) {
@@ -23634,7 +23843,7 @@ var app = (function () {
     	return block;
     }
 
-    function create_fragment$1(ctx) {
+    function create_fragment$2(ctx) {
     	let h2;
     	let t1;
     	let p0;
@@ -23700,30 +23909,30 @@ var app = (function () {
     			p1 = element("p");
     			p1.textContent = "conclusions about variables ...";
     			attr_dev(h2, "class", "body-header svelte-172ib1e");
-    			add_location(h2, file$1, 49, 0, 1618);
+    			add_location(h2, file$2, 49, 0, 1667);
     			attr_dev(p0, "class", "body-text svelte-172ib1e");
-    			add_location(p0, file$1, 50, 0, 1675);
+    			add_location(p0, file$2, 50, 0, 1725);
     			attr_dev(div0, "class", "steps-container svelte-172ib1e");
-    			add_location(div0, file$1, 56, 8, 1899);
+    			add_location(div0, file$2, 56, 8, 1955);
     			attr_dev(svg0, "id", "chart1");
     			attr_dev(svg0, "class", "svelte-172ib1e");
-    			add_location(svg0, file$1, 71, 16, 2511);
+    			add_location(svg0, file$2, 71, 16, 2582);
     			attr_dev(div1, "class", "chart-one svelte-172ib1e");
-    			add_location(div1, file$1, 70, 12, 2471);
+    			add_location(div1, file$2, 70, 12, 2541);
     			attr_dev(svg1, "id", "chart2");
     			attr_dev(svg1, "class", "svelte-172ib1e");
-    			add_location(svg1, file$1, 74, 16, 2602);
+    			add_location(svg1, file$2, 74, 16, 2676);
     			attr_dev(div2, "class", "chart-two svelte-172ib1e");
-    			add_location(div2, file$1, 73, 12, 2562);
+    			add_location(div2, file$2, 73, 12, 2635);
     			attr_dev(div3, "class", "charts-container svelte-172ib1e");
-    			add_location(div3, file$1, 69, 8, 2428);
+    			add_location(div3, file$2, 69, 8, 2497);
     			attr_dev(div4, "class", "section-container svelte-172ib1e");
-    			add_location(div4, file$1, 55, 4, 1859);
-    			add_location(br0, file$1, 78, 4, 2671);
-    			add_location(br1, file$1, 78, 10, 2677);
+    			add_location(div4, file$2, 55, 4, 1914);
+    			add_location(br0, file$2, 78, 4, 2749);
+    			add_location(br1, file$2, 78, 10, 2755);
     			attr_dev(p1, "class", "body-text svelte-172ib1e");
-    			add_location(p1, file$1, 79, 4, 2688);
-    			add_location(section, file$1, 53, 0, 1815);
+    			add_location(p1, file$2, 79, 4, 2767);
+    			add_location(section, file$2, 53, 0, 1868);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -23787,7 +23996,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_fragment$1.name,
+    		id: create_fragment$2.name,
     		type: "component",
     		source: "",
     		ctx
@@ -23796,7 +24005,7 @@ var app = (function () {
     	return block;
     }
 
-    function instance$1($$self, $$props, $$invalidate) {
+    function instance$2($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('VariablesScrolly', slots, []);
     	let value;
@@ -23882,11 +24091,654 @@ var app = (function () {
     class VariablesScrolly extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init$1(this, options, instance$1, create_fragment$1, safe_not_equal, {});
+    		init$1(this, options, instance$2, create_fragment$2, safe_not_equal, {});
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
     			tagName: "VariablesScrolly",
+    			options,
+    			id: create_fragment$2.name
+    		});
+    	}
+    }
+
+    function fade(node, { delay = 0, duration = 400, easing = identity$4 } = {}) {
+        const o = +getComputedStyle(node).opacity;
+        return {
+            delay,
+            duration,
+            easing,
+            css: t => `opacity: ${t * o}`
+        };
+    }
+
+    /* src\components\DiagramFC.svelte generated by Svelte v3.59.2 */
+    const file$1 = "src\\components\\DiagramFC.svelte";
+
+    // (150:4) {:else}
+    function create_else_block(ctx) {
+    	let p;
+
+    	const block = {
+    		c: function create() {
+    			p = element("p");
+    			p.textContent = "Click any component of the fuel cell!";
+    			set_style(p, "text-align", "center");
+    			add_location(p, file$1, 150, 4, 4428);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, p, anchor);
+    		},
+    		i: noop$1,
+    		o: noop$1,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(p);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_else_block.name,
+    		type: "else",
+    		source: "(150:4) {:else}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (141:28) 
+    function create_if_block_2(ctx) {
+    	let div;
+    	let header;
+    	let t1;
+    	let p;
+    	let t2;
+    	let sub0;
+    	let t4;
+    	let i;
+    	let sup0;
+    	let t7;
+    	let sup1;
+    	let t9;
+    	let sub1;
+    	let t11;
+    	let div_intro;
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			header = element("header");
+    			header.textContent = "Cathode";
+    			t1 = text$2("\r\n            The cathode, also known as the positive electrode, reduces oxygen with this half reaction:\r\n            ");
+    			p = element("p");
+    			t2 = text$2("O");
+    			sub0 = element("sub");
+    			sub0.textContent = "2";
+    			t4 = text$2(" + 4");
+    			i = element("i");
+    			i.textContent = "e";
+    			sup0 = element("sup");
+    			sup0.textContent = "-";
+    			t7 = text$2(" + 4H");
+    			sup1 = element("sup");
+    			sup1.textContent = "+";
+    			t9 = text$2(" → 2H");
+    			sub1 = element("sub");
+    			sub1.textContent = "2";
+    			t11 = text$2("O");
+    			attr_dev(header, "class", "svelte-r62w00");
+    			add_location(header, file$1, 142, 8, 4112);
+    			add_location(sub0, file$1, 145, 17, 4293);
+    			add_location(i, file$1, 145, 33, 4309);
+    			add_location(sup0, file$1, 145, 41, 4317);
+    			add_location(sup1, file$1, 145, 58, 4334);
+    			add_location(sub1, file$1, 145, 80, 4356);
+    			attr_dev(p, "class", "equation svelte-r62w00");
+    			add_location(p, file$1, 144, 12, 4254);
+    			add_location(div, file$1, 141, 4, 4089);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    			append_dev(div, header);
+    			append_dev(div, t1);
+    			append_dev(div, p);
+    			append_dev(p, t2);
+    			append_dev(p, sub0);
+    			append_dev(p, t4);
+    			append_dev(p, i);
+    			append_dev(p, sup0);
+    			append_dev(p, t7);
+    			append_dev(p, sup1);
+    			append_dev(p, t9);
+    			append_dev(p, sub1);
+    			append_dev(p, t11);
+    		},
+    		i: function intro(local) {
+    			if (!div_intro) {
+    				add_render_callback(() => {
+    					div_intro = create_in_transition(div, fade, {});
+    					div_intro.start();
+    				});
+    			}
+    		},
+    		o: noop$1,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_2.name,
+    		type: "if",
+    		source: "(141:28) ",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (136:28) 
+    function create_if_block_1(ctx) {
+    	let header;
+    	let header_intro;
+    	let t1;
+    	let p;
+    	let p_intro;
+
+    	const block = {
+    		c: function create() {
+    			header = element("header");
+    			header.textContent = "Electrolyte";
+    			t1 = space();
+    			p = element("p");
+    			p.textContent = "The electrolyte is an ionic solution which enables the transfer of charged ions between electrodes.";
+    			attr_dev(header, "class", "svelte-r62w00");
+    			add_location(header, file$1, 136, 4, 3881);
+    			add_location(p, file$1, 137, 4, 3923);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, header, anchor);
+    			insert_dev(target, t1, anchor);
+    			insert_dev(target, p, anchor);
+    		},
+    		i: function intro(local) {
+    			if (!header_intro) {
+    				add_render_callback(() => {
+    					header_intro = create_in_transition(header, fade, {});
+    					header_intro.start();
+    				});
+    			}
+
+    			if (!p_intro) {
+    				add_render_callback(() => {
+    					p_intro = create_in_transition(p, fade, {});
+    					p_intro.start();
+    				});
+    			}
+    		},
+    		o: noop$1,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(header);
+    			if (detaching) detach_dev(t1);
+    			if (detaching) detach_dev(p);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_1.name,
+    		type: "if",
+    		source: "(136:28) ",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (126:4) {#if clicked === 0}
+    function create_if_block(ctx) {
+    	let div;
+    	let header;
+    	let t1;
+    	let p;
+    	let t2;
+    	let sub;
+    	let t4;
+    	let sup0;
+    	let t6;
+    	let i;
+    	let sup1;
+    	let t9;
+    	let div_intro;
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			header = element("header");
+    			header.textContent = "Anode";
+    			t1 = text$2("\r\n        The anode, also known as the negative electrode, oxidizes hydrogen with this half reaction,\r\n        ");
+    			p = element("p");
+    			t2 = text$2("2H");
+    			sub = element("sub");
+    			sub.textContent = "2";
+    			t4 = text$2(" → 4H");
+    			sup0 = element("sup");
+    			sup0.textContent = "+";
+    			t6 = text$2(" + 4");
+    			i = element("i");
+    			i.textContent = "e";
+    			sup1 = element("sup");
+    			sup1.textContent = "-";
+    			t9 = text$2("\r\n        releasing electrons which do electrical work through the connected circuit. \r\n        Typically,");
+    			attr_dev(header, "class", "svelte-r62w00");
+    			add_location(header, file$1, 127, 4, 3485);
+    			add_location(sub, file$1, 130, 14, 3654);
+    			add_location(sup0, file$1, 130, 36, 3676);
+    			add_location(i, file$1, 130, 52, 3692);
+    			add_location(sup1, file$1, 130, 60, 3700);
+    			attr_dev(p, "class", "equation svelte-r62w00");
+    			add_location(p, file$1, 129, 8, 3618);
+    			add_location(div, file$1, 126, 4, 3466);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    			append_dev(div, header);
+    			append_dev(div, t1);
+    			append_dev(div, p);
+    			append_dev(p, t2);
+    			append_dev(p, sub);
+    			append_dev(p, t4);
+    			append_dev(p, sup0);
+    			append_dev(p, t6);
+    			append_dev(p, i);
+    			append_dev(p, sup1);
+    			append_dev(div, t9);
+    		},
+    		i: function intro(local) {
+    			if (!div_intro) {
+    				add_render_callback(() => {
+    					div_intro = create_in_transition(div, fade, {});
+    					div_intro.start();
+    				});
+    			}
+    		},
+    		o: noop$1,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block.name,
+    		type: "if",
+    		source: "(126:4) {#if clicked === 0}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function create_fragment$1(ctx) {
+    	let div0;
+    	let h2;
+    	let t1;
+    	let br0;
+    	let t2;
+    	let br1;
+    	let t3;
+    	let div1;
+    	let svg;
+    	let defs;
+    	let filter;
+    	let feDropShadow;
+    	let rect0;
+    	let rect0_fill_value;
+    	let rect1;
+    	let rect1_fill_value;
+    	let rect2;
+    	let rect2_fill_value;
+    	let path;
+    	let path_fill_value;
+    	let circle0;
+    	let line0;
+    	let circle1;
+    	let line1;
+    	let line2;
+    	let t4;
+    	let div2;
+    	let mounted;
+    	let dispose;
+
+    	function select_block_type(ctx, dirty) {
+    		if (/*clicked*/ ctx[0] === 0) return create_if_block;
+    		if (/*clicked*/ ctx[0] === 1) return create_if_block_1;
+    		if (/*clicked*/ ctx[0] === 2) return create_if_block_2;
+    		return create_else_block;
+    	}
+
+    	let current_block_type = select_block_type(ctx);
+    	let if_block = current_block_type(ctx);
+
+    	const block = {
+    		c: function create() {
+    			div0 = element("div");
+    			h2 = element("h2");
+    			h2.textContent = "What is a Fuel Cell?";
+    			t1 = text$2("\r\n    Fuel cells operate based on the electrochemistry principles\r\n    of oxidation and reduction. \r\n    Unlike batteries, they require an inlet fuel (such as hydrogen) to be continuously supplied for the energy-releasing reaction to occur.\r\n    Click on different parts of the fuel cell to explore!\r\n    ");
+    			br0 = element("br");
+    			t2 = space();
+    			br1 = element("br");
+    			t3 = space();
+    			div1 = element("div");
+    			svg = svg_element("svg");
+    			defs = svg_element("defs");
+    			filter = svg_element("filter");
+    			feDropShadow = svg_element("feDropShadow");
+    			rect0 = svg_element("rect");
+    			rect1 = svg_element("rect");
+    			rect2 = svg_element("rect");
+    			path = svg_element("path");
+    			circle0 = svg_element("circle");
+    			line0 = svg_element("line");
+    			circle1 = svg_element("circle");
+    			line1 = svg_element("line");
+    			line2 = svg_element("line");
+    			t4 = space();
+    			div2 = element("div");
+    			if_block.c();
+    			add_location(h2, file$1, 7, 4, 182);
+    			add_location(br0, file$1, 12, 4, 516);
+    			add_location(br1, file$1, 14, 4, 532);
+    			attr_dev(div0, "id", "box1");
+    			attr_dev(div0, "class", "info svelte-r62w00");
+    			add_location(div0, file$1, 6, 0, 148);
+    			attr_dev(feDropShadow, "dx", "-12");
+    			attr_dev(feDropShadow, "dy", "14");
+    			attr_dev(feDropShadow, "stdDeviation", "1");
+    			attr_dev(feDropShadow, "flood-opacity", "0.7");
+    			add_location(feDropShadow, file$1, 21, 16, 688);
+    			attr_dev(filter, "id", "f1");
+    			add_location(filter, file$1, 20, 12, 654);
+    			add_location(defs, file$1, 19, 8, 634);
+    			attr_dev(rect0, "id", "anode");
+    			attr_dev(rect0, "width", "400");
+    			attr_dev(rect0, "height", "950");
+    			attr_dev(rect0, "x", "-490");
+    			attr_dev(rect0, "y", "-490");
+    			attr_dev(rect0, "fill", rect0_fill_value = /*hovered*/ ctx[1] === 0 ? hovered_color : "dimgray");
+    			attr_dev(rect0, "stroke", "black");
+    			attr_dev(rect0, "stroke-width", "5");
+    			add_location(rect0, file$1, 24, 8, 807);
+    			attr_dev(rect1, "id", "electrolyte");
+    			attr_dev(rect1, "width", "200");
+    			attr_dev(rect1, "height", "950");
+    			attr_dev(rect1, "x", "-100");
+    			attr_dev(rect1, "y", "-490");
+    			attr_dev(rect1, "fill", rect1_fill_value = /*hovered*/ ctx[1] === 1 ? hovered_color : "white");
+    			attr_dev(rect1, "stroke", "black");
+    			attr_dev(rect1, "stroke-width", "5");
+    			add_location(rect1, file$1, 37, 8, 1236);
+    			attr_dev(rect2, "id", "cathode");
+    			attr_dev(rect2, "width", "400");
+    			attr_dev(rect2, "height", "950");
+    			attr_dev(rect2, "x", "90");
+    			attr_dev(rect2, "y", "-490");
+    			attr_dev(rect2, "fill", rect2_fill_value = /*hovered*/ ctx[1] === 2 ? hovered_color : "lightgray");
+    			attr_dev(rect2, "stroke", "black");
+    			attr_dev(rect2, "stroke-width", "5");
+    			add_location(rect2, file$1, 50, 8, 1668);
+    			attr_dev(path, "d", "M-400 -490\r\n        L-400 -740\r\n        L 400 -740\r\n        L 400 -490\r\n        L 350 -490\r\n        L 350 -690\r\n        L-350 -690\r\n        L-350 -490\r\n        Z");
+    			attr_dev(path, "fill", path_fill_value = /*hovered*/ ctx[1] === 3 ? hovered_color : "white");
+    			attr_dev(path, "stroke", "black");
+    			attr_dev(path, "stroke-width", "5px");
+    			add_location(path, file$1, 63, 8, 2098);
+    			attr_dev(circle0, "r", "50");
+    			attr_dev(circle0, "cx", "-600");
+    			attr_dev(circle0, "cy", "-400");
+    			attr_dev(circle0, "stroke", "black");
+    			attr_dev(circle0, "stroke-width", "5");
+    			attr_dev(circle0, "fill", "none");
+    			add_location(circle0, file$1, 80, 8, 2554);
+    			attr_dev(line0, "x1", "-625");
+    			attr_dev(line0, "y1", "-400");
+    			attr_dev(line0, "x2", "-575");
+    			attr_dev(line0, "y2", "-400");
+    			attr_dev(line0, "stroke", "black");
+    			attr_dev(line0, "stroke-width", "5");
+    			add_location(line0, file$1, 88, 8, 2725);
+    			attr_dev(circle1, "r", "50");
+    			attr_dev(circle1, "cx", "600");
+    			attr_dev(circle1, "cy", "-400");
+    			attr_dev(circle1, "stroke", "black");
+    			attr_dev(circle1, "stroke-width", "5");
+    			attr_dev(circle1, "fill", "none");
+    			add_location(circle1, file$1, 97, 8, 2896);
+    			attr_dev(line1, "x1", "625");
+    			attr_dev(line1, "y1", "-400");
+    			attr_dev(line1, "x2", "575");
+    			attr_dev(line1, "y2", "-400");
+    			attr_dev(line1, "stroke", "black");
+    			attr_dev(line1, "stroke-width", "5");
+    			add_location(line1, file$1, 105, 8, 3066);
+    			attr_dev(line2, "x1", "600");
+    			attr_dev(line2, "y1", "-425");
+    			attr_dev(line2, "x2", "600");
+    			attr_dev(line2, "y2", "-375");
+    			attr_dev(line2, "stroke", "black");
+    			attr_dev(line2, "stroke-width", "5");
+    			add_location(line2, file$1, 113, 8, 3233);
+    			attr_dev(svg, "height", "300");
+    			attr_dev(svg, "viewBox", "-1000 -750 2000 1250");
+    			add_location(svg, file$1, 18, 4, 575);
+    			attr_dev(div1, "class", "diagram svelte-r62w00");
+    			add_location(div1, file$1, 17, 0, 548);
+    			attr_dev(div2, "class", "tooltip svelte-r62w00");
+    			add_location(div2, file$1, 124, 0, 3414);
+    		},
+    		l: function claim(nodes) {
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div0, anchor);
+    			append_dev(div0, h2);
+    			append_dev(div0, t1);
+    			append_dev(div0, br0);
+    			append_dev(div0, t2);
+    			append_dev(div0, br1);
+    			insert_dev(target, t3, anchor);
+    			insert_dev(target, div1, anchor);
+    			append_dev(div1, svg);
+    			append_dev(svg, defs);
+    			append_dev(defs, filter);
+    			append_dev(filter, feDropShadow);
+    			append_dev(svg, rect0);
+    			append_dev(svg, rect1);
+    			append_dev(svg, rect2);
+    			append_dev(svg, path);
+    			append_dev(svg, circle0);
+    			append_dev(svg, line0);
+    			append_dev(svg, circle1);
+    			append_dev(svg, line1);
+    			append_dev(svg, line2);
+    			insert_dev(target, t4, anchor);
+    			insert_dev(target, div2, anchor);
+    			if_block.m(div2, null);
+
+    			if (!mounted) {
+    				dispose = [
+    					listen_dev(rect0, "click", /*click_handler*/ ctx[2], false, false, false, false),
+    					listen_dev(rect0, "mouseover", /*mouseover_handler*/ ctx[3], false, false, false, false),
+    					listen_dev(rect0, "mouseout", /*mouseout_handler*/ ctx[4], false, false, false, false),
+    					listen_dev(rect1, "click", /*click_handler_1*/ ctx[5], false, false, false, false),
+    					listen_dev(rect1, "mouseover", /*mouseover_handler_1*/ ctx[6], false, false, false, false),
+    					listen_dev(rect1, "mouseout", /*mouseout_handler_1*/ ctx[7], false, false, false, false),
+    					listen_dev(rect2, "click", /*click_handler_2*/ ctx[8], false, false, false, false),
+    					listen_dev(rect2, "mouseover", /*mouseover_handler_2*/ ctx[9], false, false, false, false),
+    					listen_dev(rect2, "mouseout", /*mouseout_handler_2*/ ctx[10], false, false, false, false),
+    					listen_dev(path, "click", /*click_handler_3*/ ctx[11], false, false, false, false),
+    					listen_dev(path, "mouseover", /*mouseover_handler_3*/ ctx[12], false, false, false, false),
+    					listen_dev(path, "mouseout", /*mouseout_handler_3*/ ctx[13], false, false, false, false)
+    				];
+
+    				mounted = true;
+    			}
+    		},
+    		p: function update(ctx, [dirty]) {
+    			if (dirty & /*hovered*/ 2 && rect0_fill_value !== (rect0_fill_value = /*hovered*/ ctx[1] === 0 ? hovered_color : "dimgray")) {
+    				attr_dev(rect0, "fill", rect0_fill_value);
+    			}
+
+    			if (dirty & /*hovered*/ 2 && rect1_fill_value !== (rect1_fill_value = /*hovered*/ ctx[1] === 1 ? hovered_color : "white")) {
+    				attr_dev(rect1, "fill", rect1_fill_value);
+    			}
+
+    			if (dirty & /*hovered*/ 2 && rect2_fill_value !== (rect2_fill_value = /*hovered*/ ctx[1] === 2 ? hovered_color : "lightgray")) {
+    				attr_dev(rect2, "fill", rect2_fill_value);
+    			}
+
+    			if (dirty & /*hovered*/ 2 && path_fill_value !== (path_fill_value = /*hovered*/ ctx[1] === 3 ? hovered_color : "white")) {
+    				attr_dev(path, "fill", path_fill_value);
+    			}
+
+    			if (current_block_type !== (current_block_type = select_block_type(ctx))) {
+    				if_block.d(1);
+    				if_block = current_block_type(ctx);
+
+    				if (if_block) {
+    					if_block.c();
+    					transition_in(if_block, 1);
+    					if_block.m(div2, null);
+    				}
+    			}
+    		},
+    		i: function intro(local) {
+    			transition_in(if_block);
+    		},
+    		o: noop$1,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div0);
+    			if (detaching) detach_dev(t3);
+    			if (detaching) detach_dev(div1);
+    			if (detaching) detach_dev(t4);
+    			if (detaching) detach_dev(div2);
+    			if_block.d();
+    			mounted = false;
+    			run_all(dispose);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_fragment$1.name,
+    		type: "component",
+    		source: "",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    const hovered_color = "gold";
+
+    function instance$1($$self, $$props, $$invalidate) {
+    	let { $$slots: slots = {}, $$scope } = $$props;
+    	validate_slots('DiagramFC', slots, []);
+    	let clicked = -1;
+    	let hovered = -1;
+    	const writable_props = [];
+
+    	Object.keys($$props).forEach(key => {
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<DiagramFC> was created with unknown prop '${key}'`);
+    	});
+
+    	const click_handler = event => {
+    		$$invalidate(0, clicked = 0);
+    	};
+
+    	const mouseover_handler = event => {
+    		$$invalidate(1, hovered = 0);
+    	};
+
+    	const mouseout_handler = event => {
+    		$$invalidate(1, hovered = -1);
+    	};
+
+    	const click_handler_1 = event => {
+    		$$invalidate(0, clicked = 1);
+    	};
+
+    	const mouseover_handler_1 = event => {
+    		$$invalidate(1, hovered = 1);
+    	};
+
+    	const mouseout_handler_1 = event => {
+    		$$invalidate(1, hovered = -1);
+    	};
+
+    	const click_handler_2 = event => {
+    		$$invalidate(0, clicked = 2);
+    	};
+
+    	const mouseover_handler_2 = event => {
+    		$$invalidate(1, hovered = 2);
+    	};
+
+    	const mouseout_handler_2 = event => {
+    		$$invalidate(1, hovered = -1);
+    	};
+
+    	const click_handler_3 = event => {
+    		$$invalidate(0, clicked = 3);
+    	};
+
+    	const mouseover_handler_3 = event => {
+    		$$invalidate(1, hovered = 3);
+    	};
+
+    	const mouseout_handler_3 = event => {
+    		$$invalidate(1, hovered = -1);
+    	};
+
+    	$$self.$capture_state = () => ({ fade, clicked, hovered, hovered_color });
+
+    	$$self.$inject_state = $$props => {
+    		if ('clicked' in $$props) $$invalidate(0, clicked = $$props.clicked);
+    		if ('hovered' in $$props) $$invalidate(1, hovered = $$props.hovered);
+    	};
+
+    	if ($$props && "$$inject" in $$props) {
+    		$$self.$inject_state($$props.$$inject);
+    	}
+
+    	return [
+    		clicked,
+    		hovered,
+    		click_handler,
+    		mouseover_handler,
+    		mouseout_handler,
+    		click_handler_1,
+    		mouseover_handler_1,
+    		mouseout_handler_1,
+    		click_handler_2,
+    		mouseover_handler_2,
+    		mouseout_handler_2,
+    		click_handler_3,
+    		mouseover_handler_3,
+    		mouseout_handler_3
+    	];
+    }
+
+    class DiagramFC extends SvelteComponentDev {
+    	constructor(options) {
+    		super(options);
+    		init$1(this, options, instance$1, create_fragment$1, safe_not_equal, {});
+
+    		dispatch_dev("SvelteRegisterComponent", {
+    			component: this,
+    			tagName: "DiagramFC",
     			options,
     			id: create_fragment$1.name
     		});
@@ -23901,69 +24753,74 @@ var app = (function () {
     	let div0;
     	let h1;
     	let t1;
-    	let p;
-    	let raw0_value = katexify("E = E_0 - b \\log(i) - Ri - m \\exp(ni)") + "";
-    	let t2;
+    	let h2;
+    	let t3;
     	let h3;
     	let a0;
-    	let t4;
+    	let t5;
     	let a1;
-    	let t6;
-    	let br;
     	let t7;
+    	let br;
     	let t8;
+    	let t9;
+    	let diagramfc;
+    	let t10;
+    	let p;
+    	let raw0_value = katexify("E = E_0 - b \\log(i) - Ri - m \\exp(ni)") + "";
+    	let t11;
     	let div1;
     	let label0;
     	let html_tag;
     	let raw1_value = katexify("E_0:") + "";
-    	let t9;
-    	let input0;
-    	let t10;
-    	let span0;
-    	let t11;
     	let t12;
+    	let input0;
+    	let t13;
+    	let span0;
+    	let t14;
+    	let t15;
     	let label1;
     	let html_tag_1;
     	let raw2_value = katexify("b:") + "";
-    	let t13;
-    	let input1;
-    	let t14;
-    	let span1;
-    	let t15;
     	let t16;
+    	let input1;
+    	let t17;
+    	let span1;
+    	let t18;
+    	let t19;
     	let label2;
     	let html_tag_2;
     	let raw3_value = katexify("R:") + "";
-    	let t17;
-    	let input2;
-    	let t18;
-    	let span2;
-    	let t19;
     	let t20;
+    	let input2;
+    	let t21;
+    	let span2;
+    	let t22;
+    	let t23;
     	let label3;
     	let html_tag_3;
     	let raw4_value = katexify("m:") + "";
-    	let t21;
-    	let input3;
-    	let t22;
-    	let span3;
-    	let t23;
     	let t24;
+    	let input3;
+    	let t25;
+    	let span3;
+    	let t26;
+    	let t27;
     	let label4;
     	let html_tag_4;
     	let raw5_value = katexify("n:") + "";
-    	let t25;
-    	let input4;
-    	let t26;
-    	let span4;
-    	let t27;
     	let t28;
-    	let chart;
+    	let input4;
     	let t29;
+    	let span4;
+    	let t30;
+    	let t31;
+    	let chart;
+    	let t32;
     	let variablesscrolly;
     	let current;
     	let mounted;
     	let dispose;
+    	diagramfc = new DiagramFC({ $$inline: true });
 
     	chart = new Chart({
     			props: {
@@ -23983,135 +24840,141 @@ var app = (function () {
     			main = element("main");
     			div0 = element("div");
     			h1 = element("h1");
-    			h1.textContent = "Fuel Cells: ...";
+    			h1.textContent = "Fuel Cells:";
     			t1 = space();
-    			p = element("p");
-    			t2 = space();
+    			h2 = element("h2");
+    			h2.textContent = "A Quick Introduction to a Fuel Cell's Current-Density vs. Voltage Curve";
+    			t3 = space();
     			h3 = element("h3");
     			a0 = element("a");
     			a0.textContent = "Katelyn";
-    			t4 = text$2("\r\n\t\t\tand ");
+    			t5 = text$2("\r\n\t\t\tand ");
     			a1 = element("a");
     			a1.textContent = "Jonathan";
-    			t6 = space();
+    			t7 = space();
     			br = element("br");
-    			t7 = text$2("\r\n            May - June 2024");
-    			t8 = space();
+    			t8 = text$2("\r\n            May - June 2024");
+    			t9 = space();
+    			create_component(diagramfc.$$.fragment);
+    			t10 = space();
+    			p = element("p");
+    			t11 = space();
     			div1 = element("div");
     			label0 = element("label");
     			html_tag = new HtmlTag(false);
-    			t9 = space();
-    			input0 = element("input");
-    			t10 = space();
-    			span0 = element("span");
-    			t11 = text$2(/*$E0*/ ctx[0]);
     			t12 = space();
+    			input0 = element("input");
+    			t13 = space();
+    			span0 = element("span");
+    			t14 = text$2(/*$E0*/ ctx[0]);
+    			t15 = space();
     			label1 = element("label");
     			html_tag_1 = new HtmlTag(false);
-    			t13 = space();
-    			input1 = element("input");
-    			t14 = space();
-    			span1 = element("span");
-    			t15 = text$2(/*$b*/ ctx[1]);
     			t16 = space();
+    			input1 = element("input");
+    			t17 = space();
+    			span1 = element("span");
+    			t18 = text$2(/*$b*/ ctx[1]);
+    			t19 = space();
     			label2 = element("label");
     			html_tag_2 = new HtmlTag(false);
-    			t17 = space();
-    			input2 = element("input");
-    			t18 = space();
-    			span2 = element("span");
-    			t19 = text$2(/*$R*/ ctx[2]);
     			t20 = space();
+    			input2 = element("input");
+    			t21 = space();
+    			span2 = element("span");
+    			t22 = text$2(/*$R*/ ctx[2]);
+    			t23 = space();
     			label3 = element("label");
     			html_tag_3 = new HtmlTag(false);
-    			t21 = space();
-    			input3 = element("input");
-    			t22 = space();
-    			span3 = element("span");
-    			t23 = text$2(/*$m*/ ctx[3]);
     			t24 = space();
+    			input3 = element("input");
+    			t25 = space();
+    			span3 = element("span");
+    			t26 = text$2(/*$m*/ ctx[3]);
+    			t27 = space();
     			label4 = element("label");
     			html_tag_4 = new HtmlTag(false);
-    			t25 = space();
-    			input4 = element("input");
-    			t26 = space();
-    			span4 = element("span");
-    			t27 = text$2(/*$n*/ ctx[4]);
     			t28 = space();
-    			create_component(chart.$$.fragment);
+    			input4 = element("input");
     			t29 = space();
+    			span4 = element("span");
+    			t30 = text$2(/*$n*/ ctx[4]);
+    			t31 = space();
+    			create_component(chart.$$.fragment);
+    			t32 = space();
     			create_component(variablesscrolly.$$.fragment);
     			attr_dev(h1, "id", "intro-hed");
     			attr_dev(h1, "class", "svelte-7fmblr");
-    			add_location(h1, file, 16, 8, 431);
-    			attr_dev(p, "id", "desc");
-    			attr_dev(p, "class", "svelte-7fmblr");
-    			add_location(p, file, 17, 8, 480);
+    			add_location(h1, file, 17, 8, 496);
+    			add_location(h2, file, 18, 8, 541);
     			attr_dev(a0, "href", "https://github.com/katemae");
     			attr_dev(a0, "target", "_blank");
-    			add_location(a0, file, 21, 3, 615);
+    			add_location(a0, file, 20, 3, 656);
     			attr_dev(a1, "href", "https://github.com/jman2-go");
     			attr_dev(a1, "target", "_blank");
-    			add_location(a1, file, 22, 7, 688);
-    			add_location(br, file, 23, 3, 759);
+    			add_location(a1, file, 21, 7, 729);
+    			add_location(br, file, 22, 3, 800);
     			attr_dev(h3, "id", "intro_date");
     			attr_dev(h3, "class", "svelte-7fmblr");
-    			add_location(h3, file, 20, 8, 590);
+    			add_location(h3, file, 19, 8, 631);
     			attr_dev(div0, "class", "intro svelte-7fmblr");
-    			add_location(div0, file, 15, 4, 402);
-    			html_tag.a = t9;
+    			add_location(div0, file, 16, 4, 467);
+    			attr_dev(p, "id", "desc");
+    			attr_dev(p, "class", "svelte-7fmblr");
+    			add_location(p, file, 28, 4, 887);
+    			html_tag.a = t12;
     			attr_dev(input0, "type", "range");
     			attr_dev(input0, "min", "0");
-    			attr_dev(input0, "max", "45");
-    			attr_dev(input0, "step", "0.5");
+    			attr_dev(input0, "max", "1.2");
+    			attr_dev(input0, "step", "0.01");
     			attr_dev(input0, "class", "svelte-7fmblr");
-    			add_location(input0, file, 30, 37, 905);
-    			add_location(span0, file, 31, 12, 986);
+    			add_location(input0, file, 34, 37, 1065);
+    			add_location(span0, file, 35, 12, 1148);
     			attr_dev(label0, "class", "svelte-7fmblr");
-    			add_location(label0, file, 29, 8, 859);
-    			html_tag_1.a = t13;
+    			add_location(label0, file, 33, 8, 1019);
+    			html_tag_1.a = t16;
     			attr_dev(input1, "type", "range");
     			attr_dev(input1, "min", "0.01");
-    			attr_dev(input1, "max", "10");
-    			attr_dev(input1, "step", "0.01");
+    			attr_dev(input1, "max", "0.1");
+    			attr_dev(input1, "step", "0.001");
     			attr_dev(input1, "class", "svelte-7fmblr");
-    			add_location(input1, file, 34, 35, 1076);
-    			add_location(span1, file, 35, 12, 1160);
+    			add_location(input1, file, 38, 35, 1238);
+    			add_location(span1, file, 39, 12, 1324);
     			attr_dev(label1, "class", "svelte-7fmblr");
-    			add_location(label1, file, 33, 8, 1032);
-    			html_tag_2.a = t17;
+    			add_location(label1, file, 37, 8, 1194);
+    			html_tag_2.a = t20;
     			attr_dev(input2, "type", "range");
-    			attr_dev(input2, "min", "0.001");
-    			attr_dev(input2, "max", "1");
-    			attr_dev(input2, "step", "0.001");
+    			attr_dev(input2, "min", "10e-6");
+    			attr_dev(input2, "max", "1000e-6");
+    			attr_dev(input2, "step", "10e-6");
     			attr_dev(input2, "class", "svelte-7fmblr");
-    			add_location(input2, file, 38, 35, 1249);
-    			add_location(span2, file, 39, 12, 1334);
+    			add_location(input2, file, 42, 35, 1413);
+    			add_location(span2, file, 43, 12, 1504);
     			attr_dev(label2, "class", "svelte-7fmblr");
-    			add_location(label2, file, 37, 8, 1205);
-    			html_tag_3.a = t21;
+    			add_location(label2, file, 41, 8, 1369);
+    			html_tag_3.a = t24;
     			attr_dev(input3, "type", "range");
-    			attr_dev(input3, "min", "0.001");
-    			attr_dev(input3, "max", "0.1");
-    			attr_dev(input3, "step", "0.001");
+    			attr_dev(input3, "min", "1e-5");
+    			attr_dev(input3, "max", "10e-5");
+    			attr_dev(input3, "step", "1e-6");
     			attr_dev(input3, "class", "svelte-7fmblr");
-    			add_location(input3, file, 42, 35, 1423);
-    			add_location(span3, file, 43, 12, 1510);
+    			add_location(input3, file, 46, 35, 1593);
+    			add_location(span3, file, 47, 12, 1680);
     			attr_dev(label3, "class", "svelte-7fmblr");
-    			add_location(label3, file, 41, 8, 1379);
-    			html_tag_4.a = t25;
+    			add_location(label3, file, 45, 8, 1549);
+    			html_tag_4.a = t28;
     			attr_dev(input4, "type", "range");
-    			attr_dev(input4, "min", "0.01");
-    			attr_dev(input4, "max", "1");
-    			attr_dev(input4, "step", "0.01");
+    			attr_dev(input4, "min", "1e-3");
+    			attr_dev(input4, "max", "10e-3");
+    			attr_dev(input4, "step", "1e-4");
     			attr_dev(input4, "class", "svelte-7fmblr");
-    			add_location(input4, file, 46, 35, 1599);
-    			add_location(span4, file, 47, 12, 1682);
+    			add_location(input4, file, 50, 35, 1769);
+    			add_location(span4, file, 51, 12, 1856);
     			attr_dev(label4, "class", "svelte-7fmblr");
-    			add_location(label4, file, 45, 8, 1555);
+    			add_location(label4, file, 49, 8, 1725);
     			attr_dev(div1, "class", "controls svelte-7fmblr");
-    			add_location(div1, file, 28, 4, 827);
-    			add_location(main, file, 14, 0, 390);
+    			add_location(div1, file, 32, 4, 987);
+    			add_location(main, file, 15, 0, 455);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -24121,65 +24984,69 @@ var app = (function () {
     			append_dev(main, div0);
     			append_dev(div0, h1);
     			append_dev(div0, t1);
-    			append_dev(div0, p);
-    			p.innerHTML = raw0_value;
-    			append_dev(div0, t2);
+    			append_dev(div0, h2);
+    			append_dev(div0, t3);
     			append_dev(div0, h3);
     			append_dev(h3, a0);
-    			append_dev(h3, t4);
+    			append_dev(h3, t5);
     			append_dev(h3, a1);
-    			append_dev(h3, t6);
-    			append_dev(h3, br);
     			append_dev(h3, t7);
-    			append_dev(main, t8);
+    			append_dev(h3, br);
+    			append_dev(h3, t8);
+    			append_dev(main, t9);
+    			mount_component(diagramfc, main, null);
+    			append_dev(main, t10);
+    			append_dev(main, p);
+    			p.innerHTML = raw0_value;
+    			append_dev(main, t11);
     			append_dev(main, div1);
     			append_dev(div1, label0);
     			html_tag.m(raw1_value, label0);
-    			append_dev(label0, t9);
+    			append_dev(label0, t12);
     			append_dev(label0, input0);
     			set_input_value(input0, /*$E0*/ ctx[0]);
-    			append_dev(label0, t10);
+    			append_dev(label0, t13);
     			append_dev(label0, span0);
-    			append_dev(span0, t11);
-    			append_dev(div1, t12);
+    			append_dev(span0, t14);
+    			append_dev(div1, t15);
     			append_dev(div1, label1);
     			html_tag_1.m(raw2_value, label1);
-    			append_dev(label1, t13);
+    			append_dev(label1, t16);
     			append_dev(label1, input1);
     			set_input_value(input1, /*$b*/ ctx[1]);
-    			append_dev(label1, t14);
+    			append_dev(label1, t17);
     			append_dev(label1, span1);
-    			append_dev(span1, t15);
-    			append_dev(div1, t16);
+    			append_dev(span1, t18);
+    			append_dev(div1, t19);
     			append_dev(div1, label2);
     			html_tag_2.m(raw3_value, label2);
-    			append_dev(label2, t17);
+    			append_dev(label2, t20);
     			append_dev(label2, input2);
     			set_input_value(input2, /*$R*/ ctx[2]);
-    			append_dev(label2, t18);
+    			append_dev(label2, t21);
     			append_dev(label2, span2);
-    			append_dev(span2, t19);
-    			append_dev(div1, t20);
+    			append_dev(span2, t22);
+    			append_dev(div1, t23);
     			append_dev(div1, label3);
     			html_tag_3.m(raw4_value, label3);
-    			append_dev(label3, t21);
+    			append_dev(label3, t24);
     			append_dev(label3, input3);
     			set_input_value(input3, /*$m*/ ctx[3]);
-    			append_dev(label3, t22);
+    			append_dev(label3, t25);
     			append_dev(label3, span3);
-    			append_dev(span3, t23);
-    			append_dev(div1, t24);
+    			append_dev(span3, t26);
+    			append_dev(div1, t27);
     			append_dev(div1, label4);
     			html_tag_4.m(raw5_value, label4);
-    			append_dev(label4, t25);
+    			append_dev(label4, t28);
     			append_dev(label4, input4);
     			set_input_value(input4, /*$n*/ ctx[4]);
-    			append_dev(label4, t26);
+    			append_dev(label4, t29);
     			append_dev(label4, span4);
-    			append_dev(span4, t27);
-    			append_dev(main, t28);
+    			append_dev(span4, t30);
+    			append_dev(main, t31);
     			mount_component(chart, main, null);
-    			append_dev(main, t29);
+    			append_dev(main, t32);
     			mount_component(variablesscrolly, main, null);
     			current = true;
 
@@ -24205,45 +25072,48 @@ var app = (function () {
     				set_input_value(input0, /*$E0*/ ctx[0]);
     			}
 
-    			if (!current || dirty & /*$E0*/ 1) set_data_dev(t11, /*$E0*/ ctx[0]);
+    			if (!current || dirty & /*$E0*/ 1) set_data_dev(t14, /*$E0*/ ctx[0]);
 
     			if (dirty & /*$b*/ 2) {
     				set_input_value(input1, /*$b*/ ctx[1]);
     			}
 
-    			if (!current || dirty & /*$b*/ 2) set_data_dev(t15, /*$b*/ ctx[1]);
+    			if (!current || dirty & /*$b*/ 2) set_data_dev(t18, /*$b*/ ctx[1]);
 
     			if (dirty & /*$R*/ 4) {
     				set_input_value(input2, /*$R*/ ctx[2]);
     			}
 
-    			if (!current || dirty & /*$R*/ 4) set_data_dev(t19, /*$R*/ ctx[2]);
+    			if (!current || dirty & /*$R*/ 4) set_data_dev(t22, /*$R*/ ctx[2]);
 
     			if (dirty & /*$m*/ 8) {
     				set_input_value(input3, /*$m*/ ctx[3]);
     			}
 
-    			if (!current || dirty & /*$m*/ 8) set_data_dev(t23, /*$m*/ ctx[3]);
+    			if (!current || dirty & /*$m*/ 8) set_data_dev(t26, /*$m*/ ctx[3]);
 
     			if (dirty & /*$n*/ 16) {
     				set_input_value(input4, /*$n*/ ctx[4]);
     			}
 
-    			if (!current || dirty & /*$n*/ 16) set_data_dev(t27, /*$n*/ ctx[4]);
+    			if (!current || dirty & /*$n*/ 16) set_data_dev(t30, /*$n*/ ctx[4]);
     		},
     		i: function intro(local) {
     			if (current) return;
+    			transition_in(diagramfc.$$.fragment, local);
     			transition_in(chart.$$.fragment, local);
     			transition_in(variablesscrolly.$$.fragment, local);
     			current = true;
     		},
     		o: function outro(local) {
+    			transition_out(diagramfc.$$.fragment, local);
     			transition_out(chart.$$.fragment, local);
     			transition_out(variablesscrolly.$$.fragment, local);
     			current = false;
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(main);
+    			destroy_component(diagramfc);
     			destroy_component(chart);
     			destroy_component(variablesscrolly);
     			mounted = false;
@@ -24270,19 +25140,19 @@ var app = (function () {
     	let $n;
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('App', slots, []);
-    	const E0 = writable(30);
+    	const E0 = writable(1.0);
     	validate_store(E0, 'E0');
     	component_subscribe($$self, E0, value => $$invalidate(0, $E0 = value));
-    	const b = writable(2);
+    	const b = writable(0.05);
     	validate_store(b, 'b');
     	component_subscribe($$self, b, value => $$invalidate(1, $b = value));
-    	const R = writable(0.001);
+    	const R = writable(30e-6);
     	validate_store(R, 'R');
     	component_subscribe($$self, R, value => $$invalidate(2, $R = value));
-    	const m = writable(0.01);
+    	const m = writable(3e-5);
     	validate_store(m, 'm');
     	component_subscribe($$self, m, value => $$invalidate(3, $m = value));
-    	const n = writable(0.7);
+    	const n = writable(8e-3);
     	validate_store(n, 'n');
     	component_subscribe($$self, n, value => $$invalidate(4, $n = value));
     	const writable_props = [];
@@ -24319,6 +25189,7 @@ var app = (function () {
     	$$self.$capture_state = () => ({
     		Chart,
     		VariablesScrolly,
+    		DiagramFC,
     		writable,
     		katexify,
     		E0,

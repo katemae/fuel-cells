@@ -1,23 +1,22 @@
 <script>
     import Chart from './components/Chart.svelte';
     import VariablesScrolly from './components/VariablesScrolly.svelte';
+    import DiagramFC from './components/DiagramFC.svelte';
 
     import { writable } from 'svelte/store';
     import katexify from './katexify';
 
-    const E0 = writable(30);
-    const b = writable(2);
-    const R = writable(0.001);
-    const m = writable(0.01);
-    const n = writable(0.7);
+    const E0 = writable(1.0);
+    const b = writable(0.05);
+    const R = writable(30e-6);
+    const m = writable(3e-5);
+    const n = writable(8e-3);
 </script>
 
 <main>
     <div class="intro">
-        <h1 id="intro-hed">Fuel Cells: ...</h1>
-        <p id="desc">
-            {@html katexify("E = E_0 - b \\log(i) - Ri - m \\exp(ni)")}
-        </p>
+        <h1 id="intro-hed">Fuel Cells:</h1>
+        <h2>A Quick Introduction to a Fuel Cell's Current-Density vs. Voltage Curve</h2>
         <h3 id="intro_date">
 			<a href="https://github.com/katemae" target="_blank">Katelyn</a>
 			and <a href="https://github.com/jman2-go" target="_blank">Jonathan</a>
@@ -26,25 +25,30 @@
         </h3>
     </div>
 
+    <DiagramFC />
+    <p id="desc">
+        {@html katexify("E = E_0 - b \\log(i) - Ri - m \\exp(ni)")}
+    </p>
+
     <div class="controls">
         <label>
-            {@html katexify("E_0:")} <input type="range" min="0" max="45" step="0.5" bind:value={$E0} />
+            {@html katexify("E_0:")} <input type="range" min="0" max="1.2" step="0.01" bind:value={$E0} />
             <span>{$E0}</span>
         </label>
         <label>
-            {@html katexify("b:")} <input type="range" min="0.01" max="10" step="0.01" bind:value={$b} />
+            {@html katexify("b:")} <input type="range" min="0.01" max="0.1" step="0.001" bind:value={$b} />
             <span>{$b}</span>
         </label>
         <label>
-            {@html katexify("R:")} <input type="range" min="0.001" max="1" step="0.001" bind:value={$R} />
+            {@html katexify("R:")} <input type="range" min="10e-6" max="1000e-6" step="10e-6" bind:value={$R} />
             <span>{$R}</span>
         </label>
         <label>
-            {@html katexify("m:")} <input type="range" min="0.001" max="0.1" step="0.001" bind:value={$m} />
+            {@html katexify("m:")} <input type="range" min="1e-5" max="10e-5" step="1e-6" bind:value={$m} />
             <span>{$m}</span>
         </label>
         <label>
-            {@html katexify("n:")} <input type="range" min="0.01" max="1" step="0.01" bind:value={$n} />
+            {@html katexify("n:")} <input type="range" min="1e-3" max="10e-3" step="1e-4" bind:value={$n} />
             <span>{$n}</span>
         </label>
     </div>
