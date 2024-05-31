@@ -62,6 +62,7 @@
             on:mouseout={(event) => { hovered = -1; }}
         />
         <path
+        class = "hoverable"
         d="M-400 -490
         L-400 -740
         L 400 -740
@@ -180,5 +181,10 @@
     header {
         font-size: 24px;
         text-align: center;
+    }
+
+    rect,
+    .hoverable {
+        cursor: pointer;
     }
 </style>

@@ -26,35 +26,43 @@
     </div>
 
     <DiagramFC />
+    
+    <p>
+        [INSERT INFORMATION HERE!!! connect from diagram to equation below]
+    </p>
+
     <p id="desc">
         {@html katexify("E = E_0 - b \\log(i) - Ri - m \\exp(ni)")}
     </p>
 
-    <div class="controls">
-        <label>
-            {@html katexify("E_0:")} <input type="range" min="0" max="1.2" step="0.01" bind:value={$E0} />
-            <span>{$E0}</span>
-        </label>
-        <label>
-            {@html katexify("b:")} <input type="range" min="0.01" max="0.1" step="0.001" bind:value={$b} />
-            <span>{$b}</span>
-        </label>
-        <label>
-            {@html katexify("R:")} <input type="range" min="10e-6" max="1000e-6" step="10e-6" bind:value={$R} />
-            <span>{$R}</span>
-        </label>
-        <label>
-            {@html katexify("m:")} <input type="range" min="1e-5" max="10e-5" step="1e-6" bind:value={$m} />
-            <span>{$m}</span>
-        </label>
-        <label>
-            {@html katexify("n:")} <input type="range" min="1e-3" max="10e-3" step="1e-4" bind:value={$n} />
-            <span>{$n}</span>
-        </label>
-    </div>
-    
-    <Chart {E0} {b} {R} {m} {n} />
     <VariablesScrolly />
+
+    <div class="main-graph">
+        <div class="controls">
+            <label>
+                {@html katexify("E_0:")} <input type="range" min="0" max="1.2" step="0.01" bind:value={$E0} />
+                <span>{$E0}</span>
+            </label>
+            <label>
+                {@html katexify("b:")} <input type="range" min="0.01" max="0.1" step="0.001" bind:value={$b} />
+                <span>{$b}</span>
+            </label>
+            <label>
+                {@html katexify("R:")} <input type="range" min="10e-6" max="1000e-6" step="10e-6" bind:value={$R} />
+                <span>{$R}</span>
+            </label>
+            <label>
+                {@html katexify("m:")} <input type="range" min="1e-5" max="10e-5" step="1e-6" bind:value={$m} />
+                <span>{$m}</span>
+            </label>
+            <label>
+                {@html katexify("n:")} <input type="range" min="1e-3" max="10e-3" step="1e-4" bind:value={$n} />
+                <span>{$n}</span>
+            </label>
+        </div>
+
+    </div>
+    <Chart {E0} {b} {R} {m} {n} />
 </main>
 
 <style>
