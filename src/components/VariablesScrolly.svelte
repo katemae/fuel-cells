@@ -3,6 +3,14 @@
     import katexify from "../katexify";
     import { select } from "d3-selection";
 
+    import Chart from "./Chart.svelte";
+    // default values
+    const E0 = 1.0;
+    const b =  0.05;
+    const R =  30e-6;
+    const m =  3e-5;
+    const n =  8e-3;
+
     let value;
 
     let steps = [];
@@ -37,11 +45,7 @@
         4: () => {
             select("#chart1").style("background-color", "purple");
             select("#chart2").style("background-color", "coral");
-        },
-        5: () => {
-            select("#chart1").style("background-color", "red");
-            select("#chart2").style("background-color", "green");
-        },
+        }
     };
 
     $: if (typeof value !== "undefined") target2event[value]();
@@ -83,7 +87,7 @@
 <style>
     .body-header,
     .body-text {
-        padding: 1% 5%;
+        padding: 1% 11%;
 
     }
 

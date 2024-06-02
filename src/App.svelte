@@ -27,7 +27,8 @@
 
     <DiagramFC />
     
-    <p>
+    <p style="text-align: center;">
+        <br> <br>
         [INSERT INFORMATION HERE!!! connect from diagram to equation below]
     </p>
 
@@ -37,51 +38,71 @@
 
     <VariablesScrolly />
 
-    <div class="main-graph">
-        <div class="controls">
-            <label>
-                {@html katexify("E_0:")} <input type="range" min="0" max="1.2" step="0.01" bind:value={$E0} />
+    <div class="chart-container">
+        <div class="controls-container">
+            <div class="control">
+                <label>{@html katexify("E_0:")} </label>
+                <input type="range" min="0" max="1.2" step="0.01" bind:value={$E0} />
                 <span>{$E0}</span>
-            </label>
-            <label>
-                {@html katexify("b:")} <input type="range" min="0.01" max="0.1" step="0.001" bind:value={$b} />
+            </div>
+            <div class="control">
+                <label>{@html katexify("b:")} </label>
+                <input type="range" min="0.01" max="0.1" step="0.001" bind:value={$b} />
                 <span>{$b}</span>
-            </label>
-            <label>
-                {@html katexify("R:")} <input type="range" min="10e-6" max="1000e-6" step="10e-6" bind:value={$R} />
+            </div>
+            <div class="control">
+                <label>{@html katexify("R:")} </label>
+                <input type="range" min="10e-6" max="1000e-6" step="10e-6" bind:value={$R} />
                 <span>{$R}</span>
-            </label>
-            <label>
-                {@html katexify("m:")} <input type="range" min="1e-5" max="10e-5" step="1e-6" bind:value={$m} />
+            </div>
+            <div class="control">
+                <label>{@html katexify("m:")} </label>
+                <input type="range" min="1e-5" max="10e-5" step="1e-6" bind:value={$m} />
                 <span>{$m}</span>
-            </label>
-            <label>
-                {@html katexify("n:")} <input type="range" min="1e-3" max="10e-3" step="1e-4" bind:value={$n} />
+            </div>
+            <div class="control">
+                <label>{@html katexify("n:")} </label>
+                <input type="range" min="1e-3" max="10e-3" step="1e-4" bind:value={$n} />
                 <span>{$n}</span>
-            </label>
+            </div>
         </div>
 
+        <div class="graph-container">
+            <Chart {E0} {b} {R} {m} {n} />
+        </div>
     </div>
-    <Chart {E0} {b} {R} {m} {n} />
 </main>
 
 <style>
     .intro {
-        max-width: 600px;
-        margin: 1rem auto;
+        height: 40vh;
+        width: 100vw;
+        margin-bottom: 7vh;
         text-align: center;
-        padding-top: 1rem;
+        padding-top: 12rem;
+        padding-bottom: 10rem;
+        background-color: #03045E;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        box-sizing: border-box;
+        color: #CAF0F8;
     }
+
+    .intro a {
+        color: #00B4D8;
+    }
+
     #intro-hed {
         font-size: 4rem;
         margin-top: 5px;
         margin-bottom: 0;
         letter-spacing: 1.5px;
         text-transform: uppercase;
-        max-width: 100%;
-        margin: auto;
         color: var(--squid-ink);
     }
+
     #desc {
         font-size: 1.4rem;
         color: var(--squid-ink);
@@ -91,32 +112,69 @@
         padding: 2rem;
         font-family: var(--font-main);
     }
+
     #intro_date {
         font-size: 1.1rem;
         color: var(--squid-ink);
-        margin: 0px;
+        margin: 0;
         margin-top: 15px;
-        padding-bottom: 0px;
-        margin-bottom: 0px;
-        color: black;
         padding-bottom: 1rem;
         font-family: var(--font-main);
     }
-    .controls {
-        max-width: 600px;
-        margin: 1rem auto;
+
+    @media (max-width: 768px) {
+        #intro-hed {
+            font-size: 3rem;
+        }
+
+        #desc {
+            font-size: 1.2rem;
+        }
+
+        #intro_date {
+            font-size: 1rem;
+    }
+
+    }
+
+    .graph-container {
+        flex: 10;
         display: flex;
-        flex-wrap: wrap;
-        gap: 1rem;
+        justify-content: center;
+        align-items: center;
+        margin: 0;
+    }
+
+    .chart-container {
+        margin: auto;
+        display: flex;
+        align-items: center;
         justify-content: center;
     }
-    .controls label {
+
+    .controls-container {
+        flex: 1;
         display: flex;
         flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+        margin-left: 7%;
+    }
+
+
+    .graph-container .controls-container {
+        margin-right: 20px;
+    }
+
+
+    .control {
+        display: flex;
         align-items: center;
-        margin-bottom: 0.5rem;
     }
-    .controls input {
-        margin-top: 0.5rem;
+
+    .control label {
+        width: 60px;
     }
+
+
 </style>

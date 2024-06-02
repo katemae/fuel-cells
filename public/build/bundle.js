@@ -212,45 +212,6 @@ var app = (function () {
         e.initCustomEvent(type, bubbles, cancelable, detail);
         return e;
     }
-    class HtmlTag {
-        constructor(is_svg = false) {
-            this.is_svg = false;
-            this.is_svg = is_svg;
-            this.e = this.n = null;
-        }
-        c(html) {
-            this.h(html);
-        }
-        m(html, target, anchor = null) {
-            if (!this.e) {
-                if (this.is_svg)
-                    this.e = svg_element(target.nodeName);
-                /** #7364  target for <template> may be provided as #document-fragment(11) */
-                else
-                    this.e = element((target.nodeType === 11 ? 'TEMPLATE' : target.nodeName));
-                this.t = target.tagName !== 'TEMPLATE' ? target : target.content;
-                this.c(html);
-            }
-            this.i(anchor);
-        }
-        h(html) {
-            this.e.innerHTML = html;
-            this.n = Array.from(this.e.nodeName === 'TEMPLATE' ? this.e.content.childNodes : this.e.childNodes);
-        }
-        i(anchor) {
-            for (let i = 0; i < this.n.length; i += 1) {
-                insert(this.t, this.n[i], anchor);
-            }
-        }
-        p(html) {
-            this.d();
-            this.h(html);
-            this.i(this.a);
-        }
-        d() {
-            this.n.forEach(detach);
-        }
-    }
 
     // we need to store the information for multiple documents because a Svelte application could also contain iframes
     // https://github.com/sveltejs/svelte/issues/3624
@@ -4766,8 +4727,8 @@ var app = (function () {
     	const block = {
     		c: function create() {
     			svg_1 = svg_element("svg");
-    			attr_dev(svg_1, "class", "svelte-1fft9vn");
-    			add_location(svg_1, file$4, 68, 0, 2052);
+    			attr_dev(svg_1, "class", "svelte-136akt");
+    			add_location(svg_1, file$4, 92, 0, 2940);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -4808,17 +4769,15 @@ var app = (function () {
     	let { m } = $$props;
     	let { n } = $$props;
     	let svg;
-    	const margin = { top: 20, right: 30, bottom: 30, left: 40 };
-    	const width = 600 - margin.left - margin.right;
-    	const height = 400 - margin.top - margin.bottom;
+    	const margin = { top: 40, right: 0, bottom: 70, left: 90 };
+    	const width = window.innerWidth * 0.5 - margin.left - margin.right;
+    	const height = window.innerHeight * 0.8 - margin.top - margin.bottom;
 
     	const lineData = derived([E0, b, R, m, n], ([$E0, $b, $R, $m, $n]) => {
     		const data = [];
 
     		for (let i = 0.001; i <= x_lim; i += 0.1) {
     			const E = $E0 - $b * Math.log10(i) - $R * i - $m * Math.exp($n * i);
-
-    			// create data to plot based on given slider values
     			data.push({ i, E });
     		}
 
@@ -4831,13 +4790,13 @@ var app = (function () {
     	function drawChart(data) {
     		const xScale = linear().domain([0, x_lim]).range([0, width]);
     		const yScale = linear().domain([0, 1.5]).range([height, 0]);
-    		const xAxis = axisBottom(xScale);
-    		const yAxis = axisLeft(yScale);
+    		const xAxis = axisBottom(xScale).tickSizeOuter(0).tickPadding(10).tickFormat(d => `${d}`);
+    		const yAxis = axisLeft(yScale).tickSizeOuter(0).tickPadding(10).tickFormat(d => `${d}`);
     		const lineGenerator = line().x(d => xScale(d.i)).y(d => yScale(d.E));
     		select(svg).selectAll('*').remove();
     		const g = select(svg).attr('width', width + margin.left + margin.right).attr('height', height + margin.top + margin.bottom).append('g').attr('transform', `translate(${margin.left},${margin.top})`);
-    		g.append('g').attr('transform', `translate(0,${height})`).call(xAxis);
-    		g.append('g').call(yAxis);
+    		g.append('g').attr('transform', `translate(0,${height})`).call(xAxis).append('text').attr('x', width / 2).attr('y', margin.bottom - 10).attr('fill', '#000').attr('font-size', '16px').text('Voltage (V)').attr('text-anchor', 'middle');
+    		g.append('g').call(yAxis).append('text').attr('transform', 'rotate(-90)').attr('y', -margin.left + 10).attr('x', -height / 2).attr('dy', '0.71em').attr('fill', '#000').attr('font-size', '16px').text('Current Density (mA/cm^2)').attr('text-anchor', 'middle');
     		g.append('path').datum(data).attr('fill', 'none').attr('stroke', 'steelblue').attr('stroke-width', 1.5).attr('d', lineGenerator);
     	}
 
@@ -23710,7 +23669,7 @@ var app = (function () {
     	return child_ctx;
     }
 
-    // (59:16) {#each steps as step, i}
+    // (63:16) {#each steps as step, i}
     function create_each_block(ctx) {
     	let div1;
     	let div0;
@@ -23728,13 +23687,13 @@ var app = (function () {
     			t = space();
     			p = element("p");
     			attr_dev(h1, "class", "step-title");
-    			add_location(h1, file$2, 61, 28, 2148);
-    			add_location(p, file$2, 62, 28, 2233);
-    			attr_dev(div0, "class", "step-content svelte-172ib1e");
-    			add_location(div0, file$2, 60, 24, 2093);
-    			attr_dev(div1, "class", "step svelte-172ib1e");
+    			add_location(h1, file$2, 65, 28, 2155);
+    			add_location(p, file$2, 66, 28, 2240);
+    			attr_dev(div0, "class", "step-content svelte-i8wxvj");
+    			add_location(div0, file$2, 64, 24, 2100);
+    			attr_dev(div1, "class", "step svelte-i8wxvj");
     			toggle_class(div1, "active", /*value*/ ctx[0] === /*i*/ ctx[6]);
-    			add_location(div1, file$2, 59, 20, 2023);
+    			add_location(div1, file$2, 63, 20, 2030);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div1, anchor);
@@ -23760,14 +23719,14 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(59:16) {#each steps as step, i}",
+    		source: "(63:16) {#each steps as step, i}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (58:12) <Scrolly bind:value>
+    // (62:12) <Scrolly bind:value>
     function create_default_slot(ctx) {
     	let t;
     	let div;
@@ -23787,8 +23746,8 @@ var app = (function () {
 
     			t = space();
     			div = element("div");
-    			attr_dev(div, "class", "spacer svelte-172ib1e");
-    			add_location(div, file$2, 66, 16, 2359);
+    			attr_dev(div, "class", "spacer svelte-i8wxvj");
+    			add_location(div, file$2, 70, 16, 2366);
     		},
     		m: function mount(target, anchor) {
     			for (let i = 0; i < each_blocks.length; i += 1) {
@@ -23836,7 +23795,7 @@ var app = (function () {
     		block,
     		id: create_default_slot.name,
     		type: "slot",
-    		source: "(58:12) <Scrolly bind:value>",
+    		source: "(62:12) <Scrolly bind:value>",
     		ctx
     	});
 
@@ -23908,31 +23867,31 @@ var app = (function () {
     			t7 = space();
     			p1 = element("p");
     			p1.textContent = "conclusions about variables ...";
-    			attr_dev(h2, "class", "body-header svelte-172ib1e");
-    			add_location(h2, file$2, 49, 0, 1618);
-    			attr_dev(p0, "class", "body-text svelte-172ib1e");
-    			add_location(p0, file$2, 50, 0, 1675);
-    			attr_dev(div0, "class", "steps-container svelte-172ib1e");
-    			add_location(div0, file$2, 56, 8, 1899);
+    			attr_dev(h2, "class", "body-header svelte-i8wxvj");
+    			add_location(h2, file$2, 53, 0, 1625);
+    			attr_dev(p0, "class", "body-text svelte-i8wxvj");
+    			add_location(p0, file$2, 54, 0, 1682);
+    			attr_dev(div0, "class", "steps-container svelte-i8wxvj");
+    			add_location(div0, file$2, 60, 8, 1906);
     			attr_dev(svg0, "id", "chart1");
-    			attr_dev(svg0, "class", "svelte-172ib1e");
-    			add_location(svg0, file$2, 71, 16, 2511);
-    			attr_dev(div1, "class", "chart-one svelte-172ib1e");
-    			add_location(div1, file$2, 70, 12, 2471);
+    			attr_dev(svg0, "class", "svelte-i8wxvj");
+    			add_location(svg0, file$2, 75, 16, 2518);
+    			attr_dev(div1, "class", "chart-one svelte-i8wxvj");
+    			add_location(div1, file$2, 74, 12, 2478);
     			attr_dev(svg1, "id", "chart2");
-    			attr_dev(svg1, "class", "svelte-172ib1e");
-    			add_location(svg1, file$2, 74, 16, 2602);
-    			attr_dev(div2, "class", "chart-two svelte-172ib1e");
-    			add_location(div2, file$2, 73, 12, 2562);
-    			attr_dev(div3, "class", "charts-container svelte-172ib1e");
-    			add_location(div3, file$2, 69, 8, 2428);
-    			attr_dev(div4, "class", "section-container svelte-172ib1e");
-    			add_location(div4, file$2, 55, 4, 1859);
-    			add_location(br0, file$2, 78, 4, 2671);
-    			add_location(br1, file$2, 78, 10, 2677);
-    			attr_dev(p1, "class", "body-text svelte-172ib1e");
-    			add_location(p1, file$2, 79, 4, 2688);
-    			add_location(section, file$2, 53, 0, 1815);
+    			attr_dev(svg1, "class", "svelte-i8wxvj");
+    			add_location(svg1, file$2, 78, 16, 2609);
+    			attr_dev(div2, "class", "chart-two svelte-i8wxvj");
+    			add_location(div2, file$2, 77, 12, 2569);
+    			attr_dev(div3, "class", "charts-container svelte-i8wxvj");
+    			add_location(div3, file$2, 73, 8, 2435);
+    			attr_dev(div4, "class", "section-container svelte-i8wxvj");
+    			add_location(div4, file$2, 59, 4, 1866);
+    			add_location(br0, file$2, 82, 4, 2678);
+    			add_location(br1, file$2, 82, 10, 2684);
+    			attr_dev(p1, "class", "body-text svelte-i8wxvj");
+    			add_location(p1, file$2, 83, 4, 2695);
+    			add_location(section, file$2, 57, 0, 1822);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -24005,6 +23964,12 @@ var app = (function () {
     	return block;
     }
 
+    const E0 = 1.0;
+    const b = 0.05;
+    const R = 30e-6;
+    const m = 3e-5;
+    const n = 8e-3;
+
     function instance$2($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('VariablesScrolly', slots, []);
@@ -24043,10 +24008,6 @@ var app = (function () {
     		4: () => {
     			select("#chart1").style("background-color", "purple");
     			select("#chart2").style("background-color", "coral");
-    		},
-    		5: () => {
-    			select("#chart1").style("background-color", "red");
-    			select("#chart2").style("background-color", "green");
     		}
     	};
 
@@ -24065,6 +24026,12 @@ var app = (function () {
     		Scrolly,
     		katexify,
     		select,
+    		Chart,
+    		E0,
+    		b,
+    		R,
+    		m,
+    		n,
     		value,
     		steps,
     		target2event
@@ -24115,7 +24082,7 @@ var app = (function () {
     /* src\components\DiagramFC.svelte generated by Svelte v3.59.2 */
     const file$1 = "src\\components\\DiagramFC.svelte";
 
-    // (151:4) {:else}
+    // (155:12) {:else}
     function create_else_block(ctx) {
     	let p;
 
@@ -24124,7 +24091,7 @@ var app = (function () {
     			p = element("p");
     			p.textContent = "Click any component of the fuel cell!";
     			set_style(p, "text-align", "center");
-    			add_location(p, file$1, 151, 4, 4457);
+    			add_location(p, file$1, 155, 12, 5626);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -24140,14 +24107,14 @@ var app = (function () {
     		block,
     		id: create_else_block.name,
     		type: "else",
-    		source: "(151:4) {:else}",
+    		source: "(155:12) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (142:28) 
+    // (146:36) 
     function create_if_block_2(ctx) {
     	let div;
     	let header;
@@ -24170,7 +24137,7 @@ var app = (function () {
     			div = element("div");
     			header = element("header");
     			header.textContent = "Cathode";
-    			t1 = text$2("\r\n            The cathode, also known as the positive electrode, reduces oxygen with this half reaction:\r\n            ");
+    			t1 = text$2("\r\n                    The cathode, also known as the positive electrode, reduces oxygen with this half reaction:\r\n                    ");
     			p = element("p");
     			t2 = text$2("O");
     			sub0 = element("sub");
@@ -24187,16 +24154,16 @@ var app = (function () {
     			sub1 = element("sub");
     			sub1.textContent = "2";
     			t11 = text$2("O");
-    			attr_dev(header, "class", "svelte-lkhh0o");
-    			add_location(header, file$1, 143, 8, 4141);
-    			add_location(sub0, file$1, 146, 17, 4322);
-    			add_location(i, file$1, 146, 33, 4338);
-    			add_location(sup0, file$1, 146, 41, 4346);
-    			add_location(sup1, file$1, 146, 58, 4363);
-    			add_location(sub1, file$1, 146, 80, 4385);
-    			attr_dev(p, "class", "equation svelte-lkhh0o");
-    			add_location(p, file$1, 145, 12, 4283);
-    			add_location(div, file$1, 142, 4, 4118);
+    			attr_dev(header, "class", "svelte-1aopggh");
+    			add_location(header, file$1, 147, 16, 5246);
+    			add_location(sub0, file$1, 150, 25, 5451);
+    			add_location(i, file$1, 150, 41, 5467);
+    			add_location(sup0, file$1, 150, 49, 5475);
+    			add_location(sup1, file$1, 150, 66, 5492);
+    			add_location(sub1, file$1, 150, 88, 5514);
+    			attr_dev(p, "class", "equation svelte-1aopggh");
+    			add_location(p, file$1, 149, 20, 5404);
+    			add_location(div, file$1, 146, 12, 5215);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -24232,14 +24199,14 @@ var app = (function () {
     		block,
     		id: create_if_block_2.name,
     		type: "if",
-    		source: "(142:28) ",
+    		source: "(146:36) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (137:28) 
+    // (141:36) 
     function create_if_block_1(ctx) {
     	let header;
     	let header_intro;
@@ -24254,9 +24221,9 @@ var app = (function () {
     			t1 = space();
     			p = element("p");
     			p.textContent = "The electrolyte is an ionic solution which enables the transfer of charged ions between electrodes.";
-    			attr_dev(header, "class", "svelte-lkhh0o");
-    			add_location(header, file$1, 137, 4, 3910);
-    			add_location(p, file$1, 138, 4, 3952);
+    			attr_dev(header, "class", "svelte-1aopggh");
+    			add_location(header, file$1, 141, 12, 4967);
+    			add_location(p, file$1, 142, 12, 5017);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, header, anchor);
@@ -24290,14 +24257,14 @@ var app = (function () {
     		block,
     		id: create_if_block_1.name,
     		type: "if",
-    		source: "(137:28) ",
+    		source: "(141:36) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (127:4) {#if clicked === 0}
+    // (131:12) {#if clicked === 0}
     function create_if_block(ctx) {
     	let div;
     	let header;
@@ -24318,7 +24285,7 @@ var app = (function () {
     			div = element("div");
     			header = element("header");
     			header.textContent = "Anode";
-    			t1 = text$2("\r\n        The anode, also known as the negative electrode, oxidizes hydrogen with this half reaction,\r\n        ");
+    			t1 = text$2("\r\n                The anode, also known as the negative electrode, oxidizes hydrogen with this half reaction,\r\n                ");
     			p = element("p");
     			t2 = text$2("2H");
     			sub = element("sub");
@@ -24331,16 +24298,16 @@ var app = (function () {
     			i.textContent = "e";
     			sup1 = element("sup");
     			sup1.textContent = "-";
-    			t9 = text$2("\r\n        releasing electrons which do electrical work through the connected circuit. \r\n        Typically,");
-    			attr_dev(header, "class", "svelte-lkhh0o");
-    			add_location(header, file$1, 128, 4, 3514);
-    			add_location(sub, file$1, 131, 14, 3683);
-    			add_location(sup0, file$1, 131, 36, 3705);
-    			add_location(i, file$1, 131, 52, 3721);
-    			add_location(sup1, file$1, 131, 60, 3729);
-    			attr_dev(p, "class", "equation svelte-lkhh0o");
-    			add_location(p, file$1, 130, 8, 3647);
-    			add_location(div, file$1, 127, 4, 3495);
+    			t9 = text$2("\r\n                releasing electrons which do electrical work through the connected circuit. \r\n                Typically,");
+    			attr_dev(header, "class", "svelte-1aopggh");
+    			add_location(header, file$1, 132, 12, 4499);
+    			add_location(sub, file$1, 135, 22, 4692);
+    			add_location(sup0, file$1, 135, 44, 4714);
+    			add_location(i, file$1, 135, 60, 4730);
+    			add_location(sup1, file$1, 135, 68, 4738);
+    			attr_dev(p, "class", "equation svelte-1aopggh");
+    			add_location(p, file$1, 134, 16, 4648);
+    			add_location(div, file$1, 131, 12, 4472);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -24374,7 +24341,7 @@ var app = (function () {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(127:4) {#if clicked === 0}",
+    		source: "(131:12) {#if clicked === 0}",
     		ctx
     	});
 
@@ -24382,6 +24349,7 @@ var app = (function () {
     }
 
     function create_fragment$1(ctx) {
+    	let div4;
     	let div0;
     	let h2;
     	let t1;
@@ -24389,6 +24357,7 @@ var app = (function () {
     	let t2;
     	let br1;
     	let t3;
+    	let div3;
     	let div1;
     	let svg;
     	let defs;
@@ -24424,14 +24393,16 @@ var app = (function () {
 
     	const block = {
     		c: function create() {
+    			div4 = element("div");
     			div0 = element("div");
     			h2 = element("h2");
     			h2.textContent = "What is a Fuel Cell?";
-    			t1 = text$2("\r\n    Fuel cells operate based on the electrochemistry principles\r\n    of oxidation and reduction. \r\n    Unlike batteries, they require an inlet fuel (such as hydrogen) to be continuously supplied for the energy-releasing reaction to occur.\r\n    Click on different parts of the fuel cell to explore!\r\n    ");
+    			t1 = text$2("\r\n        Fuel cells operate based on the electrochemistry principles\r\n        of oxidation and reduction. \r\n        Unlike batteries, they require an inlet fuel (such as hydrogen) to be continuously supplied for the energy-releasing reaction to occur.\r\n        Click on different parts of the fuel cell to explore!\r\n        ");
     			br0 = element("br");
     			t2 = space();
     			br1 = element("br");
     			t3 = space();
+    			div3 = element("div");
     			div1 = element("div");
     			svg = svg_element("svg");
     			defs = svg_element("defs");
@@ -24449,20 +24420,21 @@ var app = (function () {
     			t4 = space();
     			div2 = element("div");
     			if_block.c();
-    			add_location(h2, file$1, 7, 4, 182);
-    			add_location(br0, file$1, 12, 4, 516);
-    			add_location(br1, file$1, 14, 4, 532);
+    			add_location(h2, file$1, 10, 8, 244);
+    			add_location(br0, file$1, 15, 8, 598);
+    			add_location(br1, file$1, 16, 8, 612);
     			attr_dev(div0, "id", "box1");
-    			attr_dev(div0, "class", "info svelte-lkhh0o");
-    			add_location(div0, file$1, 6, 0, 148);
+    			attr_dev(div0, "class", "info svelte-1aopggh");
+    			set_style(div0, "padding", "1% 5%");
+    			add_location(div0, file$1, 9, 4, 182);
     			attr_dev(feDropShadow, "dx", "-12");
     			attr_dev(feDropShadow, "dy", "14");
     			attr_dev(feDropShadow, "stdDeviation", "1");
     			attr_dev(feDropShadow, "flood-opacity", "0.7");
-    			add_location(feDropShadow, file$1, 21, 16, 688);
+    			add_location(feDropShadow, file$1, 25, 24, 833);
     			attr_dev(filter, "id", "f1");
-    			add_location(filter, file$1, 20, 12, 654);
-    			add_location(defs, file$1, 19, 8, 634);
+    			add_location(filter, file$1, 24, 20, 791);
+    			add_location(defs, file$1, 23, 16, 763);
     			attr_dev(rect0, "id", "anode");
     			attr_dev(rect0, "width", "400");
     			attr_dev(rect0, "height", "950");
@@ -24471,8 +24443,8 @@ var app = (function () {
     			attr_dev(rect0, "fill", rect0_fill_value = /*hovered*/ ctx[1] === 0 ? hovered_color : "dimgray");
     			attr_dev(rect0, "stroke", "black");
     			attr_dev(rect0, "stroke-width", "5");
-    			attr_dev(rect0, "class", "svelte-lkhh0o");
-    			add_location(rect0, file$1, 24, 8, 807);
+    			attr_dev(rect0, "class", "svelte-1aopggh");
+    			add_location(rect0, file$1, 28, 16, 976);
     			attr_dev(rect1, "id", "electrolyte");
     			attr_dev(rect1, "width", "200");
     			attr_dev(rect1, "height", "950");
@@ -24481,8 +24453,8 @@ var app = (function () {
     			attr_dev(rect1, "fill", rect1_fill_value = /*hovered*/ ctx[1] === 1 ? hovered_color : "white");
     			attr_dev(rect1, "stroke", "black");
     			attr_dev(rect1, "stroke-width", "5");
-    			attr_dev(rect1, "class", "svelte-lkhh0o");
-    			add_location(rect1, file$1, 37, 8, 1236);
+    			attr_dev(rect1, "class", "svelte-1aopggh");
+    			add_location(rect1, file$1, 41, 16, 1509);
     			attr_dev(rect2, "id", "cathode");
     			attr_dev(rect2, "width", "400");
     			attr_dev(rect2, "height", "950");
@@ -24491,69 +24463,75 @@ var app = (function () {
     			attr_dev(rect2, "fill", rect2_fill_value = /*hovered*/ ctx[1] === 2 ? hovered_color : "lightgray");
     			attr_dev(rect2, "stroke", "black");
     			attr_dev(rect2, "stroke-width", "5");
-    			attr_dev(rect2, "class", "svelte-lkhh0o");
-    			add_location(rect2, file$1, 50, 8, 1668);
-    			attr_dev(path, "class", "hoverable svelte-lkhh0o");
-    			attr_dev(path, "d", "M-400 -490\r\n        L-400 -740\r\n        L 400 -740\r\n        L 400 -490\r\n        L 350 -490\r\n        L 350 -690\r\n        L-350 -690\r\n        L-350 -490\r\n        Z");
+    			attr_dev(rect2, "class", "svelte-1aopggh");
+    			add_location(rect2, file$1, 54, 16, 2045);
+    			attr_dev(path, "class", "hoverable svelte-1aopggh");
+    			attr_dev(path, "d", "M-400 -490\r\n                L-400 -740\r\n                L 400 -740\r\n                L 400 -490\r\n                L 350 -490\r\n                L 350 -690\r\n                L-350 -690\r\n                L-350 -490\r\n                Z");
     			attr_dev(path, "fill", path_fill_value = /*hovered*/ ctx[1] === 3 ? hovered_color : "white");
     			attr_dev(path, "stroke", "black");
     			attr_dev(path, "stroke-width", "5px");
-    			add_location(path, file$1, 63, 8, 2098);
+    			add_location(path, file$1, 67, 16, 2579);
     			attr_dev(circle0, "r", "50");
     			attr_dev(circle0, "cx", "-600");
     			attr_dev(circle0, "cy", "-400");
     			attr_dev(circle0, "stroke", "black");
     			attr_dev(circle0, "stroke-width", "5");
     			attr_dev(circle0, "fill", "none");
-    			add_location(circle0, file$1, 81, 8, 2583);
+    			add_location(circle0, file$1, 85, 16, 3208);
     			attr_dev(line0, "x1", "-625");
     			attr_dev(line0, "y1", "-400");
     			attr_dev(line0, "x2", "-575");
     			attr_dev(line0, "y2", "-400");
     			attr_dev(line0, "stroke", "black");
     			attr_dev(line0, "stroke-width", "5");
-    			add_location(line0, file$1, 89, 8, 2754);
+    			add_location(line0, file$1, 93, 16, 3443);
     			attr_dev(circle1, "r", "50");
     			attr_dev(circle1, "cx", "600");
     			attr_dev(circle1, "cy", "-400");
     			attr_dev(circle1, "stroke", "black");
     			attr_dev(circle1, "stroke-width", "5");
     			attr_dev(circle1, "fill", "none");
-    			add_location(circle1, file$1, 98, 8, 2925);
+    			add_location(circle1, file$1, 102, 16, 3678);
     			attr_dev(line1, "x1", "625");
     			attr_dev(line1, "y1", "-400");
     			attr_dev(line1, "x2", "575");
     			attr_dev(line1, "y2", "-400");
     			attr_dev(line1, "stroke", "black");
     			attr_dev(line1, "stroke-width", "5");
-    			add_location(line1, file$1, 106, 8, 3095);
+    			add_location(line1, file$1, 110, 16, 3912);
     			attr_dev(line2, "x1", "600");
     			attr_dev(line2, "y1", "-425");
     			attr_dev(line2, "x2", "600");
     			attr_dev(line2, "y2", "-375");
     			attr_dev(line2, "stroke", "black");
     			attr_dev(line2, "stroke-width", "5");
-    			add_location(line2, file$1, 114, 8, 3262);
-    			attr_dev(svg, "height", "300");
+    			add_location(line2, file$1, 118, 16, 4143);
     			attr_dev(svg, "viewBox", "-1000 -750 2000 1250");
-    			add_location(svg, file$1, 18, 4, 575);
-    			attr_dev(div1, "class", "diagram svelte-lkhh0o");
-    			add_location(div1, file$1, 17, 0, 548);
-    			attr_dev(div2, "class", "tooltip svelte-lkhh0o");
-    			add_location(div2, file$1, 125, 0, 3443);
+    			attr_dev(svg, "class", "svelte-1aopggh");
+    			add_location(svg, file$1, 22, 12, 709);
+    			attr_dev(div1, "class", "diagram svelte-1aopggh");
+    			add_location(div1, file$1, 21, 8, 674);
+    			attr_dev(div2, "class", "tooltip svelte-1aopggh");
+    			add_location(div2, file$1, 129, 8, 4404);
+    			attr_dev(div3, "class", "diagram-full svelte-1aopggh");
+    			add_location(div3, file$1, 19, 4, 636);
+    			attr_dev(div4, "class", "container svelte-1aopggh");
+    			add_location(div4, file$1, 7, 0, 151);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, div0, anchor);
+    			insert_dev(target, div4, anchor);
+    			append_dev(div4, div0);
     			append_dev(div0, h2);
     			append_dev(div0, t1);
     			append_dev(div0, br0);
     			append_dev(div0, t2);
     			append_dev(div0, br1);
-    			insert_dev(target, t3, anchor);
-    			insert_dev(target, div1, anchor);
+    			append_dev(div4, t3);
+    			append_dev(div4, div3);
+    			append_dev(div3, div1);
     			append_dev(div1, svg);
     			append_dev(svg, defs);
     			append_dev(defs, filter);
@@ -24567,8 +24545,8 @@ var app = (function () {
     			append_dev(svg, circle1);
     			append_dev(svg, line1);
     			append_dev(svg, line2);
-    			insert_dev(target, t4, anchor);
-    			insert_dev(target, div2, anchor);
+    			append_dev(div3, t4);
+    			append_dev(div3, div2);
     			if_block.m(div2, null);
 
     			if (!mounted) {
@@ -24623,11 +24601,7 @@ var app = (function () {
     		},
     		o: noop$1,
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div0);
-    			if (detaching) detach_dev(t3);
-    			if (detaching) detach_dev(div1);
-    			if (detaching) detach_dev(t4);
-    			if (detaching) detach_dev(div2);
+    			if (detaching) detach_dev(div4);
     			if_block.d();
     			mounted = false;
     			run_all(dispose);
@@ -24764,65 +24738,70 @@ var app = (function () {
     	let t5;
     	let a1;
     	let t7;
-    	let br;
+    	let br0;
     	let t8;
     	let t9;
     	let diagramfc;
     	let t10;
     	let p0;
+    	let br1;
+    	let t11;
+    	let br2;
     	let t12;
+    	let t13;
     	let p1;
     	let raw0_value = katexify("E = E_0 - b \\log(i) - Ri - m \\exp(ni)") + "";
-    	let t13;
-    	let variablesscrolly;
     	let t14;
-    	let div2;
+    	let variablesscrolly;
+    	let t15;
+    	let div8;
+    	let div6;
     	let div1;
     	let label0;
-    	let html_tag;
     	let raw1_value = katexify("E_0:") + "";
-    	let t15;
-    	let input0;
     	let t16;
-    	let span0;
+    	let input0;
     	let t17;
+    	let span0;
     	let t18;
-    	let label1;
-    	let html_tag_1;
-    	let raw2_value = katexify("b:") + "";
     	let t19;
-    	let input1;
+    	let div2;
+    	let label1;
+    	let raw2_value = katexify("b:") + "";
     	let t20;
-    	let span1;
+    	let input1;
     	let t21;
+    	let span1;
     	let t22;
-    	let label2;
-    	let html_tag_2;
-    	let raw3_value = katexify("R:") + "";
     	let t23;
-    	let input2;
+    	let div3;
+    	let label2;
+    	let raw3_value = katexify("R:") + "";
     	let t24;
-    	let span2;
+    	let input2;
     	let t25;
+    	let span2;
     	let t26;
-    	let label3;
-    	let html_tag_3;
-    	let raw4_value = katexify("m:") + "";
     	let t27;
-    	let input3;
+    	let div4;
+    	let label3;
+    	let raw4_value = katexify("m:") + "";
     	let t28;
-    	let span3;
+    	let input3;
     	let t29;
+    	let span3;
     	let t30;
-    	let label4;
-    	let html_tag_4;
-    	let raw5_value = katexify("n:") + "";
     	let t31;
-    	let input4;
+    	let div5;
+    	let label4;
+    	let raw5_value = katexify("n:") + "";
     	let t32;
-    	let span4;
+    	let input4;
     	let t33;
+    	let span4;
     	let t34;
+    	let t35;
+    	let div7;
     	let chart;
     	let current;
     	let mounted;
@@ -24858,135 +24837,146 @@ var app = (function () {
     			a1 = element("a");
     			a1.textContent = "Jonathan";
     			t7 = space();
-    			br = element("br");
+    			br0 = element("br");
     			t8 = text$2("\r\n            May - June 2024");
     			t9 = space();
     			create_component(diagramfc.$$.fragment);
     			t10 = space();
     			p0 = element("p");
-    			p0.textContent = "[INSERT INFORMATION HERE!!! connect from diagram to equation below]";
-    			t12 = space();
-    			p1 = element("p");
+    			br1 = element("br");
+    			t11 = space();
+    			br2 = element("br");
+    			t12 = text$2("\r\n        [INSERT INFORMATION HERE!!! connect from diagram to equation below]");
     			t13 = space();
-    			create_component(variablesscrolly.$$.fragment);
+    			p1 = element("p");
     			t14 = space();
-    			div2 = element("div");
+    			create_component(variablesscrolly.$$.fragment);
+    			t15 = space();
+    			div8 = element("div");
+    			div6 = element("div");
     			div1 = element("div");
     			label0 = element("label");
-    			html_tag = new HtmlTag(false);
-    			t15 = space();
-    			input0 = element("input");
     			t16 = space();
+    			input0 = element("input");
+    			t17 = space();
     			span0 = element("span");
-    			t17 = text$2(/*$E0*/ ctx[0]);
-    			t18 = space();
-    			label1 = element("label");
-    			html_tag_1 = new HtmlTag(false);
+    			t18 = text$2(/*$E0*/ ctx[0]);
     			t19 = space();
-    			input1 = element("input");
+    			div2 = element("div");
+    			label1 = element("label");
     			t20 = space();
+    			input1 = element("input");
+    			t21 = space();
     			span1 = element("span");
-    			t21 = text$2(/*$b*/ ctx[1]);
-    			t22 = space();
-    			label2 = element("label");
-    			html_tag_2 = new HtmlTag(false);
+    			t22 = text$2(/*$b*/ ctx[1]);
     			t23 = space();
-    			input2 = element("input");
+    			div3 = element("div");
+    			label2 = element("label");
     			t24 = space();
+    			input2 = element("input");
+    			t25 = space();
     			span2 = element("span");
-    			t25 = text$2(/*$R*/ ctx[2]);
-    			t26 = space();
-    			label3 = element("label");
-    			html_tag_3 = new HtmlTag(false);
+    			t26 = text$2(/*$R*/ ctx[2]);
     			t27 = space();
-    			input3 = element("input");
+    			div4 = element("div");
+    			label3 = element("label");
     			t28 = space();
+    			input3 = element("input");
+    			t29 = space();
     			span3 = element("span");
-    			t29 = text$2(/*$m*/ ctx[3]);
-    			t30 = space();
-    			label4 = element("label");
-    			html_tag_4 = new HtmlTag(false);
+    			t30 = text$2(/*$m*/ ctx[3]);
     			t31 = space();
-    			input4 = element("input");
+    			div5 = element("div");
+    			label4 = element("label");
     			t32 = space();
+    			input4 = element("input");
+    			t33 = space();
     			span4 = element("span");
-    			t33 = text$2(/*$n*/ ctx[4]);
-    			t34 = space();
+    			t34 = text$2(/*$n*/ ctx[4]);
+    			t35 = space();
+    			div7 = element("div");
     			create_component(chart.$$.fragment);
     			attr_dev(h1, "id", "intro-hed");
-    			attr_dev(h1, "class", "svelte-7fmblr");
+    			attr_dev(h1, "class", "svelte-kmwuic");
     			add_location(h1, file, 17, 8, 496);
     			add_location(h2, file, 18, 8, 541);
     			attr_dev(a0, "href", "https://github.com/katemae");
     			attr_dev(a0, "target", "_blank");
+    			attr_dev(a0, "class", "svelte-kmwuic");
     			add_location(a0, file, 20, 3, 656);
     			attr_dev(a1, "href", "https://github.com/jman2-go");
     			attr_dev(a1, "target", "_blank");
+    			attr_dev(a1, "class", "svelte-kmwuic");
     			add_location(a1, file, 21, 7, 729);
-    			add_location(br, file, 22, 3, 800);
+    			add_location(br0, file, 22, 3, 800);
     			attr_dev(h3, "id", "intro_date");
-    			attr_dev(h3, "class", "svelte-7fmblr");
+    			attr_dev(h3, "class", "svelte-kmwuic");
     			add_location(h3, file, 19, 8, 631);
-    			attr_dev(div0, "class", "intro svelte-7fmblr");
+    			attr_dev(div0, "class", "intro svelte-kmwuic");
     			add_location(div0, file, 16, 4, 467);
+    			add_location(br1, file, 30, 8, 934);
+    			add_location(br2, file, 30, 13, 939);
+    			set_style(p0, "text-align", "center");
     			add_location(p0, file, 29, 4, 893);
     			attr_dev(p1, "id", "desc");
-    			attr_dev(p1, "class", "svelte-7fmblr");
-    			add_location(p1, file, 33, 4, 991);
-    			html_tag.a = t15;
+    			attr_dev(p1, "class", "svelte-kmwuic");
+    			add_location(p1, file, 34, 4, 1038);
+    			attr_dev(label0, "class", "svelte-kmwuic");
+    			add_location(label0, file, 43, 16, 1290);
     			attr_dev(input0, "type", "range");
     			attr_dev(input0, "min", "0");
     			attr_dev(input0, "max", "1.2");
     			attr_dev(input0, "step", "0.01");
-    			attr_dev(input0, "class", "svelte-7fmblr");
-    			add_location(input0, file, 42, 41, 1239);
-    			add_location(span0, file, 43, 16, 1326);
-    			attr_dev(label0, "class", "svelte-7fmblr");
-    			add_location(label0, file, 41, 12, 1189);
-    			html_tag_1.a = t19;
+    			add_location(input0, file, 44, 16, 1348);
+    			add_location(span0, file, 45, 16, 1435);
+    			attr_dev(div1, "class", "control svelte-kmwuic");
+    			add_location(div1, file, 42, 12, 1251);
+    			attr_dev(label1, "class", "svelte-kmwuic");
+    			add_location(label1, file, 48, 16, 1526);
     			attr_dev(input1, "type", "range");
     			attr_dev(input1, "min", "0.01");
     			attr_dev(input1, "max", "0.1");
     			attr_dev(input1, "step", "0.001");
-    			attr_dev(input1, "class", "svelte-7fmblr");
-    			add_location(input1, file, 46, 39, 1428);
-    			add_location(span1, file, 47, 16, 1518);
-    			attr_dev(label1, "class", "svelte-7fmblr");
-    			add_location(label1, file, 45, 12, 1380);
-    			html_tag_2.a = t23;
+    			add_location(input1, file, 49, 16, 1582);
+    			add_location(span1, file, 50, 16, 1672);
+    			attr_dev(div2, "class", "control svelte-kmwuic");
+    			add_location(div2, file, 47, 12, 1487);
+    			attr_dev(label2, "class", "svelte-kmwuic");
+    			add_location(label2, file, 53, 16, 1762);
     			attr_dev(input2, "type", "range");
     			attr_dev(input2, "min", "10e-6");
     			attr_dev(input2, "max", "1000e-6");
     			attr_dev(input2, "step", "10e-6");
-    			attr_dev(input2, "class", "svelte-7fmblr");
-    			add_location(input2, file, 50, 39, 1619);
-    			add_location(span2, file, 51, 16, 1714);
-    			attr_dev(label2, "class", "svelte-7fmblr");
-    			add_location(label2, file, 49, 12, 1571);
-    			html_tag_3.a = t27;
+    			add_location(input2, file, 54, 16, 1818);
+    			add_location(span2, file, 55, 16, 1913);
+    			attr_dev(div3, "class", "control svelte-kmwuic");
+    			add_location(div3, file, 52, 12, 1723);
+    			attr_dev(label3, "class", "svelte-kmwuic");
+    			add_location(label3, file, 58, 16, 2003);
     			attr_dev(input3, "type", "range");
     			attr_dev(input3, "min", "1e-5");
     			attr_dev(input3, "max", "10e-5");
     			attr_dev(input3, "step", "1e-6");
-    			attr_dev(input3, "class", "svelte-7fmblr");
-    			add_location(input3, file, 54, 39, 1815);
-    			add_location(span3, file, 55, 16, 1906);
-    			attr_dev(label3, "class", "svelte-7fmblr");
-    			add_location(label3, file, 53, 12, 1767);
-    			html_tag_4.a = t31;
+    			add_location(input3, file, 59, 16, 2059);
+    			add_location(span3, file, 60, 16, 2150);
+    			attr_dev(div4, "class", "control svelte-kmwuic");
+    			add_location(div4, file, 57, 12, 1964);
+    			attr_dev(label4, "class", "svelte-kmwuic");
+    			add_location(label4, file, 63, 16, 2240);
     			attr_dev(input4, "type", "range");
     			attr_dev(input4, "min", "1e-3");
     			attr_dev(input4, "max", "10e-3");
     			attr_dev(input4, "step", "1e-4");
-    			attr_dev(input4, "class", "svelte-7fmblr");
-    			add_location(input4, file, 58, 39, 2007);
-    			add_location(span4, file, 59, 16, 2098);
-    			attr_dev(label4, "class", "svelte-7fmblr");
-    			add_location(label4, file, 57, 12, 1959);
-    			attr_dev(div1, "class", "controls svelte-7fmblr");
-    			add_location(div1, file, 40, 8, 1153);
-    			attr_dev(div2, "class", "main-graph");
-    			add_location(div2, file, 39, 4, 1119);
+    			add_location(input4, file, 64, 16, 2296);
+    			add_location(span4, file, 65, 16, 2387);
+    			attr_dev(div5, "class", "control svelte-kmwuic");
+    			add_location(div5, file, 62, 12, 2201);
+    			attr_dev(div6, "class", "controls-container svelte-kmwuic");
+    			add_location(div6, file, 41, 8, 1205);
+    			attr_dev(div7, "class", "graph-container svelte-kmwuic");
+    			add_location(div7, file, 69, 8, 2452);
+    			attr_dev(div8, "class", "chart-container svelte-kmwuic");
+    			add_location(div8, file, 40, 4, 1166);
     			add_location(main, file, 15, 0, 455);
     		},
     		l: function claim(nodes) {
@@ -25004,66 +24994,76 @@ var app = (function () {
     			append_dev(h3, t5);
     			append_dev(h3, a1);
     			append_dev(h3, t7);
-    			append_dev(h3, br);
+    			append_dev(h3, br0);
     			append_dev(h3, t8);
     			append_dev(main, t9);
     			mount_component(diagramfc, main, null);
     			append_dev(main, t10);
     			append_dev(main, p0);
-    			append_dev(main, t12);
+    			append_dev(p0, br1);
+    			append_dev(p0, t11);
+    			append_dev(p0, br2);
+    			append_dev(p0, t12);
+    			append_dev(main, t13);
     			append_dev(main, p1);
     			p1.innerHTML = raw0_value;
-    			append_dev(main, t13);
-    			mount_component(variablesscrolly, main, null);
     			append_dev(main, t14);
-    			append_dev(main, div2);
-    			append_dev(div2, div1);
+    			mount_component(variablesscrolly, main, null);
+    			append_dev(main, t15);
+    			append_dev(main, div8);
+    			append_dev(div8, div6);
+    			append_dev(div6, div1);
     			append_dev(div1, label0);
-    			html_tag.m(raw1_value, label0);
-    			append_dev(label0, t15);
-    			append_dev(label0, input0);
+    			label0.innerHTML = raw1_value;
+    			append_dev(div1, t16);
+    			append_dev(div1, input0);
     			set_input_value(input0, /*$E0*/ ctx[0]);
-    			append_dev(label0, t16);
-    			append_dev(label0, span0);
-    			append_dev(span0, t17);
-    			append_dev(div1, t18);
-    			append_dev(div1, label1);
-    			html_tag_1.m(raw2_value, label1);
-    			append_dev(label1, t19);
-    			append_dev(label1, input1);
+    			append_dev(div1, t17);
+    			append_dev(div1, span0);
+    			append_dev(span0, t18);
+    			append_dev(div6, t19);
+    			append_dev(div6, div2);
+    			append_dev(div2, label1);
+    			label1.innerHTML = raw2_value;
+    			append_dev(div2, t20);
+    			append_dev(div2, input1);
     			set_input_value(input1, /*$b*/ ctx[1]);
-    			append_dev(label1, t20);
-    			append_dev(label1, span1);
-    			append_dev(span1, t21);
-    			append_dev(div1, t22);
-    			append_dev(div1, label2);
-    			html_tag_2.m(raw3_value, label2);
-    			append_dev(label2, t23);
-    			append_dev(label2, input2);
+    			append_dev(div2, t21);
+    			append_dev(div2, span1);
+    			append_dev(span1, t22);
+    			append_dev(div6, t23);
+    			append_dev(div6, div3);
+    			append_dev(div3, label2);
+    			label2.innerHTML = raw3_value;
+    			append_dev(div3, t24);
+    			append_dev(div3, input2);
     			set_input_value(input2, /*$R*/ ctx[2]);
-    			append_dev(label2, t24);
-    			append_dev(label2, span2);
-    			append_dev(span2, t25);
-    			append_dev(div1, t26);
-    			append_dev(div1, label3);
-    			html_tag_3.m(raw4_value, label3);
-    			append_dev(label3, t27);
-    			append_dev(label3, input3);
+    			append_dev(div3, t25);
+    			append_dev(div3, span2);
+    			append_dev(span2, t26);
+    			append_dev(div6, t27);
+    			append_dev(div6, div4);
+    			append_dev(div4, label3);
+    			label3.innerHTML = raw4_value;
+    			append_dev(div4, t28);
+    			append_dev(div4, input3);
     			set_input_value(input3, /*$m*/ ctx[3]);
-    			append_dev(label3, t28);
-    			append_dev(label3, span3);
-    			append_dev(span3, t29);
-    			append_dev(div1, t30);
-    			append_dev(div1, label4);
-    			html_tag_4.m(raw5_value, label4);
-    			append_dev(label4, t31);
-    			append_dev(label4, input4);
+    			append_dev(div4, t29);
+    			append_dev(div4, span3);
+    			append_dev(span3, t30);
+    			append_dev(div6, t31);
+    			append_dev(div6, div5);
+    			append_dev(div5, label4);
+    			label4.innerHTML = raw5_value;
+    			append_dev(div5, t32);
+    			append_dev(div5, input4);
     			set_input_value(input4, /*$n*/ ctx[4]);
-    			append_dev(label4, t32);
-    			append_dev(label4, span4);
-    			append_dev(span4, t33);
-    			append_dev(main, t34);
-    			mount_component(chart, main, null);
+    			append_dev(div5, t33);
+    			append_dev(div5, span4);
+    			append_dev(span4, t34);
+    			append_dev(div8, t35);
+    			append_dev(div8, div7);
+    			mount_component(chart, div7, null);
     			current = true;
 
     			if (!mounted) {
@@ -25088,31 +25088,31 @@ var app = (function () {
     				set_input_value(input0, /*$E0*/ ctx[0]);
     			}
 
-    			if (!current || dirty & /*$E0*/ 1) set_data_dev(t17, /*$E0*/ ctx[0]);
+    			if (!current || dirty & /*$E0*/ 1) set_data_dev(t18, /*$E0*/ ctx[0]);
 
     			if (dirty & /*$b*/ 2) {
     				set_input_value(input1, /*$b*/ ctx[1]);
     			}
 
-    			if (!current || dirty & /*$b*/ 2) set_data_dev(t21, /*$b*/ ctx[1]);
+    			if (!current || dirty & /*$b*/ 2) set_data_dev(t22, /*$b*/ ctx[1]);
 
     			if (dirty & /*$R*/ 4) {
     				set_input_value(input2, /*$R*/ ctx[2]);
     			}
 
-    			if (!current || dirty & /*$R*/ 4) set_data_dev(t25, /*$R*/ ctx[2]);
+    			if (!current || dirty & /*$R*/ 4) set_data_dev(t26, /*$R*/ ctx[2]);
 
     			if (dirty & /*$m*/ 8) {
     				set_input_value(input3, /*$m*/ ctx[3]);
     			}
 
-    			if (!current || dirty & /*$m*/ 8) set_data_dev(t29, /*$m*/ ctx[3]);
+    			if (!current || dirty & /*$m*/ 8) set_data_dev(t30, /*$m*/ ctx[3]);
 
     			if (dirty & /*$n*/ 16) {
     				set_input_value(input4, /*$n*/ ctx[4]);
     			}
 
-    			if (!current || dirty & /*$n*/ 16) set_data_dev(t33, /*$n*/ ctx[4]);
+    			if (!current || dirty & /*$n*/ 16) set_data_dev(t34, /*$n*/ ctx[4]);
     		},
     		i: function intro(local) {
     			if (current) return;
