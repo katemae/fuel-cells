@@ -1,13 +1,22 @@
 <script>
     import { fade } from 'svelte/transition';
+    import { onMount } from 'svelte';
+
     let clicked = -1;
     let hovered = -1;
     const hovered_color = "gold";
+
+    function animateCircuit() {
+        const electrons = document.querySelectorAll('.electron animateMotion');
+        electrons.forEach((electron, i) => {
+            electron.beginElement();
+        });
+    }
 </script>
 
 <div class="container">
 
-    <div id="box1" class="info" style="padding: 1% 5%;">
+    <div id="box1" class="info">
         <h2>What is a Fuel Cell?</h2>
         Fuel cells operate based on the electrochemistry principles of oxidation and reduction. 
         Using an inlet fuel such as hydrogen, a fuel cell converts chemical energy to electricity with its  
@@ -80,7 +89,7 @@
                     on:mouseout={(event) => { hovered = -1; }}
                 />
                 <path
-                class = "hoverable"
+                class="hoverable"
                 d="M-400 -490
                 L-400 -740
                 L 400 -740
@@ -90,13 +99,30 @@
                 L-350 -690
                 L-350 -490
                 Z"
-                fill={hovered === 3 ? hovered_color: "white"}
+                fill={hovered === 3 ? hovered_color : "white"}
                 stroke="black"
-                stroke-width=5px
-                on:click={(event) => {clicked = 3;}}
-                on:mouseover={(event) => {hovered = 3; }}
+                stroke-width="5px"
+                on:click={(event) => {clicked = 3; animateElectrons();}}
+                on:mouseover={(event) => {hovered = 3;}}
                 on:mouseout={(event) => { hovered = -1; }}
-                />
+            />
+            
+                <!-- Electrons animation -->
+                <path id="circuitPath" d="M-400 -490 V -740 H 400 V -490" fill="none" stroke="none"/>
+                {#if clicked === 3}
+                    {#each Array(5) as _, i}
+                        <circle class="electron" r="15" fill="#ffb703">
+                            <animateMotion
+                                class="electronMotion"
+                                dur="5s"
+                                repeatCount="indefinite"
+                                begin={(i * 1) + "s; anim" + i + ".begin"}>
+                                <mpath href="#circuitPath"/>
+                            </animateMotion>
+                        </circle>
+                    {/each}
+                {/if}
+                
                 <!-- turns out PEM fuel cells have their electrolyte as a membrane... -->
                 <!-- <rect
                     id="membrane"
@@ -236,7 +262,7 @@
         height: 300px;
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 950px) {
         .container {
             flex-direction: column;
             align-items: center;
@@ -271,8 +297,7 @@
         flex: 1;
         text-align: justify;
         font-size: 16px;
-        margin: 1rem;
-        padding: 1% 5%;
+        padding: 1% 5.5%;
     }
 
     .diagram-full {
@@ -280,6 +305,7 @@
         display: flex;
         flex-direction: column;
         align-items: center;
+        padding: 1% 2%;
     }
 
     .diagram {

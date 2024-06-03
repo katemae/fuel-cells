@@ -27,10 +27,7 @@
     </div>
 
     <DiagramFC />
-
     <Why />
-    
-    
 
     <p id="desc">
         {@html katexify("E = E_0 - b \\log(i) - Ri - m \\exp(ni)")}
@@ -76,7 +73,6 @@
 <style>
     .intro {
         height: 40vh;
-        width: 100vw;
         margin-bottom: 7vh;
         text-align: center;
         padding-top: 12rem;
@@ -122,7 +118,7 @@
         font-family: var(--font-main);
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 950px) {
         #intro-hed {
             font-size: 3rem;
         }

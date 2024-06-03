@@ -20,8 +20,9 @@
 </div>
 
 <style>
-.body {
-    text-align: justify;
-    margin: 50px;
-}
+    .body {
+        text-align: justify;
+        /* margin: 50px; */
+        padding: 1% 10%;
+    }
 </style>

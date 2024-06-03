@@ -1,9 +1,9 @@
 <script>
     import Scrolly from "./Scrolly.svelte";
+    import Chart from "./Chart.svelte";
     import katexify from "../katexify";
     import { select } from "d3-selection";
 
-    import Chart from "./Chart.svelte";
     // default values
     const E0 = 1.0;
     const b =  0.05;
@@ -12,10 +12,8 @@
     const n =  8e-3;
 
     let value;
-
     let steps = [];
 
-    // Preprocess the steps content with katexify
         steps = [
             { title: 'E_0', content: ".... desc for E_0" },
             { title: 'b', content: ".... desc for b" },

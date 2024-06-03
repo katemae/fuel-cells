@@ -102,7 +102,7 @@
         margin-bottom: 5%;
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 1350px) {
         svg {
             width: 90%;
             margin: auto;
