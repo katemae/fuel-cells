@@ -9,10 +9,18 @@
 
     <div id="box1" class="info" style="padding: 1% 5%;">
         <h2>What is a Fuel Cell?</h2>
-        Fuel cells operate based on the electrochemistry principles
-        of oxidation and reduction. 
-        Unlike batteries, they require an inlet fuel (such as hydrogen) to be continuously supplied for the energy-releasing reaction to occur.
-        Click on different parts of the fuel cell to explore!
+        Fuel cells operate based on the electrochemistry principles of oxidation and reduction. 
+        Using an inlet fuel such as hydrogen, a fuel cell converts chemical energy to electricity with its  
+        <a href=https://chem.libretexts.org/Bookshelves/Analytical_Chemistry/Supplemental_Modules_(Analytical_Chemistry)/Electrochemistry/Redox_Chemistry/Half-Reactions>
+            <b>half reactions</b></a>.
+        Unlike batteries, fuel cells need to be continuously supplied for the energy-releasing reaction to occur.
+        The most well-known fuel cell is the <a href=https://en.wikipedia.org/wiki/Proton-exchange_membrane_fuel_cell><b>Proton-Exchange Membrane Fuel Cell</b></a> (PEMFC), 
+        which utilizes the reaction
+        <p class="equation">
+            2H<sub>2</sub> + O<sub>2</sub> &#8594 2H<sub>2</sub>O
+        </p>
+        which has a potential of approximately 1.2 volts and produces electrical energy.
+        Click on different parts of this fuel cell to explore!
         <br>
         <br>
     </div>
@@ -20,11 +28,17 @@
     <div class="diagram-full">
 
         <div class="diagram">
-            <svg viewBox="-1000 -750 2000 1250">
+            <svg viewBox="-1000 -900 2000 1400">
                 <defs>
                     <filter id="f1">
                         <feDropShadow dx="-12" dy="14" stdDeviation="1" flood-opacity="0.7"/>
                     </filter>
+                    <marker 
+                        id='head' orient="auto"
+                        markerWidth='10' markerHeight='10'
+                        refX='0.1' refY='2'>
+                        <path d='M0,0 V4 L2,2 Z' fill="black"/>
+                    </marker>
                 </defs>
                 <rect
                     id="anode"
@@ -83,6 +97,20 @@
                 on:mouseover={(event) => {hovered = 3; }}
                 on:mouseout={(event) => { hovered = -1; }}
                 />
+                <!-- turns out PEM fuel cells have their electrolyte as a membrane... -->
+                <!-- <rect
+                    id="membrane"
+                    width="40" 
+                    height="1000" 
+                    x="-25"
+                    y="-525"
+                    fill={hovered === 4 ? hovered_color: "#FFF8DC"}
+                    stroke="black"
+                    stroke-width="5"
+                    on:click={(event) => {clicked = 4;}}
+                    on:mouseover={(event) => {hovered = 4; }}
+                    on:mouseout={(event) => { hovered = -1; }}
+                /> -->
                 <circle 
                     r=50
                     cx=-600
@@ -124,6 +152,20 @@
                     stroke="black"
                     stroke-width="5"
                 />
+                <path
+                    d="M-450 -700, -450 -800, -350 -800 "
+                    marker-end='url(#head)'
+                    fill='none'
+                    stroke="black"
+                    stroke-width=8px
+                />
+                <path
+                    d="M350 -800, 450 -800, 450 -700"
+                    marker-end='url(#head)'
+                    fill='none'
+                    stroke="black"
+                    stroke-width=8px
+                />
             </svg>
         </div>
 
@@ -136,12 +178,16 @@
                     2H<sub>2</sub> &#8594 4H<sup>+</sup> + 4<i>e</i><sup>-</sup>
                 </p>
                 releasing electrons which do electrical work through the connected circuit. 
-                Typically, 
+                The anode takes in pure hydrogen gas, and ionizes the hydrogen. 
+                The electrode itself is a conductive material to easily transfer electrons to the circuit.
+                Typically, both electrodes use a catalyst such as platinum to speed up the reaction process, generating more energy.
             </div>
             {:else if clicked === 1}
             <header in:fade>Electrolyte</header>
             <p in:fade>
-                The electrolyte is an ionic solution which enables the transfer of charged ions between electrodes.
+                The electrolyte is typically an ionic solution which enables the transfer of charged ions between electrodes. It also separates the two electrodes to prevent short circuiting.
+                However, in PEM fuel cells, the electrolyte is a semi-conductive polymer membrane, solely allowing the movement of hydrogen ions.
+                Once oxidized, hydrogen ions bond with the membrane, in which they can be used at the cathode for its reduction half-reaction.
             </p>
             {:else if clicked === 2}
             <div in:fade>
@@ -150,8 +196,21 @@
                     <p class="equation">
                         O<sub>2</sub> + 4<i>e</i><sup>-</sup> + 4H<sup>+</sup> &#8594 2H<sub>2</sub>O
                     </p>
-            
+                    receiving electrons from the circuit and producing water from the oxygen. 
+                    On this side, both atmospheric air or pure oxygen can be inputted, and water vapor is released into the atmosphere.
                 </div>
+            {:else if clicked === 3}
+            <div in:fade>
+                <header>Circuit</header>
+                    The circuit provides the pathway for electrons. Electrons come from the anode (the negative electrode), and move to the cathode (the positive electrode). 
+                    Note, the direction of electron travel is <i>opposite</i> to the direction of current. The arrows drawn in this diagram portray the movement of electrons, not current flow.
+                </div>
+            <!-- {:else if clicked === 4}
+            <div in:fade>
+                <header>Membrane</header>
+                    The membrane separates the two electrodes. As it is semi-permeable, it allows certain ions to pass through, but prevents the transfer of electrons to stop a short circuit.
+                    It is typically made of a polymer; in 
+                </div> -->
             {:else}
             <p style="text-align: center">
                 Click any component of the fuel cell!

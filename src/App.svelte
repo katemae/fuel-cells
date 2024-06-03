@@ -2,6 +2,7 @@
     import Chart from './components/Chart.svelte';
     import VariablesScrolly from './components/VariablesScrolly.svelte';
     import DiagramFC from './components/DiagramFC.svelte';
+    import Why from './components/Why.svelte';
 
     import { writable } from 'svelte/store';
     import katexify from './katexify';
@@ -26,11 +27,10 @@
     </div>
 
     <DiagramFC />
+
+    <Why />
     
-    <p style="text-align: center;">
-        <br> <br>
-        [INSERT INFORMATION HERE!!! connect from diagram to equation below]
-    </p>
+    
 
     <p id="desc">
         {@html katexify("E = E_0 - b \\log(i) - Ri - m \\exp(ni)")}
