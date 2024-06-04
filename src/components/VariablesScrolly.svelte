@@ -22,30 +22,6 @@
 
     let chartParams1 = { E0, b, R, m, n };
     let chartParams2 = { E0, b, R, m, n };
-
-    // Reactive statement to update charts when `value` changes
-    // (CURRENTLY NOT WORKING!!! CHARTS ARE ONLY SHOWING THE DEFAULT VALUES SET EARLIER)
-    $: {
-        if (value === 0) {
-            chartParams1 = { ...chartParams1, E0: 1.2 };
-            chartParams2 = { ...chartParams2, E0: 0 };
-        } else if (value === 1) {
-            chartParams1 = { ...chartParams1, b: 0.1 };
-            chartParams2 = { ...chartParams2, b: 0.01 };
-        } else if (value === 2) {
-            chartParams1 = { ...chartParams1, R: 0.001 };
-            chartParams2 = { ...chartParams2, R: 0.00001 };
-        } else if (value === 3) {
-            chartParams1 = { ...chartParams1, m: 0.0001 };
-            chartParams2 = { ...chartParams2, m: 0.00001 };
-        } else if (value === 4) {
-            chartParams1 = { ...chartParams1, n: 0.01 };
-            chartParams2 = { ...chartParams2, n: 0.001 };
-        } else {
-            chartParams1 = { ...chartParams1, E0, b, R, m, n };
-            chartParams2 = { ...chartParams2, E0, b, R, m, n };
-        }
-    }
 </script>
 
 <h2 class="body-header">Understanding the Variables</h2>
@@ -69,14 +45,52 @@
             </Scrolly>
         </div>
         <div class="charts-container">
-            <div class="chart-one">
-                <ChartScrolly {...chartParams1} />
-            </div>
-            <div class="chart-two">
-                <ChartScrolly {...chartParams2} />
-            </div>
+            {#if value === 0}
+                <div class="chart-one">
+                    <ChartScrolly {...chartParams1} E0={1.2} />
+                </div>
+                <div class="chart-two">
+                    <ChartScrolly {...chartParams2} E0={0.5} />
+                </div>
+            {:else if value === 1}
+                <div class="chart-one">
+                    <ChartScrolly {...chartParams1} b={0.1} />
+                </div>
+                <div class="chart-two">
+                    <ChartScrolly {...chartParams2} b={0.01} />
+                </div>
+            {:else if value === 2}
+                <div class="chart-one">
+                    <ChartScrolly {...chartParams1} R={0.001} />
+                </div>
+                <div class="chart-two">
+                    <ChartScrolly {...chartParams2} R={0.00001} />
+                </div>
+            {:else if value === 3}
+                <div class="chart-one">
+                    <ChartScrolly {...chartParams1} m={0.0001} />
+                </div>
+                <div class="chart-two">
+                    <ChartScrolly {...chartParams2} m={0.00001} />
+                </div>
+            {:else if value === 4}
+                <div class="chart-one">
+                    <ChartScrolly {...chartParams1} n={0.01} />
+                </div>
+                <div class="chart-two">
+                    <ChartScrolly {...chartParams2} n={0.001} />
+                </div>
+            {:else}
+                <div class="chart-one">
+                    <ChartScrolly {...chartParams1} />
+                </div>
+                <div class="chart-two">
+                    <ChartScrolly {...chartParams2} />
+                </div>
+            {/if}
         </div>
     </div>
+    
     <br /><br />
     <p class="body-text">conclusions about variables ... </p>
 </section>
