@@ -3,6 +3,7 @@
     import VariablesScrolly from './components/VariablesScrolly.svelte';
     import DiagramFC from './components/DiagramFC.svelte';
     import Why from './components/Why.svelte';
+    import References from './components/References.svelte';
 
     import { writable } from 'svelte/store';
     import katexify from './katexify';
@@ -68,6 +69,8 @@
             <Chart {E0} {b} {R} {m} {n} />
         </div>
     </div>
+
+    <References />
 </main>
 
 <style>
