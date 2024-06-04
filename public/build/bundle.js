@@ -5261,10 +5261,10 @@ var app = (function () {
     			div = element("div");
     			svg_1 = svg_element("svg");
     			attr_dev(svg_1, "class", "svelte-1syunp1");
-    			add_location(svg_1, file$4, 98, 4, 3009);
+    			add_location(svg_1, file$4, 100, 4, 3084);
     			set_style(div, "width", "100%");
     			set_style(div, "height", "100%");
-    			add_location(div, file$4, 97, 0, 2941);
+    			add_location(div, file$4, 99, 0, 3016);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -5320,7 +5320,7 @@ var app = (function () {
     	}
 
     	function drawChart() {
-    		if (!container) return; // Ensure container is defined
+    		if (!container) return; // Fitting chart to container, otherwise dimensions get crazy
     		const width = container.clientWidth - margin.left - margin.right;
     		const height = container.clientHeight - margin.top - margin.bottom;
     		const data = getLineData();
@@ -23980,13 +23980,13 @@ var app = (function () {
     			t = space();
     			p = element("p");
     			attr_dev(h1, "class", "step-title");
-    			add_location(h1, file$3, 62, 28, 2234);
-    			add_location(p, file$3, 63, 28, 2319);
+    			add_location(h1, file$3, 62, 28, 2276);
+    			add_location(p, file$3, 63, 28, 2361);
     			attr_dev(div0, "class", "step-content svelte-3xf48k");
-    			add_location(div0, file$3, 61, 24, 2179);
+    			add_location(div0, file$3, 61, 24, 2221);
     			attr_dev(div1, "class", "step svelte-3xf48k");
     			toggle_class(div1, "active", /*value*/ ctx[0] === /*i*/ ctx[7]);
-    			add_location(div1, file$3, 60, 20, 2109);
+    			add_location(div1, file$3, 60, 20, 2151);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div1, anchor);
@@ -24039,7 +24039,7 @@ var app = (function () {
     			t = space();
     			div = element("div");
     			attr_dev(div, "class", "spacer svelte-3xf48k");
-    			add_location(div, file$3, 67, 16, 2445);
+    			add_location(div, file$3, 67, 16, 2487);
     		},
     		m: function mount(target, anchor) {
     			for (let i = 0; i < each_blocks.length; i += 1) {
@@ -24183,24 +24183,24 @@ var app = (function () {
     			p1 = element("p");
     			p1.textContent = "conclusions about variables ...";
     			attr_dev(h2, "class", "body-header svelte-3xf48k");
-    			add_location(h2, file$3, 50, 0, 1708);
+    			add_location(h2, file$3, 50, 0, 1750);
     			attr_dev(p0, "class", "body-text svelte-3xf48k");
-    			add_location(p0, file$3, 51, 0, 1765);
+    			add_location(p0, file$3, 51, 0, 1807);
     			attr_dev(div0, "class", "steps-container svelte-3xf48k");
-    			add_location(div0, file$3, 57, 8, 1985);
+    			add_location(div0, file$3, 57, 8, 2027);
     			attr_dev(div1, "class", "chart-one svelte-3xf48k");
-    			add_location(div1, file$3, 71, 12, 2557);
+    			add_location(div1, file$3, 71, 12, 2599);
     			attr_dev(div2, "class", "chart-two svelte-3xf48k");
-    			add_location(div2, file$3, 74, 12, 2663);
+    			add_location(div2, file$3, 74, 12, 2705);
     			attr_dev(div3, "class", "charts-container svelte-3xf48k");
-    			add_location(div3, file$3, 70, 8, 2514);
+    			add_location(div3, file$3, 70, 8, 2556);
     			attr_dev(div4, "class", "section-container svelte-3xf48k");
-    			add_location(div4, file$3, 56, 4, 1945);
-    			add_location(br0, file$3, 79, 4, 2787);
-    			add_location(br1, file$3, 79, 10, 2793);
+    			add_location(div4, file$3, 56, 4, 1987);
+    			add_location(br0, file$3, 79, 4, 2829);
+    			add_location(br1, file$3, 79, 10, 2835);
     			attr_dev(p1, "class", "body-text svelte-3xf48k");
-    			add_location(p1, file$3, 80, 4, 2804);
-    			add_location(section, file$3, 54, 0, 1901);
+    			add_location(p1, file$3, 80, 4, 2846);
+    			add_location(section, file$3, 54, 0, 1943);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -24302,7 +24302,6 @@ var app = (function () {
     	validate_slots('VariablesScrolly', slots, []);
     	let { value } = $$props;
 
-    	// Define steps
     	let steps = [
     		{
     			title: 'E_0',
@@ -24367,6 +24366,7 @@ var app = (function () {
     	$$self.$$.update = () => {
     		if ($$self.$$.dirty & /*value, chartParams1, chartParams2*/ 7) {
     			// Reactive statement to update charts when `value` changes
+    			// (CURRENTLY NOT WORKING!!! CHARTS ARE ONLY SHOWING THE DEFAULT VALUES SET EARLIER)
     			{
     				if (value === 0) {
     					$$invalidate(1, chartParams1 = { ...chartParams1, E0: 1.2 });

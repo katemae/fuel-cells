@@ -3,7 +3,7 @@
     import ChartScrolly from "./ChartScrolly.svelte";
     import katexify from "../katexify";
 
-    export let value; // Declare value as a prop
+    export let value;
 
     // Default values
     const E0 = 1.0;
@@ -12,7 +12,6 @@
     const m =  3e-5;
     const n =  8e-3;
 
-    // Define steps
     let steps = [
         { title: 'E_0', content: ".... desc for E_0" },
         { title: 'b', content: ".... desc for b" },
@@ -25,6 +24,7 @@
     let chartParams2 = { E0, b, R, m, n };
 
     // Reactive statement to update charts when `value` changes
+    // (CURRENTLY NOT WORKING!!! CHARTS ARE ONLY SHOWING THE DEFAULT VALUES SET EARLIER)
     $: {
         if (value === 0) {
             chartParams1 = { ...chartParams1, E0: 1.2 };

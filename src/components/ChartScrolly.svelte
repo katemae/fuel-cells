@@ -1,3 +1,5 @@
+<!-- STATIC CHART FOR SCROLLYTELLING -->
+
 <script>
     import { onMount, setContext } from 'svelte';
     import { scaleLinear, select, axisBottom, axisLeft, line } from 'd3';
@@ -23,7 +25,7 @@
     }
 
     function drawChart() {
-        if (!container) return; // Ensure container is defined
+        if (!container) return; // Fitting chart to container, otherwise dimensions get crazy
         const width = container.clientWidth - margin.left - margin.right;
         const height = container.clientHeight - margin.top - margin.bottom;
         const data = getLineData();
