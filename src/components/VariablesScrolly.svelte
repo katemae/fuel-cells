@@ -1,10 +1,11 @@
 <script>
     import Scrolly from "./Scrolly.svelte";
-    import Chart from "./Chart.svelte";
+    import ChartScrolly from "./ChartScrolly.svelte";
     import katexify from "../katexify";
-    import { select } from "d3-selection";
 
-    // default values
+    export let value;
+
+    // Default values
     const E0 = 1.0;
     const b =  0.05;
     const R =  30e-6;
@@ -29,31 +30,8 @@
             }
         ];
 
-
-    const target2event = {
-        0: () => {
-            select("#chart1").style("background-color", "purple");
-            select("#chart2").style("background-color", "coral");
-        },
-        1: () => {
-            select("#chart1").style("background-color", "red");
-            select("#chart2").style("background-color", "green");
-        },
-        2: () => {
-            select("#chart1").style("background-color", "purple");
-            select("#chart2").style("background-color", "coral");
-        },
-        3: () => {
-            select("#chart1").style("background-color", "red");
-            select("#chart2").style("background-color", "green");
-        },
-        4: () => {
-            select("#chart1").style("background-color", "purple");
-            select("#chart2").style("background-color", "coral");
-        }
-    };
-
-    $: if (typeof value !== "undefined") target2event[value]();
+    let chartParams1 = { E0, b, R, m, n };
+    let chartParams2 = { E0, b, R, m, n };
 </script>
 
 <h2 class="body-header">Understanding the Parameters</h2>
@@ -79,14 +57,52 @@
             </Scrolly>
         </div>
         <div class="charts-container">
-            <div class="chart-one">
-                <svg id="chart1" />
-            </div>
-            <div class="chart-two">
-                <svg id="chart2" />
-            </div>
+            {#if value === 0}
+                <div class="chart-one">
+                    <ChartScrolly {...chartParams1} E0={1.2} />
+                </div>
+                <div class="chart-two">
+                    <ChartScrolly {...chartParams2} E0={0.5} />
+                </div>
+            {:else if value === 1}
+                <div class="chart-one">
+                    <ChartScrolly {...chartParams1} b={0.1} />
+                </div>
+                <div class="chart-two">
+                    <ChartScrolly {...chartParams2} b={0.01} />
+                </div>
+            {:else if value === 2}
+                <div class="chart-one">
+                    <ChartScrolly {...chartParams1} R={0.001} />
+                </div>
+                <div class="chart-two">
+                    <ChartScrolly {...chartParams2} R={0.00001} />
+                </div>
+            {:else if value === 3}
+                <div class="chart-one">
+                    <ChartScrolly {...chartParams1} m={0.0001} />
+                </div>
+                <div class="chart-two">
+                    <ChartScrolly {...chartParams2} m={0.00001} />
+                </div>
+            {:else if value === 4}
+                <div class="chart-one">
+                    <ChartScrolly {...chartParams1} n={0.01} />
+                </div>
+                <div class="chart-two">
+                    <ChartScrolly {...chartParams2} n={0.001} />
+                </div>
+            {:else}
+                <div class="chart-one">
+                    <ChartScrolly {...chartParams1} />
+                </div>
+                <div class="chart-two">
+                    <ChartScrolly {...chartParams2} />
+                </div>
+            {/if}
         </div>
     </div>
+    
     <br /><br />
     <p class="body-text">
         In conclusion, each source of voltage loss plays a role in the effectiveness of the fuel cell. 
@@ -100,22 +116,14 @@
     .body-header,
     .body-text {
         padding: 1% 11%;
-
     }
 
-    #chart1,
-    #chart2 {
+    .chart-one, .chart-two {
         width: 100%;
-        height: 100%;
-    }
-    .chart-one {
-        width: 100%;
-        height: 100%;
+        height: 80%;
         border: 3px solid skyblue;
     }
     .chart-two {
-        width: 100%;
-        height: 100%;
         border: 3px solid coral;
     }
     .spacer {
