@@ -11,8 +11,7 @@
     const R =  30e-6;
     const m =  3e-5;
     const n =  8e-3;
-
-    let value;
+    
     let steps = [];
 
         steps = [

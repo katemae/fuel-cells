@@ -5020,11 +5020,7 @@ var app = (function () {
     		c: function create() {
     			div = element("div");
     			if (default_slot) default_slot.c();
-<<<<<<< HEAD
-    			add_location(div, file$4, 80, 2, 2222);
-=======
-    			add_location(div, file$5, 80, 2, 2142);
->>>>>>> d97bccf9d96c8c8271e416e48f248c2a03d730c1
+    			add_location(div, file$5, 80, 2, 2222);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -23979,11 +23975,7 @@ var app = (function () {
     	return child_ctx;
     }
 
-<<<<<<< HEAD
-    // (70:16) {#each steps as step, i}
-=======
-    // (36:16) {#each steps as step, i}
->>>>>>> d97bccf9d96c8c8271e416e48f248c2a03d730c1
+    // (47:16) {#each steps as step, i}
     function create_each_block$1(ctx) {
     	let div1;
     	let div0;
@@ -24001,23 +23993,13 @@ var app = (function () {
     			t = space();
     			p = element("p");
     			attr_dev(h1, "class", "step-title");
-<<<<<<< HEAD
-    			add_location(h1, file$3, 72, 28, 3902);
-    			add_location(p, file$3, 73, 28, 3988);
-    			attr_dev(div0, "class", "step-content svelte-i8wxvj");
-    			add_location(div0, file$3, 71, 24, 3846);
-    			attr_dev(div1, "class", "step svelte-i8wxvj");
-    			toggle_class(div1, "active", /*value*/ ctx[0] === /*i*/ ctx[6]);
-    			add_location(div1, file$3, 70, 20, 3775);
-=======
-    			add_location(h1, file$3, 38, 28, 1212);
-    			add_location(p, file$3, 39, 28, 1297);
+    			add_location(h1, file$3, 49, 28, 3040);
+    			add_location(p, file$3, 50, 28, 3126);
     			attr_dev(div0, "class", "step-content svelte-3xf48k");
-    			add_location(div0, file$3, 37, 24, 1157);
+    			add_location(div0, file$3, 48, 24, 2984);
     			attr_dev(div1, "class", "step svelte-3xf48k");
     			toggle_class(div1, "active", /*value*/ ctx[0] === /*i*/ ctx[7]);
-    			add_location(div1, file$3, 36, 20, 1087);
->>>>>>> d97bccf9d96c8c8271e416e48f248c2a03d730c1
+    			add_location(div1, file$3, 47, 20, 2913);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div1, anchor);
@@ -24029,6 +24011,7 @@ var app = (function () {
     			p.innerHTML = raw1_value;
     		},
     		p: function update(ctx, dirty) {
+    			if (dirty & /*steps*/ 2 && raw0_value !== (raw0_value = katexify(/*step*/ ctx[5].title) + "")) h1.innerHTML = raw0_value;			if (dirty & /*steps*/ 2 && raw1_value !== (raw1_value = /*step*/ ctx[5].content + "")) p.innerHTML = raw1_value;
     			if (dirty & /*value*/ 1) {
     				toggle_class(div1, "active", /*value*/ ctx[0] === /*i*/ ctx[7]);
     			}
@@ -24042,22 +24025,14 @@ var app = (function () {
     		block,
     		id: create_each_block$1.name,
     		type: "each",
-<<<<<<< HEAD
-    		source: "(70:16) {#each steps as step, i}",
-=======
-    		source: "(36:16) {#each steps as step, i}",
->>>>>>> d97bccf9d96c8c8271e416e48f248c2a03d730c1
+    		source: "(47:16) {#each steps as step, i}",
     		ctx
     	});
 
     	return block;
     }
 
-<<<<<<< HEAD
-    // (69:12) <Scrolly bind:value>
-=======
-    // (35:12) <Scrolly bind:value>
->>>>>>> d97bccf9d96c8c8271e416e48f248c2a03d730c1
+    // (46:12) <Scrolly bind:value>
     function create_default_slot(ctx) {
     	let t;
     	let div;
@@ -24077,13 +24052,8 @@ var app = (function () {
 
     			t = space();
     			div = element("div");
-<<<<<<< HEAD
-    			attr_dev(div, "class", "spacer svelte-i8wxvj");
-    			add_location(div, file$3, 77, 16, 4118);
-=======
     			attr_dev(div, "class", "spacer svelte-3xf48k");
-    			add_location(div, file$3, 43, 16, 1423);
->>>>>>> d97bccf9d96c8c8271e416e48f248c2a03d730c1
+    			add_location(div, file$3, 54, 16, 3256);
     		},
     		m: function mount(target, anchor) {
     			for (let i = 0; i < each_blocks.length; i += 1) {
@@ -24131,17 +24101,14 @@ var app = (function () {
     		block,
     		id: create_default_slot.name,
     		type: "slot",
-<<<<<<< HEAD
-    		source: "(69:12) <Scrolly bind:value>",
-=======
-    		source: "(35:12) <Scrolly bind:value>",
+    		source: "(46:12) <Scrolly bind:value>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (83:12) {:else}
+    // (94:12) {:else}
     function create_else_block$1(ctx) {
     	let div0;
     	let chartscrolly0;
@@ -24181,9 +24148,9 @@ var app = (function () {
     			div1 = element("div");
     			create_component(chartscrolly1.$$.fragment);
     			attr_dev(div0, "class", "chart-one svelte-3xf48k");
-    			add_location(div0, file$3, 83, 16, 3008);
+    			add_location(div0, file$3, 94, 16, 4881);
     			attr_dev(div1, "class", "chart-two svelte-3xf48k");
-    			add_location(div1, file$3, 86, 16, 3126);
+    			add_location(div1, file$3, 97, 16, 5002);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div0, anchor);
@@ -24230,14 +24197,14 @@ var app = (function () {
     		block,
     		id: create_else_block$1.name,
     		type: "else",
-    		source: "(83:12) {:else}",
+    		source: "(94:12) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (76:34) 
+    // (87:34) 
     function create_if_block_4$1(ctx) {
     	let div0;
     	let chartscrolly0;
@@ -24277,9 +24244,9 @@ var app = (function () {
     			div1 = element("div");
     			create_component(chartscrolly1.$$.fragment);
     			attr_dev(div0, "class", "chart-one svelte-3xf48k");
-    			add_location(div0, file$3, 76, 16, 2733);
+    			add_location(div0, file$3, 87, 16, 4599);
     			attr_dev(div1, "class", "chart-two svelte-3xf48k");
-    			add_location(div1, file$3, 79, 16, 2860);
+    			add_location(div1, file$3, 90, 16, 4729);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div0, anchor);
@@ -24332,14 +24299,14 @@ var app = (function () {
     		block,
     		id: create_if_block_4$1.name,
     		type: "if",
-    		source: "(76:34) ",
+    		source: "(87:34) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (69:34) 
+    // (80:34) 
     function create_if_block_3$1(ctx) {
     	let div0;
     	let chartscrolly0;
@@ -24379,9 +24346,9 @@ var app = (function () {
     			div1 = element("div");
     			create_component(chartscrolly1.$$.fragment);
     			attr_dev(div0, "class", "chart-one svelte-3xf48k");
-    			add_location(div0, file$3, 69, 16, 2439);
+    			add_location(div0, file$3, 80, 16, 4298);
     			attr_dev(div1, "class", "chart-two svelte-3xf48k");
-    			add_location(div1, file$3, 72, 16, 2568);
+    			add_location(div1, file$3, 83, 16, 4430);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div0, anchor);
@@ -24434,14 +24401,14 @@ var app = (function () {
     		block,
     		id: create_if_block_3$1.name,
     		type: "if",
-    		source: "(69:34) ",
+    		source: "(80:34) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (62:34) 
+    // (73:34) 
     function create_if_block_2$1(ctx) {
     	let div0;
     	let chartscrolly0;
@@ -24481,9 +24448,9 @@ var app = (function () {
     			div1 = element("div");
     			create_component(chartscrolly1.$$.fragment);
     			attr_dev(div0, "class", "chart-one svelte-3xf48k");
-    			add_location(div0, file$3, 62, 16, 2146);
+    			add_location(div0, file$3, 73, 16, 3998);
     			attr_dev(div1, "class", "chart-two svelte-3xf48k");
-    			add_location(div1, file$3, 65, 16, 2274);
+    			add_location(div1, file$3, 76, 16, 4129);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div0, anchor);
@@ -24536,14 +24503,14 @@ var app = (function () {
     		block,
     		id: create_if_block_2$1.name,
     		type: "if",
-    		source: "(62:34) ",
+    		source: "(73:34) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (55:34) 
+    // (66:34) 
     function create_if_block_1$1(ctx) {
     	let div0;
     	let chartscrolly0;
@@ -24583,9 +24550,9 @@ var app = (function () {
     			div1 = element("div");
     			create_component(chartscrolly1.$$.fragment);
     			attr_dev(div0, "class", "chart-one svelte-3xf48k");
-    			add_location(div0, file$3, 55, 16, 1858);
+    			add_location(div0, file$3, 66, 16, 3703);
     			attr_dev(div1, "class", "chart-two svelte-3xf48k");
-    			add_location(div1, file$3, 58, 16, 1984);
+    			add_location(div1, file$3, 69, 16, 3832);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div0, anchor);
@@ -24638,14 +24605,14 @@ var app = (function () {
     		block,
     		id: create_if_block_1$1.name,
     		type: "if",
-    		source: "(55:34) ",
+    		source: "(66:34) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (48:12) {#if value === 0}
+    // (59:12) {#if value === 0}
     function create_if_block$1(ctx) {
     	let div0;
     	let chartscrolly0;
@@ -24685,9 +24652,9 @@ var app = (function () {
     			div1 = element("div");
     			create_component(chartscrolly1.$$.fragment);
     			attr_dev(div0, "class", "chart-one svelte-3xf48k");
-    			add_location(div0, file$3, 48, 16, 1569);
+    			add_location(div0, file$3, 59, 16, 3407);
     			attr_dev(div1, "class", "chart-two svelte-3xf48k");
-    			add_location(div1, file$3, 51, 16, 1696);
+    			add_location(div1, file$3, 62, 16, 3537);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div0, anchor);
@@ -24740,8 +24707,7 @@ var app = (function () {
     		block,
     		id: create_if_block$1.name,
     		type: "if",
-    		source: "(48:12) {#if value === 0}",
->>>>>>> d97bccf9d96c8c8271e416e48f248c2a03d730c1
+    		source: "(59:12) {#if value === 0}",
     		ctx
     	});
 
@@ -24814,11 +24780,7 @@ var app = (function () {
     			h2.textContent = "Understanding the Parameters";
     			t1 = space();
     			p0 = element("p");
-<<<<<<< HEAD
     			p0.textContent = "Ideally, a fuel cell would operate at its theoretical voltage of 1.2 volts, no matter the condition. \r\n    However, fuel cells in real life are not perfect; factors such as temperature, pressure of the fuel, materials, and construction all contribute to fuel cell voltage losses, also known as irreversibilities.\r\n    Each parameter of this fitted characterization curve helps describe a different type of loss.";
-=======
-    			p0.textContent = "Description... understanding the difference between high and low values for each is important because...";
->>>>>>> d97bccf9d96c8c8271e416e48f248c2a03d730c1
     			t3 = space();
     			section = element("section");
     			div2 = element("div");
@@ -24832,51 +24794,22 @@ var app = (function () {
     			br1 = element("br");
     			t6 = space();
     			p1 = element("p");
-<<<<<<< HEAD
     			p1.textContent = "In conclusion, each source of voltage loss plays a role in the effectiveness of the fuel cell. \r\n        From the current-density versus voltage curve, these parameters can be fitted from collected data, and key sources of fuel cell losses can be determined.\r\n        Therefore, with a solid understanding of this characterization method, better fuel cells can be designed for an energy efficient future.\r\n        (Note: this website provides a simplified view of this curve; lots of active research is still being done to accurately model a fuel cell's behavior, especially at extreme temperatures and pressures.)";
-    			attr_dev(h2, "class", "body-header svelte-i8wxvj");
-    			add_location(h2, file$3, 58, 0, 3056);
-    			attr_dev(p0, "class", "body-text svelte-i8wxvj");
-    			add_location(p0, file$3, 59, 0, 3115);
-    			attr_dev(div0, "class", "steps-container svelte-i8wxvj");
-    			add_location(div0, file$3, 67, 8, 3648);
-    			attr_dev(svg0, "id", "chart1");
-    			attr_dev(svg0, "class", "svelte-i8wxvj");
-    			add_location(svg0, file$3, 82, 16, 4275);
-    			attr_dev(div1, "class", "chart-one svelte-i8wxvj");
-    			add_location(div1, file$3, 81, 12, 4234);
-    			attr_dev(svg1, "id", "chart2");
-    			attr_dev(svg1, "class", "svelte-i8wxvj");
-    			add_location(svg1, file$3, 85, 16, 4369);
-    			attr_dev(div2, "class", "chart-two svelte-i8wxvj");
-    			add_location(div2, file$3, 84, 12, 4328);
-    			attr_dev(div3, "class", "charts-container svelte-i8wxvj");
-    			add_location(div3, file$3, 80, 8, 4190);
-    			attr_dev(div4, "class", "section-container svelte-i8wxvj");
-    			add_location(div4, file$3, 66, 4, 3607);
-    			add_location(br0, file$3, 89, 4, 4442);
-    			add_location(br1, file$3, 89, 10, 4448);
-    			attr_dev(p1, "class", "body-text svelte-i8wxvj");
-    			add_location(p1, file$3, 90, 4, 4460);
-    			add_location(section, file$3, 64, 0, 3561);
-=======
-    			p1.textContent = "conclusions about variables ...";
     			attr_dev(h2, "class", "body-header svelte-3xf48k");
-    			add_location(h2, file$3, 26, 0, 686);
+    			add_location(h2, file$3, 35, 0, 2194);
     			attr_dev(p0, "class", "body-text svelte-3xf48k");
-    			add_location(p0, file$3, 27, 0, 743);
+    			add_location(p0, file$3, 36, 0, 2253);
     			attr_dev(div0, "class", "steps-container svelte-3xf48k");
-    			add_location(div0, file$3, 33, 8, 963);
+    			add_location(div0, file$3, 44, 8, 2786);
     			attr_dev(div1, "class", "charts-container svelte-3xf48k");
-    			add_location(div1, file$3, 46, 8, 1492);
+    			add_location(div1, file$3, 57, 8, 3328);
     			attr_dev(div2, "class", "section-container svelte-3xf48k");
-    			add_location(div2, file$3, 32, 4, 923);
-    			add_location(br0, file$3, 93, 4, 3281);
-    			add_location(br1, file$3, 93, 10, 3287);
+    			add_location(div2, file$3, 43, 4, 2745);
+    			add_location(br0, file$3, 104, 4, 5164);
+    			add_location(br1, file$3, 104, 10, 5170);
     			attr_dev(p1, "class", "body-text svelte-3xf48k");
-    			add_location(p1, file$3, 94, 4, 3298);
-    			add_location(section, file$3, 30, 0, 879);
->>>>>>> d97bccf9d96c8c8271e416e48f248c2a03d730c1
+    			add_location(p1, file$3, 105, 4, 5182);
+    			add_location(section, file$3, 41, 0, 2699);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -24903,7 +24836,7 @@ var app = (function () {
     		p: function update(ctx, [dirty]) {
     			const scrolly_changes = {};
 
-    			if (dirty & /*$$scope, value*/ 257) {
+    			if (dirty & /*$$scope, steps, value*/ 259) {
     				scrolly_changes.$$scope = { dirty, ctx };
     			}
 
@@ -24983,8 +24916,9 @@ var app = (function () {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('VariablesScrolly', slots, []);
     	let { value } = $$props;
+    	let steps = [];
 
-    	let steps = [
+    	steps = [
     		{
     			title: 'Activation Losses: E_0 and b',
     			content: "Activation losses arise from the rate of the reaction at each electrode. E_0 encompasses the voltage differential between the reversible voltage and the measured voltage. b comes from the non-linear Tafel equation, which describes the variation in reaction rate at different current densities. A higher b indicates a slower reaction. Together, they form the low current density region."
