@@ -58,7 +58,7 @@
             .attr('y', margin.bottom - 10)
             .attr('fill', '#000')
             .attr('font-size', '16px') 
-            .text('Voltage (V)')
+            .text('Current Density (mA/cm^2)')
             .attr('text-anchor', 'middle');
 
         g.append('g')
@@ -70,7 +70,7 @@
             .attr('dy', '0.71em')
             .attr('fill', '#000')
             .attr('font-size', '16px') 
-            .text('Current Density (mA/cm^2)')
+            .text('Voltage (V)')
             .attr('text-anchor', 'middle');
             
 
