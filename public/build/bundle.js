@@ -4957,7 +4957,7 @@ var app = (function () {
     		c: function create() {
     			div = element("div");
     			if (default_slot) default_slot.c();
-    			add_location(div, file$4, 80, 2, 2142);
+    			add_location(div, file$4, 80, 2, 2222);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -23672,7 +23672,7 @@ var app = (function () {
     	return child_ctx;
     }
 
-    // (61:16) {#each steps as step, i}
+    // (70:16) {#each steps as step, i}
     function create_each_block$1(ctx) {
     	let div1;
     	let div0;
@@ -23690,13 +23690,13 @@ var app = (function () {
     			t = space();
     			p = element("p");
     			attr_dev(h1, "class", "step-title");
-    			add_location(h1, file$3, 63, 28, 2104);
-    			add_location(p, file$3, 64, 28, 2189);
+    			add_location(h1, file$3, 72, 28, 3902);
+    			add_location(p, file$3, 73, 28, 3988);
     			attr_dev(div0, "class", "step-content svelte-i8wxvj");
-    			add_location(div0, file$3, 62, 24, 2049);
+    			add_location(div0, file$3, 71, 24, 3846);
     			attr_dev(div1, "class", "step svelte-i8wxvj");
     			toggle_class(div1, "active", /*value*/ ctx[0] === /*i*/ ctx[6]);
-    			add_location(div1, file$3, 61, 20, 1979);
+    			add_location(div1, file$3, 70, 20, 3775);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div1, anchor);
@@ -23722,14 +23722,14 @@ var app = (function () {
     		block,
     		id: create_each_block$1.name,
     		type: "each",
-    		source: "(61:16) {#each steps as step, i}",
+    		source: "(70:16) {#each steps as step, i}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (60:12) <Scrolly bind:value>
+    // (69:12) <Scrolly bind:value>
     function create_default_slot(ctx) {
     	let t;
     	let div;
@@ -23750,7 +23750,7 @@ var app = (function () {
     			t = space();
     			div = element("div");
     			attr_dev(div, "class", "spacer svelte-i8wxvj");
-    			add_location(div, file$3, 68, 16, 2315);
+    			add_location(div, file$3, 77, 16, 4118);
     		},
     		m: function mount(target, anchor) {
     			for (let i = 0; i < each_blocks.length; i += 1) {
@@ -23798,7 +23798,7 @@ var app = (function () {
     		block,
     		id: create_default_slot.name,
     		type: "slot",
-    		source: "(60:12) <Scrolly bind:value>",
+    		source: "(69:12) <Scrolly bind:value>",
     		ctx
     	});
 
@@ -23848,10 +23848,10 @@ var app = (function () {
     	const block = {
     		c: function create() {
     			h2 = element("h2");
-    			h2.textContent = "Understanding the Variables";
+    			h2.textContent = "Understanding the Parameters";
     			t1 = space();
     			p0 = element("p");
-    			p0.textContent = "description ... understanding the difference between high and low values for each is important bc ... etc...";
+    			p0.textContent = "Ideally, a fuel cell would operate at its theoretical voltage of 1.2 volts, no matter the condition. \r\n    However, fuel cells in real life are not perfect; factors such as temperature, pressure of the fuel, materials, and construction all contribute to fuel cell voltage losses, also known as irreversibilities.\r\n    Each parameter of this fitted characterization curve helps describe a different type of loss.";
     			t3 = space();
     			section = element("section");
     			div4 = element("div");
@@ -23869,32 +23869,32 @@ var app = (function () {
     			br1 = element("br");
     			t7 = space();
     			p1 = element("p");
-    			p1.textContent = "conclusions about variables ...";
+    			p1.textContent = "In conclusion, each source of voltage loss plays a role in the effectiveness of the fuel cell. \r\n        From the current-density versus voltage curve, these parameters can be fitted from collected data, and key sources of fuel cell losses can be determined.\r\n        Therefore, with a solid understanding of this characterization method, better fuel cells can be designed for an energy efficient future.\r\n        (Note: this website provides a simplified view of this curve; lots of active research is still being done to accurately model a fuel cell's behavior, especially at extreme temperatures and pressures.)";
     			attr_dev(h2, "class", "body-header svelte-i8wxvj");
-    			add_location(h2, file$3, 51, 0, 1574);
+    			add_location(h2, file$3, 58, 0, 3056);
     			attr_dev(p0, "class", "body-text svelte-i8wxvj");
-    			add_location(p0, file$3, 52, 0, 1631);
+    			add_location(p0, file$3, 59, 0, 3115);
     			attr_dev(div0, "class", "steps-container svelte-i8wxvj");
-    			add_location(div0, file$3, 58, 8, 1855);
+    			add_location(div0, file$3, 67, 8, 3648);
     			attr_dev(svg0, "id", "chart1");
     			attr_dev(svg0, "class", "svelte-i8wxvj");
-    			add_location(svg0, file$3, 73, 16, 2467);
+    			add_location(svg0, file$3, 82, 16, 4275);
     			attr_dev(div1, "class", "chart-one svelte-i8wxvj");
-    			add_location(div1, file$3, 72, 12, 2427);
+    			add_location(div1, file$3, 81, 12, 4234);
     			attr_dev(svg1, "id", "chart2");
     			attr_dev(svg1, "class", "svelte-i8wxvj");
-    			add_location(svg1, file$3, 76, 16, 2558);
+    			add_location(svg1, file$3, 85, 16, 4369);
     			attr_dev(div2, "class", "chart-two svelte-i8wxvj");
-    			add_location(div2, file$3, 75, 12, 2518);
+    			add_location(div2, file$3, 84, 12, 4328);
     			attr_dev(div3, "class", "charts-container svelte-i8wxvj");
-    			add_location(div3, file$3, 71, 8, 2384);
+    			add_location(div3, file$3, 80, 8, 4190);
     			attr_dev(div4, "class", "section-container svelte-i8wxvj");
-    			add_location(div4, file$3, 57, 4, 1815);
-    			add_location(br0, file$3, 80, 4, 2627);
-    			add_location(br1, file$3, 80, 10, 2633);
+    			add_location(div4, file$3, 66, 4, 3607);
+    			add_location(br0, file$3, 89, 4, 4442);
+    			add_location(br1, file$3, 89, 10, 4448);
     			attr_dev(p1, "class", "body-text svelte-i8wxvj");
-    			add_location(p1, file$3, 81, 4, 2644);
-    			add_location(section, file$3, 55, 0, 1771);
+    			add_location(p1, file$3, 90, 4, 4460);
+    			add_location(section, file$3, 64, 0, 3561);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -23981,13 +23981,21 @@ var app = (function () {
 
     	steps = [
     		{
-    			title: 'E_0',
-    			content: ".... desc for E_0"
+    			title: 'Activation Losses: E_0 and b',
+    			content: "Activation losses arise from the rate of the reaction at each electrode. E_0 encompasses the voltage differential between the reversible voltage and the measured voltage. b comes from the non-linear Tafel equation, which describes the variation in reaction rate at different current densities. A higher b indicates a slower reaction. Together, they form the low current density region."
     		},
-    		{ title: 'b', content: ".... desc for b" },
-    		{ title: 'R', content: ".... desc for R" },
-    		{ title: 'm', content: ".... desc for m" },
-    		{ title: 'n', content: ".... desc for n" }
+    		{
+    			title: 'Fuel Crossover and Internal Currents',
+    			content: "An extra source of voltage loss is observed from the imperfect electrolyte. The electrolyte, despite its electronic resistivity, still lets through a small amount of electrons. Additionally, some hydrogen gas can diffuse through the electrolyte to react with the oxygen. Both result in voltage drop within the observed voltage."
+    		},
+    		{
+    			title: 'Ohmic Losses: R',
+    			content: "As implied in the name, ohmic losses come from interal resistance of the fuel cell. Internal resistance is affected by factors such as electrical conductivity of the electrodes and the ionic conductivity of the electrolyte. The ohmic losses describe the intermediate current density region, which is mostly linear."
+    		},
+    		{
+    			title: 'Mass Transfer Losses: m and n',
+    			content: "Lastly, mass transfer losses materialize from the concentration of gasses at each electrode. When hydrogen or oxygen gas is reacted, its partial pressure drops, reducing voltage. m and n are empirical parameters, providing a nice fit to the curve. Mass transfer losses dominate in the high current density region."
+    		}
     	];
 
     	const target2event = {

@@ -15,11 +15,18 @@
     let steps = [];
 
         steps = [
-            { title: 'E_0', content: ".... desc for E_0" },
-            { title: 'b', content: ".... desc for b" },
-            { title: 'R', content: ".... desc for R" },
-            { title: 'm', content: ".... desc for m" },
-            { title: 'n', content: ".... desc for n" },
+            { title: 'Activation Losses: E_0 and b', 
+            content: "Activation losses arise from the rate of the reaction at each electrode. E_0 encompasses the voltage differential between the reversible voltage and the measured voltage. b comes from the non-linear Tafel equation, which describes the variation in reaction rate at different current densities. A higher b indicates a slower reaction. Together, they form the low current density region." 
+            },
+            { title: 'Fuel Crossover and Internal Currents', 
+            content: "An extra source of voltage loss is observed from the imperfect electrolyte. The electrolyte, despite its electronic resistivity, still lets through a small amount of electrons. Additionally, some hydrogen gas can diffuse through the electrolyte to react with the oxygen. Both result in voltage drop within the observed voltage."
+            },
+            { title: 'Ohmic Losses: R', 
+            content: "As implied in the name, ohmic losses come from interal resistance of the fuel cell. Internal resistance is affected by factors such as electrical conductivity of the electrodes and the ionic conductivity of the electrolyte. The ohmic losses describe the intermediate current density region, which is mostly linear." 
+            },
+            { title: 'Mass Transfer Losses: m and n', 
+            content: "Lastly, mass transfer losses materialize from the concentration of gasses at each electrode. When hydrogen or oxygen gas is reacted, its partial pressure drops, reducing voltage. m and n are empirical parameters, providing a nice fit to the curve. Mass transfer losses dominate in the high current density region."
+            }
         ];
 
 
@@ -49,9 +56,11 @@
     $: if (typeof value !== "undefined") target2event[value]();
 </script>
 
-<h2 class="body-header">Understanding the Variables</h2>
+<h2 class="body-header">Understanding the Parameters</h2>
 <p class="body-text">
-    description ... understanding the difference between high and low values for each is important bc ... etc...
+    Ideally, a fuel cell would operate at its theoretical voltage of 1.2 volts, no matter the condition. 
+    However, fuel cells in real life are not perfect; factors such as temperature, pressure of the fuel, materials, and construction all contribute to fuel cell voltage losses, also known as irreversibilities.
+    Each parameter of this fitted characterization curve helps describe a different type of loss.
 </p>
 <section>
     <!-- scroll container -->
@@ -79,7 +88,12 @@
         </div>
     </div>
     <br /><br />
-    <p class="body-text">conclusions about variables ... </p>
+    <p class="body-text">
+        In conclusion, each source of voltage loss plays a role in the effectiveness of the fuel cell. 
+        From the current-density versus voltage curve, these parameters can be fitted from collected data, and key sources of fuel cell losses can be determined.
+        Therefore, with a solid understanding of this characterization method, better fuel cells can be designed for an energy efficient future.
+        (Note: this website provides a simplified view of this curve; lots of active research is still being done to accurately model a fuel cell's behavior, especially at extreme temperatures and pressures.)
+    </p>
 </section>
 
 <style>
