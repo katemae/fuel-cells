@@ -303,6 +303,17 @@ var app = (function () {
         get_current_component().$$.on_mount.push(fn);
     }
     /**
+     * Schedules a callback to run immediately before the component is unmounted.
+     *
+     * Out of `onMount`, `beforeUpdate`, `afterUpdate` and `onDestroy`, this is the
+     * only one that runs inside a server-side component.
+     *
+     * https://svelte.dev/docs#run-time-svelte-ondestroy
+     */
+    function onDestroy(fn) {
+        get_current_component().$$.on_destroy.push(fn);
+    }
+    /**
      * Associates an arbitrary `context` object with the current component and the specified `key`
      * and returns that object. The context is then available to children of the component
      * (including slotted content) with `getContext`.
@@ -5126,7 +5137,7 @@ var app = (function () {
     		c: function create() {
     			div = element("div");
     			if (default_slot) default_slot.c();
-    			add_location(div, file$6, 80, 2, 2222);
+    			add_location(div, file$6, 80, 2, 2142);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -5379,11 +5390,11 @@ var app = (function () {
     		c: function create() {
     			div = element("div");
     			svg_1 = svg_element("svg");
-    			attr_dev(svg_1, "class", "svelte-1syunp1");
-    			add_location(svg_1, file$5, 100, 4, 3084);
+    			attr_dev(svg_1, "class", "svelte-uvxlpj");
+    			add_location(svg_1, file$5, 108, 4, 3248);
     			set_style(div, "width", "100%");
     			set_style(div, "height", "100%");
-    			add_location(div, file$5, 99, 0, 3016);
+    			add_location(div, file$5, 107, 0, 3180);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -5438,10 +5449,14 @@ var app = (function () {
     		return data;
     	}
 
-    	function drawChart() {
-    		if (!container) return; // Fitting chart to container, otherwise dimensions get crazy
+    	function updateDimensions() {
+    		if (!container) return;
     		const width = container.clientWidth - margin.left - margin.right;
     		const height = container.clientHeight - margin.top - margin.bottom;
+    		drawChart(width, height);
+    	}
+
+    	function drawChart(width, height) {
     		const data = getLineData();
     		const xScale = linear().domain([0, 1000]).range([0, width]);
     		const yScale = linear().domain([0, 1.5]).range([height, 0]);
@@ -5450,16 +5465,20 @@ var app = (function () {
     		const lineGenerator = line().x(d => xScale(d.i)).y(d => yScale(d.E));
     		select(svg).selectAll('*').remove();
     		const g = select(svg).attr('width', width + margin.left + margin.right).attr('height', height + margin.top + margin.bottom).append('g').attr('transform', `translate(${margin.left},${margin.top})`);
-    		g.append('g').attr('transform', `translate(0,${height})`).call(xAxis).append('text').attr('x', width / 2).attr('y', margin.bottom - 10).attr('fill', '#000').attr('font-size', '16px').text('Current Density (mA/cm^2)').attr('text-anchor', 'middle');
-    		g.append('g').call(yAxis).append('text').attr('transform', 'rotate(-90)').attr('y', -margin.left + 10).attr('x', -height / 2).attr('dy', '0.71em').attr('fill', '#000').attr('font-size', '16px').text('Voltage (V)').attr('text-anchor', 'middle');
+    		g.append('g').attr('transform', `translate(0,${height})`).call(xAxis).append('text').attr('x', width / 2).attr('y', margin.bottom - 5).attr('fill', '#000').attr('font-size', '14px').text('Current Density (mA/cm^2)').attr('text-anchor', 'middle');
+    		g.append('g').call(yAxis).append('text').attr('transform', 'rotate(-90)').attr('y', -margin.left + 5).attr('x', -height / 2).attr('dy', '0.71em').attr('fill', '#000').attr('font-size', '14px').text('Voltage (V)').attr('text-anchor', 'middle');
     		g.append('path').datum(data).attr('fill', 'none').attr('stroke', 'steelblue').attr('stroke-width', 1.5).attr('d', lineGenerator);
     	}
 
     	onMount(() => {
-    		drawChart();
+    		updateDimensions();
+    		window.addEventListener('resize', updateDimensions);
     	});
 
-    	// Emit chart container for external styling
+    	onDestroy(() => {
+    		window.removeEventListener('resize', updateDimensions);
+    	});
+
     	setContext('chartContainer', container);
 
     	$$self.$$.on_mount.push(function () {
@@ -5514,6 +5533,7 @@ var app = (function () {
 
     	$$self.$capture_state = () => ({
     		onMount,
+    		onDestroy,
     		setContext,
     		scaleLinear: linear,
     		select,
@@ -5529,6 +5549,7 @@ var app = (function () {
     		container,
     		margin,
     		getLineData,
+    		updateDimensions,
     		drawChart
     	});
 
@@ -5548,7 +5569,7 @@ var app = (function () {
     	}
 
     	{
-    		drawChart();
+    		updateDimensions();
     	}
 
     	return [svg, container, E0, b, R, m, n, svg_1_binding, div_binding];
@@ -24086,24 +24107,26 @@ var app = (function () {
     	let div1;
     	let div0;
     	let h1;
-    	let raw0_value = katexify(/*step*/ ctx[5].title) + "";
-    	let t;
+    	let t0_value = /*step*/ ctx[5].title + "";
+    	let t0;
+    	let t1;
     	let p;
-    	let raw1_value = /*step*/ ctx[5].content + "";
+    	let raw_value = /*step*/ ctx[5].content + "";
 
     	const block = {
     		c: function create() {
     			div1 = element("div");
     			div0 = element("div");
     			h1 = element("h1");
-    			t = space();
+    			t0 = text$2(t0_value);
+    			t1 = space();
     			p = element("p");
     			attr_dev(h1, "class", "step-title");
     			add_location(h1, file$4, 49, 28, 3040);
-    			add_location(p, file$4, 50, 28, 3126);
-    			attr_dev(div0, "class", "step-content svelte-3xf48k");
+    			add_location(p, file$4, 50, 28, 3110);
+    			attr_dev(div0, "class", "step-content svelte-1itqo5w");
     			add_location(div0, file$4, 48, 24, 2984);
-    			attr_dev(div1, "class", "step svelte-3xf48k");
+    			attr_dev(div1, "class", "step svelte-1itqo5w");
     			toggle_class(div1, "active", /*value*/ ctx[0] === /*i*/ ctx[7]);
     			add_location(div1, file$4, 47, 20, 2913);
     		},
@@ -24111,13 +24134,14 @@ var app = (function () {
     			insert_dev(target, div1, anchor);
     			append_dev(div1, div0);
     			append_dev(div0, h1);
-    			h1.innerHTML = raw0_value;
-    			append_dev(div0, t);
+    			append_dev(h1, t0);
+    			append_dev(div0, t1);
     			append_dev(div0, p);
-    			p.innerHTML = raw1_value;
+    			p.innerHTML = raw_value;
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*steps*/ 2 && raw0_value !== (raw0_value = katexify(/*step*/ ctx[5].title) + "")) h1.innerHTML = raw0_value;			if (dirty & /*steps*/ 2 && raw1_value !== (raw1_value = /*step*/ ctx[5].content + "")) p.innerHTML = raw1_value;
+    			if (dirty & /*steps*/ 2 && t0_value !== (t0_value = /*step*/ ctx[5].title + "")) set_data_dev(t0, t0_value);
+    			if (dirty & /*steps*/ 2 && raw_value !== (raw_value = /*step*/ ctx[5].content + "")) p.innerHTML = raw_value;
     			if (dirty & /*value*/ 1) {
     				toggle_class(div1, "active", /*value*/ ctx[0] === /*i*/ ctx[7]);
     			}
@@ -24158,8 +24182,8 @@ var app = (function () {
 
     			t = space();
     			div = element("div");
-    			attr_dev(div, "class", "spacer svelte-3xf48k");
-    			add_location(div, file$4, 54, 16, 3256);
+    			attr_dev(div, "class", "spacer svelte-1itqo5w");
+    			add_location(div, file$4, 54, 16, 3240);
     		},
     		m: function mount(target, anchor) {
     			for (let i = 0; i < each_blocks.length; i += 1) {
@@ -24172,7 +24196,7 @@ var app = (function () {
     			insert_dev(target, div, anchor);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*value, steps, katexify*/ 3) {
+    			if (dirty & /*value, steps*/ 3) {
     				each_value = /*steps*/ ctx[1];
     				validate_each_argument(each_value);
     				let i;
@@ -24253,10 +24277,10 @@ var app = (function () {
     			t = space();
     			div1 = element("div");
     			create_component(chartscrolly1.$$.fragment);
-    			attr_dev(div0, "class", "chart-one svelte-3xf48k");
-    			add_location(div0, file$4, 94, 16, 4881);
-    			attr_dev(div1, "class", "chart-two svelte-3xf48k");
-    			add_location(div1, file$4, 97, 16, 5002);
+    			attr_dev(div0, "class", "chart-one svelte-1itqo5w");
+    			add_location(div0, file$4, 94, 16, 4865);
+    			attr_dev(div1, "class", "chart-two svelte-1itqo5w");
+    			add_location(div1, file$4, 97, 16, 4986);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div0, anchor);
@@ -24349,10 +24373,10 @@ var app = (function () {
     			t = space();
     			div1 = element("div");
     			create_component(chartscrolly1.$$.fragment);
-    			attr_dev(div0, "class", "chart-one svelte-3xf48k");
-    			add_location(div0, file$4, 87, 16, 4599);
-    			attr_dev(div1, "class", "chart-two svelte-3xf48k");
-    			add_location(div1, file$4, 90, 16, 4729);
+    			attr_dev(div0, "class", "chart-one svelte-1itqo5w");
+    			add_location(div0, file$4, 87, 16, 4583);
+    			attr_dev(div1, "class", "chart-two svelte-1itqo5w");
+    			add_location(div1, file$4, 90, 16, 4713);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div0, anchor);
@@ -24451,10 +24475,10 @@ var app = (function () {
     			t = space();
     			div1 = element("div");
     			create_component(chartscrolly1.$$.fragment);
-    			attr_dev(div0, "class", "chart-one svelte-3xf48k");
-    			add_location(div0, file$4, 80, 16, 4298);
-    			attr_dev(div1, "class", "chart-two svelte-3xf48k");
-    			add_location(div1, file$4, 83, 16, 4430);
+    			attr_dev(div0, "class", "chart-one svelte-1itqo5w");
+    			add_location(div0, file$4, 80, 16, 4282);
+    			attr_dev(div1, "class", "chart-two svelte-1itqo5w");
+    			add_location(div1, file$4, 83, 16, 4414);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div0, anchor);
@@ -24553,10 +24577,10 @@ var app = (function () {
     			t = space();
     			div1 = element("div");
     			create_component(chartscrolly1.$$.fragment);
-    			attr_dev(div0, "class", "chart-one svelte-3xf48k");
-    			add_location(div0, file$4, 73, 16, 3998);
-    			attr_dev(div1, "class", "chart-two svelte-3xf48k");
-    			add_location(div1, file$4, 76, 16, 4129);
+    			attr_dev(div0, "class", "chart-one svelte-1itqo5w");
+    			add_location(div0, file$4, 73, 16, 3982);
+    			attr_dev(div1, "class", "chart-two svelte-1itqo5w");
+    			add_location(div1, file$4, 76, 16, 4113);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div0, anchor);
@@ -24655,10 +24679,10 @@ var app = (function () {
     			t = space();
     			div1 = element("div");
     			create_component(chartscrolly1.$$.fragment);
-    			attr_dev(div0, "class", "chart-one svelte-3xf48k");
-    			add_location(div0, file$4, 66, 16, 3703);
-    			attr_dev(div1, "class", "chart-two svelte-3xf48k");
-    			add_location(div1, file$4, 69, 16, 3832);
+    			attr_dev(div0, "class", "chart-one svelte-1itqo5w");
+    			add_location(div0, file$4, 66, 16, 3687);
+    			attr_dev(div1, "class", "chart-two svelte-1itqo5w");
+    			add_location(div1, file$4, 69, 16, 3816);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div0, anchor);
@@ -24757,10 +24781,10 @@ var app = (function () {
     			t = space();
     			div1 = element("div");
     			create_component(chartscrolly1.$$.fragment);
-    			attr_dev(div0, "class", "chart-one svelte-3xf48k");
-    			add_location(div0, file$4, 59, 16, 3407);
-    			attr_dev(div1, "class", "chart-two svelte-3xf48k");
-    			add_location(div1, file$4, 62, 16, 3537);
+    			attr_dev(div0, "class", "chart-one svelte-1itqo5w");
+    			add_location(div0, file$4, 59, 16, 3391);
+    			attr_dev(div1, "class", "chart-two svelte-1itqo5w");
+    			add_location(div1, file$4, 62, 16, 3521);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div0, anchor);
@@ -24901,20 +24925,20 @@ var app = (function () {
     			t6 = space();
     			p1 = element("p");
     			p1.textContent = "In conclusion, each source of voltage loss plays a role in the effectiveness of the fuel cell. \r\n        From the current-density versus voltage curve, these parameters can be fitted from collected data, and key sources of fuel cell losses can be determined.\r\n        Therefore, with a solid understanding of this characterization method, better fuel cells can be designed for an energy efficient future.\r\n        (Note: this website provides a simplified view of this curve; lots of active research is still being done to accurately model a fuel cell's behavior, especially at extreme temperatures and pressures.)";
-    			attr_dev(h2, "class", "body-header svelte-3xf48k");
+    			attr_dev(h2, "class", "body-header svelte-1itqo5w");
     			add_location(h2, file$4, 35, 0, 2194);
-    			attr_dev(p0, "class", "body-text svelte-3xf48k");
+    			attr_dev(p0, "class", "body-text svelte-1itqo5w");
     			add_location(p0, file$4, 36, 0, 2253);
-    			attr_dev(div0, "class", "steps-container svelte-3xf48k");
+    			attr_dev(div0, "class", "steps-container svelte-1itqo5w");
     			add_location(div0, file$4, 44, 8, 2786);
-    			attr_dev(div1, "class", "charts-container svelte-3xf48k");
-    			add_location(div1, file$4, 57, 8, 3328);
-    			attr_dev(div2, "class", "section-container svelte-3xf48k");
+    			attr_dev(div1, "class", "charts-container svelte-1itqo5w");
+    			add_location(div1, file$4, 57, 8, 3312);
+    			attr_dev(div2, "class", "section-container svelte-1itqo5w");
     			add_location(div2, file$4, 43, 4, 2745);
-    			add_location(br0, file$4, 104, 4, 5164);
-    			add_location(br1, file$4, 104, 10, 5170);
-    			attr_dev(p1, "class", "body-text svelte-3xf48k");
-    			add_location(p1, file$4, 105, 4, 5182);
+    			add_location(br0, file$4, 104, 4, 5148);
+    			add_location(br1, file$4, 104, 10, 5154);
+    			attr_dev(p1, "class", "body-text svelte-1itqo5w");
+    			add_location(p1, file$4, 105, 4, 5166);
     			add_location(section, file$4, 41, 0, 2699);
     		},
     		l: function claim(nodes) {

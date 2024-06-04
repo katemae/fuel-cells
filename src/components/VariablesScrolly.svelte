@@ -47,7 +47,7 @@
                 {#each steps as step, i}
                     <div class="step" class:active={value === i}>
                         <div class="step-content">
-                            <h1 class="step-title">{@html katexify(step.title)}</h1>
+                            <h1 class="step-title">{step.title}</h1>
                             <p>{@html step.content}</p>
                         </div>
                     </div>
@@ -119,12 +119,10 @@
 
     .chart-one, .chart-two {
         width: 100%;
-        height: 80%;
-        border: 3px solid skyblue;
+        height: 85%;
+        background-color: white;
     }
-    .chart-two {
-        border: 3px solid coral;
-    }
+
     .spacer {
         height: 40vh;
     }
@@ -132,28 +130,28 @@
         position: sticky;
         top: 10%;
         display: grid;
-        width: 50%;
+        width: 45%;
         grid-template-columns: 100%;
         grid-row-gap: 2rem;
         grid-column-gap: 0rem;
         grid-template-rows: repeat(2, 1fr);
         height: 85vh;
-        border: 3px solid black;
     }
     .section-container {
         margin-top: 1em;
         text-align: center;
         transition: background 100ms;
         justify-content: center;
-        padding: 0 15%;
+        padding: 0 10%;
         display: flex;
+        gap: 5%;
     }
     
     .step {
         height: 110vh;
         display: flex;
         place-items: center;
-        justify-content: center;
+        justify-content: left;
     }
     .step-content {
         font-size: 18px;
@@ -165,8 +163,8 @@
         justify-content: center;
         transition: background 500ms ease;
         text-align: left;
-        width: 75%;
-        margin: auto;
+        width: 90%;
+        margin-left: 3%;
         max-width: 500px;
         font-family: var(--font-main);
         line-height: 1.3;

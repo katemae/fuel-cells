@@ -1,7 +1,7 @@
 <!-- STATIC CHART FOR SCROLLYTELLING -->
 
 <script>
-    import { onMount, setContext } from 'svelte';
+    import { onMount, onDestroy, setContext } from 'svelte';
     import { scaleLinear, select, axisBottom, axisLeft, line } from 'd3';
 
     export let E0;
@@ -24,10 +24,14 @@
         return data;
     }
 
-    function drawChart() {
-        if (!container) return; // Fitting chart to container, otherwise dimensions get crazy
+    function updateDimensions() {
+        if (!container) return;
         const width = container.clientWidth - margin.left - margin.right;
         const height = container.clientHeight - margin.top - margin.bottom;
+        drawChart(width, height);
+    }
+
+    function drawChart(width, height) {
         const data = getLineData();
         const xScale = scaleLinear().domain([0, 1000]).range([0, width]);
         const yScale = scaleLinear().domain([0, 1.5]).range([height, 0]);
@@ -59,9 +63,9 @@
             .call(xAxis)
             .append('text')
             .attr('x', width / 2)
-            .attr('y', margin.bottom - 10)
+            .attr('y', margin.bottom - 5)
             .attr('fill', '#000')
-            .attr('font-size', '16px')
+            .attr('font-size', '14px')
             .text('Current Density (mA/cm^2)')
             .attr('text-anchor', 'middle');
 
@@ -69,11 +73,11 @@
             .call(yAxis)
             .append('text')
             .attr('transform', 'rotate(-90)')
-            .attr('y', -margin.left + 10)
+            .attr('y', -margin.left + 5)
             .attr('x', -height / 2)
             .attr('dy', '0.71em')
             .attr('fill', '#000')
-            .attr('font-size', '16px')
+            .attr('font-size', '14px')
             .text('Voltage (V)')
             .attr('text-anchor', 'middle');
 
@@ -86,14 +90,18 @@
     }
 
     onMount(() => {
-        drawChart();
+        updateDimensions();
+        window.addEventListener('resize', updateDimensions);
+    });
+
+    onDestroy(() => {
+        window.removeEventListener('resize', updateDimensions);
     });
 
     $: {
-        drawChart();
+        updateDimensions();
     }
 
-    // Emit chart container for external styling
     setContext('chartContainer', container);
 </script>
 
@@ -107,6 +115,6 @@
     }
     svg {
         display: block;
-        margin-bottom: 5%;
+        max-width: 95%;
     }
 </style>
