@@ -1,57 +1,56 @@
 <script>
     import Scrolly from "./Scrolly.svelte";
-    import Chart from "./Chart.svelte";
+    import ChartScrolly from "./ChartScrolly.svelte";
     import katexify from "../katexify";
-    import { select } from "d3-selection";
 
-    // default values
+    export let value; // Declare value as a prop
+
+    // Default values
     const E0 = 1.0;
     const b =  0.05;
     const R =  30e-6;
     const m =  3e-5;
     const n =  8e-3;
 
-    let value;
-    let steps = [];
+    // Define steps
+    let steps = [
+        { title: 'E_0', content: ".... desc for E_0" },
+        { title: 'b', content: ".... desc for b" },
+        { title: 'R', content: ".... desc for R" },
+        { title: 'm', content: ".... desc for m" },
+        { title: 'n', content: ".... desc for n" },
+    ];
 
-        steps = [
-            { title: 'E_0', content: ".... desc for E_0" },
-            { title: 'b', content: ".... desc for b" },
-            { title: 'R', content: ".... desc for R" },
-            { title: 'm', content: ".... desc for m" },
-            { title: 'n', content: ".... desc for n" },
-        ];
+    let chartParams1 = { E0, b, R, m, n };
+    let chartParams2 = { E0, b, R, m, n };
 
-
-    const target2event = {
-        0: () => {
-            select("#chart1").style("background-color", "purple");
-            select("#chart2").style("background-color", "coral");
-        },
-        1: () => {
-            select("#chart1").style("background-color", "red");
-            select("#chart2").style("background-color", "green");
-        },
-        2: () => {
-            select("#chart1").style("background-color", "purple");
-            select("#chart2").style("background-color", "coral");
-        },
-        3: () => {
-            select("#chart1").style("background-color", "red");
-            select("#chart2").style("background-color", "green");
-        },
-        4: () => {
-            select("#chart1").style("background-color", "purple");
-            select("#chart2").style("background-color", "coral");
+    // Reactive statement to update charts when `value` changes
+    $: {
+        if (value === 0) {
+            chartParams1 = { ...chartParams1, E0: 1.2 };
+            chartParams2 = { ...chartParams2, E0: 0 };
+        } else if (value === 1) {
+            chartParams1 = { ...chartParams1, b: 0.1 };
+            chartParams2 = { ...chartParams2, b: 0.01 };
+        } else if (value === 2) {
+            chartParams1 = { ...chartParams1, R: 0.001 };
+            chartParams2 = { ...chartParams2, R: 0.00001 };
+        } else if (value === 3) {
+            chartParams1 = { ...chartParams1, m: 0.0001 };
+            chartParams2 = { ...chartParams2, m: 0.00001 };
+        } else if (value === 4) {
+            chartParams1 = { ...chartParams1, n: 0.01 };
+            chartParams2 = { ...chartParams2, n: 0.001 };
+        } else {
+            chartParams1 = { ...chartParams1, E0, b, R, m, n };
+            chartParams2 = { ...chartParams2, E0, b, R, m, n };
         }
-    };
-
-    $: if (typeof value !== "undefined") target2event[value]();
+    }
 </script>
 
 <h2 class="body-header">Understanding the Variables</h2>
 <p class="body-text">
-    description ... understanding the difference between high and low values for each is important bc ... etc...
+    Description... understanding the difference between high and low values for each is important because...
 </p>
 <section>
     <!-- scroll container -->
@@ -71,10 +70,10 @@
         </div>
         <div class="charts-container">
             <div class="chart-one">
-                <svg id="chart1" />
+                <ChartScrolly {...chartParams1} />
             </div>
             <div class="chart-two">
-                <svg id="chart2" />
+                <ChartScrolly {...chartParams2} />
             </div>
         </div>
     </div>
@@ -86,22 +85,14 @@
     .body-header,
     .body-text {
         padding: 1% 11%;
-
     }
 
-    #chart1,
-    #chart2 {
+    .chart-one, .chart-two {
         width: 100%;
-        height: 100%;
-    }
-    .chart-one {
-        width: 100%;
-        height: 100%;
+        height: 80%;
         border: 3px solid skyblue;
     }
     .chart-two {
-        width: 100%;
-        height: 100%;
         border: 3px solid coral;
     }
     .spacer {

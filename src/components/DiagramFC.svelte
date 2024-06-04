@@ -5,13 +5,6 @@
     let clicked = -1;
     let hovered = -1;
     const hovered_color = "gold";
-
-    function animateCircuit() {
-        const electrons = document.querySelectorAll('.electron animateMotion');
-        electrons.forEach((electron, i) => {
-            electron.beginElement();
-        });
-    }
 </script>
 
 <div class="container">
@@ -49,6 +42,42 @@
                         <path d='M0,0 V4 L2,2 Z' fill="black"/>
                     </marker>
                 </defs>
+
+                <path
+                    class="hoverable"
+                    d="M-400 -490
+                    L-400 -740
+                    L 400 -740
+                    L 400 -490
+                    L 350 -490
+                    L 350 -690
+                    L-350 -690
+                    L-350 -490
+                    Z"
+                    fill={hovered === 3 ? hovered_color : "white"}
+                    stroke="black"
+                    stroke-width="5px"
+                    on:click={(event) => {clicked = 3; animateElectrons();}}
+                    on:mouseover={(event) => {hovered = 3;}}
+                    on:mouseout={(event) => { hovered = -1; }}
+                />
+            
+                <!-- Electrons animation -->
+                <path id="circuitPath" d="M-400 -490 V -740 H 400 V -490" fill="none" stroke="none"/>
+                {#if clicked === 3}
+                    {#each Array(5) as _, i}
+                        <circle class="electron" r="15" fill="#ffb703">
+                            <animateMotion
+                                class="electronMotion"
+                                dur="5s"
+                                repeatCount="indefinite"
+                                begin={(i * 1) + "s; anim" + i + ".begin"}>
+                                <mpath href="#circuitPath"/>
+                            </animateMotion>
+                        </circle>
+                    {/each}
+                {/if}
+
                 <rect
                     id="anode"
                     width="400" 
@@ -88,40 +117,6 @@
                     on:mouseover={(event) => {hovered = 2; }}
                     on:mouseout={(event) => { hovered = -1; }}
                 />
-                <path
-                class="hoverable"
-                d="M-400 -490
-                L-400 -740
-                L 400 -740
-                L 400 -490
-                L 350 -490
-                L 350 -690
-                L-350 -690
-                L-350 -490
-                Z"
-                fill={hovered === 3 ? hovered_color : "white"}
-                stroke="black"
-                stroke-width="5px"
-                on:click={(event) => {clicked = 3; animateElectrons();}}
-                on:mouseover={(event) => {hovered = 3;}}
-                on:mouseout={(event) => { hovered = -1; }}
-            />
-            
-                <!-- Electrons animation -->
-                <path id="circuitPath" d="M-400 -490 V -740 H 400 V -490" fill="none" stroke="none"/>
-                {#if clicked === 3}
-                    {#each Array(5) as _, i}
-                        <circle class="electron" r="15" fill="#ffb703">
-                            <animateMotion
-                                class="electronMotion"
-                                dur="5s"
-                                repeatCount="indefinite"
-                                begin={(i * 1) + "s; anim" + i + ".begin"}>
-                                <mpath href="#circuitPath"/>
-                            </animateMotion>
-                        </circle>
-                    {/each}
-                {/if}
                 
                 <!-- turns out PEM fuel cells have their electrolyte as a membrane... -->
                 <!-- <rect
@@ -336,5 +331,15 @@
     rect,
     .hoverable {
         cursor: pointer;
+    }
+
+    .electron {
+        z-index: 0;
+        position: relative;
+    }
+
+    #electrolyte {
+        z-index: 1;
+        position: relative;
     }
 </style>
