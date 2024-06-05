@@ -10,10 +10,10 @@
     export let n;
 
     let svg;
+    let container;
+    let width, height;
     const margin = { top: 40, right: 0, bottom: 70, left: 90 };
-    const width = (window.innerWidth * 0.5) - margin.left - margin.right;
-    const height = (window.innerHeight * 0.8) - margin.top - margin.bottom;
-    const x_lim = 1000;
+    const x_lim = 999;
 
     const lineData = derived([E0, b, R, m, n], ([$E0, $b, $R, $m, $n]) => {
         const data = [];
@@ -29,14 +29,14 @@
         const yScale = scaleLinear().domain([0, 1.5]).range([height, 0]);
 
         const xAxis = axisBottom(xScale)
-                        .tickSizeOuter(0)
-                        .tickPadding(10)
-                        .tickFormat(d => `${d}`);
+            .tickSizeOuter(0)
+            .tickPadding(10)
+            .tickFormat(d => `${d}`);
 
         const yAxis = axisLeft(yScale)
-                        .tickSizeOuter(0)
-                        .tickPadding(10)
-                        .tickFormat(d => `${d}`);
+            .tickSizeOuter(0)
+            .tickPadding(10)
+            .tickFormat(d => `${d}`);
 
         const lineGenerator = line()
             .x(d => xScale(d.i))
@@ -57,7 +57,7 @@
             .attr('x', width / 2)
             .attr('y', margin.bottom - 10)
             .attr('fill', '#000')
-            .attr('font-size', '16px') 
+            .attr('font-size', '16px')
             .text('Current Density (mA/cm^2)')
             .attr('text-anchor', 'middle');
 
@@ -69,10 +69,9 @@
             .attr('x', -height / 2)
             .attr('dy', '0.71em')
             .attr('fill', '#000')
-            .attr('font-size', '16px') 
+            .attr('font-size', '16px')
             .text('Voltage (V)')
             .attr('text-anchor', 'middle');
-            
 
         g.append('path')
             .datum(data)
@@ -82,28 +81,46 @@
             .attr('d', lineGenerator);
     }
 
-    $: lineData.subscribe(drawChart);
+    function updateDimensions() {
+        if (container) {
+            const containerWidth = container.clientWidth;
+            const containerHeight = container.clientHeight;
+            width = containerWidth - margin.left - margin.right;
+            height = containerHeight - margin.top - margin.bottom;
+            lineData.subscribe(drawChart);
+        }
+    }
 
     onMount(() => {
-        drawChart($lineData);
+        updateDimensions();
+        window.addEventListener('resize', updateDimensions);
+        return () => window.removeEventListener('resize', updateDimensions);
     });
-
 </script>
 
-<svg bind:this={svg}></svg>
+<div bind:this={container} class="chart-container">
+    <svg bind:this={svg}></svg>
+</div>
 
 <style>
     .axis text {
-        font-size: 14px; /* Adjust font size as needed */
+        font-size: 14px;
     }
 
     svg {
         display: block;
         margin-bottom: 5%;
+        padding-right: 4%;
+        background-color: white;
+    }
+
+    .chart-container {
+        width: 100%;
+        height: 80vh;
     }
 
     @media (max-width: 1350px) {
-        svg {
+        .chart-container {
             width: 90%;
             margin: auto;
         }

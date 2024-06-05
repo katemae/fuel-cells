@@ -17,7 +17,7 @@
 
     function getLineData() {
         const data = [];
-        for (let i = 0.001; i <= 1000; i += 0.1) {
+        for (let i = 0.001; i <= 999; i += 0.1) {
             const E = E0 - b * Math.log10(i) - R * i - m * Math.exp(n * i);
             data.push({ i, E });
         }
@@ -33,7 +33,7 @@
 
     function drawChart(width, height) {
         const data = getLineData();
-        const xScale = scaleLinear().domain([0, 1000]).range([0, width]);
+        const xScale = scaleLinear().domain([0, 999]).range([0, width]);
         const yScale = scaleLinear().domain([0, 1.5]).range([height, 0]);
 
         const xAxis = axisBottom(xScale)

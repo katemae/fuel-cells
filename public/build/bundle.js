@@ -4905,27 +4905,34 @@ var app = (function () {
     const file$7 = "src\\components\\Chart.svelte";
 
     function create_fragment$7(ctx) {
+    	let div;
     	let svg_1;
 
     	const block = {
     		c: function create() {
+    			div = element("div");
     			svg_1 = svg_element("svg");
-    			attr_dev(svg_1, "class", "svelte-rhi4ov");
-    			add_location(svg_1, file$7, 92, 0, 2940);
+    			attr_dev(svg_1, "class", "svelte-1ob1vju");
+    			add_location(svg_1, file$7, 101, 4, 3274);
+    			attr_dev(div, "class", "chart-container svelte-1ob1vju");
+    			add_location(div, file$7, 100, 0, 3217);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, svg_1, anchor);
+    			insert_dev(target, div, anchor);
+    			append_dev(div, svg_1);
     			/*svg_1_binding*/ ctx[7](svg_1);
+    			/*div_binding*/ ctx[8](div);
     		},
     		p: noop$1,
     		i: noop$1,
     		o: noop$1,
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(svg_1);
+    			if (detaching) detach_dev(div);
     			/*svg_1_binding*/ ctx[7](null);
+    			/*div_binding*/ ctx[8](null);
     		}
     	};
 
@@ -4940,10 +4947,9 @@ var app = (function () {
     	return block;
     }
 
-    const x_lim = 1000;
+    const x_lim = 999;
 
     function instance$7($$self, $$props, $$invalidate) {
-    	let $lineData;
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('Chart', slots, []);
     	let { E0 } = $$props;
@@ -4952,9 +4958,9 @@ var app = (function () {
     	let { m } = $$props;
     	let { n } = $$props;
     	let svg;
+    	let container;
+    	let width, height;
     	const margin = { top: 40, right: 0, bottom: 70, left: 90 };
-    	const width = window.innerWidth * 0.5 - margin.left - margin.right;
-    	const height = window.innerHeight * 0.8 - margin.top - margin.bottom;
 
     	const lineData = derived([E0, b, R, m, n], ([$E0, $b, $R, $m, $n]) => {
     		const data = [];
@@ -4966,9 +4972,6 @@ var app = (function () {
 
     		return data;
     	});
-
-    	validate_store(lineData, 'lineData');
-    	component_subscribe($$self, lineData, value => $$invalidate(8, $lineData = value));
 
     	function drawChart(data) {
     		const xScale = linear().domain([0, x_lim]).range([0, width]);
@@ -4983,8 +4986,20 @@ var app = (function () {
     		g.append('path').datum(data).attr('fill', 'none').attr('stroke', 'steelblue').attr('stroke-width', 1.5).attr('d', lineGenerator);
     	}
 
+    	function updateDimensions() {
+    		if (container) {
+    			const containerWidth = container.clientWidth;
+    			const containerHeight = container.clientHeight;
+    			width = containerWidth - margin.left - margin.right;
+    			height = containerHeight - margin.top - margin.bottom;
+    			lineData.subscribe(drawChart);
+    		}
+    	}
+
     	onMount(() => {
-    		drawChart($lineData);
+    		updateDimensions();
+    		window.addEventListener('resize', updateDimensions);
+    		return () => window.removeEventListener('resize', updateDimensions);
     	});
 
     	$$self.$$.on_mount.push(function () {
@@ -5022,6 +5037,13 @@ var app = (function () {
     		});
     	}
 
+    	function div_binding($$value) {
+    		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
+    			container = $$value;
+    			$$invalidate(1, container);
+    		});
+    	}
+
     	$$self.$$set = $$props => {
     		if ('E0' in $$props) $$invalidate(2, E0 = $$props.E0);
     		if ('b' in $$props) $$invalidate(3, b = $$props.b);
@@ -5044,13 +5066,14 @@ var app = (function () {
     		m,
     		n,
     		svg,
-    		margin,
+    		container,
     		width,
     		height,
+    		margin,
     		x_lim,
     		lineData,
     		drawChart,
-    		$lineData
+    		updateDimensions
     	});
 
     	$$self.$inject_state = $$props => {
@@ -5060,14 +5083,16 @@ var app = (function () {
     		if ('m' in $$props) $$invalidate(5, m = $$props.m);
     		if ('n' in $$props) $$invalidate(6, n = $$props.n);
     		if ('svg' in $$props) $$invalidate(0, svg = $$props.svg);
+    		if ('container' in $$props) $$invalidate(1, container = $$props.container);
+    		if ('width' in $$props) width = $$props.width;
+    		if ('height' in $$props) height = $$props.height;
     	};
 
     	if ($$props && "$$inject" in $$props) {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	lineData.subscribe(drawChart);
-    	return [svg, lineData, E0, b, R, m, n, svg_1_binding];
+    	return [svg, container, E0, b, R, m, n, svg_1_binding, div_binding];
     }
 
     class Chart extends SvelteComponentDev {
@@ -5391,10 +5416,10 @@ var app = (function () {
     			div = element("div");
     			svg_1 = svg_element("svg");
     			attr_dev(svg_1, "class", "svelte-uvxlpj");
-    			add_location(svg_1, file$5, 108, 4, 3248);
+    			add_location(svg_1, file$5, 108, 4, 3246);
     			set_style(div, "width", "100%");
     			set_style(div, "height", "100%");
-    			add_location(div, file$5, 107, 0, 3180);
+    			add_location(div, file$5, 107, 0, 3178);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -5441,7 +5466,7 @@ var app = (function () {
     	function getLineData() {
     		const data = [];
 
-    		for (let i = 0.001; i <= 1000; i += 0.1) {
+    		for (let i = 0.001; i <= 999; i += 0.1) {
     			const E = E0 - b * Math.log10(i) - R * i - m * Math.exp(n * i);
     			data.push({ i, E });
     		}
@@ -5458,7 +5483,7 @@ var app = (function () {
 
     	function drawChart(width, height) {
     		const data = getLineData();
-    		const xScale = linear().domain([0, 1000]).range([0, width]);
+    		const xScale = linear().domain([0, 999]).range([0, width]);
     		const yScale = linear().domain([0, 1.5]).range([height, 0]);
     		const xAxis = axisBottom(xScale).tickSizeOuter(0).tickPadding(5).tickFormat(d => `${d}`);
     		const yAxis = axisLeft(yScale).tickSizeOuter(0).tickPadding(5).tickFormat(d => `${d}`);
@@ -24107,41 +24132,38 @@ var app = (function () {
     	let div1;
     	let div0;
     	let h1;
-    	let t0_value = /*step*/ ctx[5].title + "";
-    	let t0;
-    	let t1;
+    	let raw0_value = /*step*/ ctx[5].title + "";
+    	let t;
     	let p;
-    	let raw_value = /*step*/ ctx[5].content + "";
+    	let raw1_value = /*step*/ ctx[5].content + "";
 
     	const block = {
     		c: function create() {
     			div1 = element("div");
     			div0 = element("div");
     			h1 = element("h1");
-    			t0 = text$2(t0_value);
-    			t1 = space();
+    			t = space();
     			p = element("p");
     			attr_dev(h1, "class", "step-title");
-    			add_location(h1, file$4, 49, 28, 3040);
-    			add_location(p, file$4, 50, 28, 3110);
+    			add_location(h1, file$4, 49, 28, 3061);
+    			add_location(p, file$4, 50, 28, 3137);
     			attr_dev(div0, "class", "step-content svelte-uu24v0");
-    			add_location(div0, file$4, 48, 24, 2984);
+    			add_location(div0, file$4, 48, 24, 3005);
     			attr_dev(div1, "class", "step svelte-uu24v0");
     			toggle_class(div1, "active", /*value*/ ctx[0] === /*i*/ ctx[7]);
-    			add_location(div1, file$4, 47, 20, 2913);
+    			add_location(div1, file$4, 47, 20, 2934);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div1, anchor);
     			append_dev(div1, div0);
     			append_dev(div0, h1);
-    			append_dev(h1, t0);
-    			append_dev(div0, t1);
+    			h1.innerHTML = raw0_value;
+    			append_dev(div0, t);
     			append_dev(div0, p);
-    			p.innerHTML = raw_value;
+    			p.innerHTML = raw1_value;
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*steps*/ 2 && t0_value !== (t0_value = /*step*/ ctx[5].title + "")) set_data_dev(t0, t0_value);
-    			if (dirty & /*steps*/ 2 && raw_value !== (raw_value = /*step*/ ctx[5].content + "")) p.innerHTML = raw_value;
+    			if (dirty & /*steps*/ 2 && raw0_value !== (raw0_value = /*step*/ ctx[5].title + "")) h1.innerHTML = raw0_value;			if (dirty & /*steps*/ 2 && raw1_value !== (raw1_value = /*step*/ ctx[5].content + "")) p.innerHTML = raw1_value;
     			if (dirty & /*value*/ 1) {
     				toggle_class(div1, "active", /*value*/ ctx[0] === /*i*/ ctx[7]);
     			}
@@ -24183,7 +24205,7 @@ var app = (function () {
     			t = space();
     			div = element("div");
     			attr_dev(div, "class", "spacer svelte-uu24v0");
-    			add_location(div, file$4, 54, 16, 3240);
+    			add_location(div, file$4, 54, 16, 3267);
     		},
     		m: function mount(target, anchor) {
     			for (let i = 0; i < each_blocks.length; i += 1) {
@@ -24278,9 +24300,9 @@ var app = (function () {
     			div1 = element("div");
     			create_component(chartscrolly1.$$.fragment);
     			attr_dev(div0, "class", "chart-one svelte-uu24v0");
-    			add_location(div0, file$4, 94, 16, 4865);
+    			add_location(div0, file$4, 94, 16, 4892);
     			attr_dev(div1, "class", "chart-two svelte-uu24v0");
-    			add_location(div1, file$4, 97, 16, 4986);
+    			add_location(div1, file$4, 97, 16, 5013);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div0, anchor);
@@ -24374,9 +24396,9 @@ var app = (function () {
     			div1 = element("div");
     			create_component(chartscrolly1.$$.fragment);
     			attr_dev(div0, "class", "chart-one svelte-uu24v0");
-    			add_location(div0, file$4, 87, 16, 4583);
+    			add_location(div0, file$4, 87, 16, 4610);
     			attr_dev(div1, "class", "chart-two svelte-uu24v0");
-    			add_location(div1, file$4, 90, 16, 4713);
+    			add_location(div1, file$4, 90, 16, 4740);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div0, anchor);
@@ -24476,9 +24498,9 @@ var app = (function () {
     			div1 = element("div");
     			create_component(chartscrolly1.$$.fragment);
     			attr_dev(div0, "class", "chart-one svelte-uu24v0");
-    			add_location(div0, file$4, 80, 16, 4282);
+    			add_location(div0, file$4, 80, 16, 4309);
     			attr_dev(div1, "class", "chart-two svelte-uu24v0");
-    			add_location(div1, file$4, 83, 16, 4414);
+    			add_location(div1, file$4, 83, 16, 4441);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div0, anchor);
@@ -24578,9 +24600,9 @@ var app = (function () {
     			div1 = element("div");
     			create_component(chartscrolly1.$$.fragment);
     			attr_dev(div0, "class", "chart-one svelte-uu24v0");
-    			add_location(div0, file$4, 73, 16, 3982);
+    			add_location(div0, file$4, 73, 16, 4009);
     			attr_dev(div1, "class", "chart-two svelte-uu24v0");
-    			add_location(div1, file$4, 76, 16, 4113);
+    			add_location(div1, file$4, 76, 16, 4140);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div0, anchor);
@@ -24680,9 +24702,9 @@ var app = (function () {
     			div1 = element("div");
     			create_component(chartscrolly1.$$.fragment);
     			attr_dev(div0, "class", "chart-one svelte-uu24v0");
-    			add_location(div0, file$4, 66, 16, 3687);
+    			add_location(div0, file$4, 66, 16, 3714);
     			attr_dev(div1, "class", "chart-two svelte-uu24v0");
-    			add_location(div1, file$4, 69, 16, 3816);
+    			add_location(div1, file$4, 69, 16, 3843);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div0, anchor);
@@ -24782,9 +24804,9 @@ var app = (function () {
     			div1 = element("div");
     			create_component(chartscrolly1.$$.fragment);
     			attr_dev(div0, "class", "chart-one svelte-uu24v0");
-    			add_location(div0, file$4, 59, 16, 3391);
+    			add_location(div0, file$4, 59, 16, 3418);
     			attr_dev(div1, "class", "chart-two svelte-uu24v0");
-    			add_location(div1, file$4, 62, 16, 3521);
+    			add_location(div1, file$4, 62, 16, 3548);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div0, anchor);
@@ -24926,20 +24948,20 @@ var app = (function () {
     			p1 = element("p");
     			p1.textContent = "In conclusion, each source of voltage loss plays a role in the effectiveness of the fuel cell. \r\n        From the current-density versus voltage curve, these parameters can be fitted from collected data, and key sources of fuel cell losses can be determined.\r\n        Therefore, with a solid understanding of this characterization method, better fuel cells can be designed for an energy efficient future.\r\n        (Note: this website provides a simplified view of this curve; lots of active research is still being done to accurately model a fuel cell's behavior, especially at extreme temperatures and pressures.)";
     			attr_dev(h2, "class", "body-header svelte-uu24v0");
-    			add_location(h2, file$4, 35, 0, 2194);
+    			add_location(h2, file$4, 35, 0, 2215);
     			attr_dev(p0, "class", "body-text svelte-uu24v0");
-    			add_location(p0, file$4, 36, 0, 2253);
+    			add_location(p0, file$4, 36, 0, 2274);
     			attr_dev(div0, "class", "steps-container svelte-uu24v0");
-    			add_location(div0, file$4, 44, 8, 2786);
+    			add_location(div0, file$4, 44, 8, 2807);
     			attr_dev(div1, "class", "charts-container svelte-uu24v0");
-    			add_location(div1, file$4, 57, 8, 3312);
+    			add_location(div1, file$4, 57, 8, 3339);
     			attr_dev(div2, "class", "section-container svelte-uu24v0");
-    			add_location(div2, file$4, 43, 4, 2745);
-    			add_location(br0, file$4, 104, 4, 5148);
-    			add_location(br1, file$4, 104, 10, 5154);
+    			add_location(div2, file$4, 43, 4, 2766);
+    			add_location(br0, file$4, 104, 4, 5175);
+    			add_location(br1, file$4, 104, 10, 5181);
     			attr_dev(p1, "class", "body-text svelte-uu24v0");
-    			add_location(p1, file$4, 105, 4, 5166);
-    			add_location(section, file$4, 41, 0, 2699);
+    			add_location(p1, file$4, 105, 4, 5193);
+    			add_location(section, file$4, 41, 0, 2720);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -25050,8 +25072,8 @@ var app = (function () {
 
     	steps = [
     		{
-    			title: 'Activation Losses: E_0 and b',
-    			content: "Activation losses arise from the rate of the reaction at each electrode. E_0 encompasses the voltage differential between the reversible voltage and the measured voltage. b comes from the non-linear Tafel equation, which describes the variation in reaction rate at different current densities. A higher b indicates a slower reaction. Together, they form the low current density region."
+    			title: 'Activation Losses: E<sub>0</sub>  and b',
+    			content: "Activation losses arise from the rate of the reaction at each electrode. E<sub>0</sub> encompasses the voltage differential between the reversible voltage and the measured voltage. b comes from the non-linear Tafel equation, which describes the variation in reaction rate at different current densities. A higher b indicates a slower reaction. Together, they form the low current density region."
     		},
     		{
     			title: 'Fuel Crossover and Internal Currents',
@@ -26319,9 +26341,9 @@ var app = (function () {
     			add_location(li1, file$1, 29, 8, 749);
     			add_location(h32, file$1, 30, 12, 817);
     			add_location(li2, file$1, 30, 8, 813);
-    			attr_dev(ul, "class", "list svelte-11lqbzi");
+    			attr_dev(ul, "class", "list svelte-ky4gt0");
     			add_location(ul, file$1, 27, 4, 658);
-    			attr_dev(div, "class", "reference svelte-11lqbzi");
+    			attr_dev(div, "class", "reference svelte-ky4gt0");
     			add_location(div, file$1, 26, 0, 581);
     		},
     		m: function mount(target, anchor) {
@@ -26409,11 +26431,11 @@ var app = (function () {
     			attr_dev(input, "type", "checkbox");
     			attr_dev(input, "id", "check");
     			input.hidden = true;
-    			attr_dev(input, "class", "svelte-11lqbzi");
+    			attr_dev(input, "class", "svelte-ky4gt0");
     			add_location(input, file$1, 16, 0, 339);
     			add_location(strong, file$1, 23, 4, 526);
     			attr_dev(label, "for", "check");
-    			attr_dev(label, "class", "button svelte-11lqbzi");
+    			attr_dev(label, "class", "button svelte-ky4gt0");
     			add_location(label, file$1, 17, 0, 423);
     		},
     		l: function claim(nodes) {
@@ -26720,27 +26742,27 @@ var app = (function () {
     			t34 = space();
     			create_component(references.$$.fragment);
     			attr_dev(h1, "id", "intro-hed");
-    			attr_dev(h1, "class", "svelte-5r82c4");
+    			attr_dev(h1, "class", "svelte-qcszd5");
     			add_location(h1, file, 19, 8, 606);
     			add_location(h2, file, 20, 8, 651);
     			attr_dev(a0, "href", "https://github.com/katemae");
     			attr_dev(a0, "target", "_blank");
-    			attr_dev(a0, "class", "svelte-5r82c4");
+    			attr_dev(a0, "class", "svelte-qcszd5");
     			add_location(a0, file, 22, 3, 766);
     			attr_dev(a1, "href", "https://github.com/jman2-go");
     			attr_dev(a1, "target", "_blank");
-    			attr_dev(a1, "class", "svelte-5r82c4");
+    			attr_dev(a1, "class", "svelte-qcszd5");
     			add_location(a1, file, 23, 7, 839);
     			add_location(br, file, 24, 3, 910);
     			attr_dev(h3, "id", "intro_date");
-    			attr_dev(h3, "class", "svelte-5r82c4");
+    			attr_dev(h3, "class", "svelte-qcszd5");
     			add_location(h3, file, 21, 8, 741);
-    			attr_dev(div0, "class", "intro svelte-5r82c4");
+    			attr_dev(div0, "class", "intro svelte-qcszd5");
     			add_location(div0, file, 18, 4, 577);
     			attr_dev(p, "id", "desc");
-    			attr_dev(p, "class", "svelte-5r82c4");
+    			attr_dev(p, "class", "svelte-qcszd5");
     			add_location(p, file, 32, 4, 1012);
-    			attr_dev(label0, "class", "svelte-5r82c4");
+    			attr_dev(label0, "class", "svelte-qcszd5");
     			add_location(label0, file, 41, 16, 1264);
     			attr_dev(input0, "type", "range");
     			attr_dev(input0, "min", "0");
@@ -26748,9 +26770,9 @@ var app = (function () {
     			attr_dev(input0, "step", "0.01");
     			add_location(input0, file, 42, 16, 1322);
     			add_location(span0, file, 43, 16, 1409);
-    			attr_dev(div1, "class", "control svelte-5r82c4");
+    			attr_dev(div1, "class", "control svelte-qcszd5");
     			add_location(div1, file, 40, 12, 1225);
-    			attr_dev(label1, "class", "svelte-5r82c4");
+    			attr_dev(label1, "class", "svelte-qcszd5");
     			add_location(label1, file, 46, 16, 1500);
     			attr_dev(input1, "type", "range");
     			attr_dev(input1, "min", "0.01");
@@ -26758,9 +26780,9 @@ var app = (function () {
     			attr_dev(input1, "step", "0.001");
     			add_location(input1, file, 47, 16, 1556);
     			add_location(span1, file, 48, 16, 1646);
-    			attr_dev(div2, "class", "control svelte-5r82c4");
+    			attr_dev(div2, "class", "control svelte-qcszd5");
     			add_location(div2, file, 45, 12, 1461);
-    			attr_dev(label2, "class", "svelte-5r82c4");
+    			attr_dev(label2, "class", "svelte-qcszd5");
     			add_location(label2, file, 51, 16, 1736);
     			attr_dev(input2, "type", "range");
     			attr_dev(input2, "min", "10e-6");
@@ -26768,9 +26790,9 @@ var app = (function () {
     			attr_dev(input2, "step", "10e-6");
     			add_location(input2, file, 52, 16, 1792);
     			add_location(span2, file, 53, 16, 1887);
-    			attr_dev(div3, "class", "control svelte-5r82c4");
+    			attr_dev(div3, "class", "control svelte-qcszd5");
     			add_location(div3, file, 50, 12, 1697);
-    			attr_dev(label3, "class", "svelte-5r82c4");
+    			attr_dev(label3, "class", "svelte-qcszd5");
     			add_location(label3, file, 56, 16, 1977);
     			attr_dev(input3, "type", "range");
     			attr_dev(input3, "min", "1e-5");
@@ -26778,9 +26800,9 @@ var app = (function () {
     			attr_dev(input3, "step", "1e-6");
     			add_location(input3, file, 57, 16, 2033);
     			add_location(span3, file, 58, 16, 2124);
-    			attr_dev(div4, "class", "control svelte-5r82c4");
+    			attr_dev(div4, "class", "control svelte-qcszd5");
     			add_location(div4, file, 55, 12, 1938);
-    			attr_dev(label4, "class", "svelte-5r82c4");
+    			attr_dev(label4, "class", "svelte-qcszd5");
     			add_location(label4, file, 61, 16, 2214);
     			attr_dev(input4, "type", "range");
     			attr_dev(input4, "min", "1e-3");
@@ -26788,13 +26810,13 @@ var app = (function () {
     			attr_dev(input4, "step", "1e-4");
     			add_location(input4, file, 62, 16, 2270);
     			add_location(span4, file, 63, 16, 2361);
-    			attr_dev(div5, "class", "control svelte-5r82c4");
+    			attr_dev(div5, "class", "control svelte-qcszd5");
     			add_location(div5, file, 60, 12, 2175);
-    			attr_dev(div6, "class", "controls-container svelte-5r82c4");
+    			attr_dev(div6, "class", "controls-container svelte-qcszd5");
     			add_location(div6, file, 39, 8, 1179);
-    			attr_dev(div7, "class", "graph-container svelte-5r82c4");
+    			attr_dev(div7, "class", "graph-container svelte-qcszd5");
     			add_location(div7, file, 67, 8, 2426);
-    			attr_dev(div8, "class", "chart-container svelte-5r82c4");
+    			attr_dev(div8, "class", "chart-container svelte-qcszd5");
     			add_location(div8, file, 38, 4, 1140);
     			add_location(main, file, 17, 0, 565);
     		},

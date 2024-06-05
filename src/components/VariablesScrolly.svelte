@@ -15,8 +15,8 @@
     let steps = [];
 
         steps = [
-            { title: 'Activation Losses: E_0 and b', 
-            content: "Activation losses arise from the rate of the reaction at each electrode. E_0 encompasses the voltage differential between the reversible voltage and the measured voltage. b comes from the non-linear Tafel equation, which describes the variation in reaction rate at different current densities. A higher b indicates a slower reaction. Together, they form the low current density region." 
+            { title: 'Activation Losses: E<sub>0</sub>  and b', 
+            content: "Activation losses arise from the rate of the reaction at each electrode. E<sub>0</sub> encompasses the voltage differential between the reversible voltage and the measured voltage. b comes from the non-linear Tafel equation, which describes the variation in reaction rate at different current densities. A higher b indicates a slower reaction. Together, they form the low current density region." 
             },
             { title: 'Fuel Crossover and Internal Currents', 
             content: "An extra source of voltage loss is observed from the imperfect electrolyte. The electrolyte, despite its electronic resistivity, still lets through a small amount of electrons. Additionally, some hydrogen gas can diffuse through the electrolyte to react with the oxygen. Both result in voltage drop within the observed voltage."
@@ -47,7 +47,7 @@
                 {#each steps as step, i}
                     <div class="step" class:active={value === i}>
                         <div class="step-content">
-                            <h1 class="step-title">{step.title}</h1>
+                            <h1 class="step-title">{@html step.title}</h1>
                             <p>{@html step.content}</p>
                         </div>
                     </div>

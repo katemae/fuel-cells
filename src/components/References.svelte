@@ -40,7 +40,7 @@
         color: #03045E;
         padding: 2% 0;
         padding-left: 10%;
-        width: 100%;
+        width: 90%;
         text-align: Left;
         text-decoration: none;
         display: inline-block;
