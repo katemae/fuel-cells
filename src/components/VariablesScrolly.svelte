@@ -172,7 +172,7 @@
     }
 
     .step.active .step-content {
-        background: #f1f3f3ee;
+        background: #90E0EF;
         color: var(--squid-ink);
     }
     .steps-container {

@@ -24124,9 +24124,9 @@ var app = (function () {
     			attr_dev(h1, "class", "step-title");
     			add_location(h1, file$4, 49, 28, 3040);
     			add_location(p, file$4, 50, 28, 3110);
-    			attr_dev(div0, "class", "step-content svelte-1itqo5w");
+    			attr_dev(div0, "class", "step-content svelte-uu24v0");
     			add_location(div0, file$4, 48, 24, 2984);
-    			attr_dev(div1, "class", "step svelte-1itqo5w");
+    			attr_dev(div1, "class", "step svelte-uu24v0");
     			toggle_class(div1, "active", /*value*/ ctx[0] === /*i*/ ctx[7]);
     			add_location(div1, file$4, 47, 20, 2913);
     		},
@@ -24182,7 +24182,7 @@ var app = (function () {
 
     			t = space();
     			div = element("div");
-    			attr_dev(div, "class", "spacer svelte-1itqo5w");
+    			attr_dev(div, "class", "spacer svelte-uu24v0");
     			add_location(div, file$4, 54, 16, 3240);
     		},
     		m: function mount(target, anchor) {
@@ -24277,9 +24277,9 @@ var app = (function () {
     			t = space();
     			div1 = element("div");
     			create_component(chartscrolly1.$$.fragment);
-    			attr_dev(div0, "class", "chart-one svelte-1itqo5w");
+    			attr_dev(div0, "class", "chart-one svelte-uu24v0");
     			add_location(div0, file$4, 94, 16, 4865);
-    			attr_dev(div1, "class", "chart-two svelte-1itqo5w");
+    			attr_dev(div1, "class", "chart-two svelte-uu24v0");
     			add_location(div1, file$4, 97, 16, 4986);
     		},
     		m: function mount(target, anchor) {
@@ -24373,9 +24373,9 @@ var app = (function () {
     			t = space();
     			div1 = element("div");
     			create_component(chartscrolly1.$$.fragment);
-    			attr_dev(div0, "class", "chart-one svelte-1itqo5w");
+    			attr_dev(div0, "class", "chart-one svelte-uu24v0");
     			add_location(div0, file$4, 87, 16, 4583);
-    			attr_dev(div1, "class", "chart-two svelte-1itqo5w");
+    			attr_dev(div1, "class", "chart-two svelte-uu24v0");
     			add_location(div1, file$4, 90, 16, 4713);
     		},
     		m: function mount(target, anchor) {
@@ -24475,9 +24475,9 @@ var app = (function () {
     			t = space();
     			div1 = element("div");
     			create_component(chartscrolly1.$$.fragment);
-    			attr_dev(div0, "class", "chart-one svelte-1itqo5w");
+    			attr_dev(div0, "class", "chart-one svelte-uu24v0");
     			add_location(div0, file$4, 80, 16, 4282);
-    			attr_dev(div1, "class", "chart-two svelte-1itqo5w");
+    			attr_dev(div1, "class", "chart-two svelte-uu24v0");
     			add_location(div1, file$4, 83, 16, 4414);
     		},
     		m: function mount(target, anchor) {
@@ -24577,9 +24577,9 @@ var app = (function () {
     			t = space();
     			div1 = element("div");
     			create_component(chartscrolly1.$$.fragment);
-    			attr_dev(div0, "class", "chart-one svelte-1itqo5w");
+    			attr_dev(div0, "class", "chart-one svelte-uu24v0");
     			add_location(div0, file$4, 73, 16, 3982);
-    			attr_dev(div1, "class", "chart-two svelte-1itqo5w");
+    			attr_dev(div1, "class", "chart-two svelte-uu24v0");
     			add_location(div1, file$4, 76, 16, 4113);
     		},
     		m: function mount(target, anchor) {
@@ -24679,9 +24679,9 @@ var app = (function () {
     			t = space();
     			div1 = element("div");
     			create_component(chartscrolly1.$$.fragment);
-    			attr_dev(div0, "class", "chart-one svelte-1itqo5w");
+    			attr_dev(div0, "class", "chart-one svelte-uu24v0");
     			add_location(div0, file$4, 66, 16, 3687);
-    			attr_dev(div1, "class", "chart-two svelte-1itqo5w");
+    			attr_dev(div1, "class", "chart-two svelte-uu24v0");
     			add_location(div1, file$4, 69, 16, 3816);
     		},
     		m: function mount(target, anchor) {
@@ -24781,9 +24781,9 @@ var app = (function () {
     			t = space();
     			div1 = element("div");
     			create_component(chartscrolly1.$$.fragment);
-    			attr_dev(div0, "class", "chart-one svelte-1itqo5w");
+    			attr_dev(div0, "class", "chart-one svelte-uu24v0");
     			add_location(div0, file$4, 59, 16, 3391);
-    			attr_dev(div1, "class", "chart-two svelte-1itqo5w");
+    			attr_dev(div1, "class", "chart-two svelte-uu24v0");
     			add_location(div1, file$4, 62, 16, 3521);
     		},
     		m: function mount(target, anchor) {
@@ -24925,19 +24925,19 @@ var app = (function () {
     			t6 = space();
     			p1 = element("p");
     			p1.textContent = "In conclusion, each source of voltage loss plays a role in the effectiveness of the fuel cell. \r\n        From the current-density versus voltage curve, these parameters can be fitted from collected data, and key sources of fuel cell losses can be determined.\r\n        Therefore, with a solid understanding of this characterization method, better fuel cells can be designed for an energy efficient future.\r\n        (Note: this website provides a simplified view of this curve; lots of active research is still being done to accurately model a fuel cell's behavior, especially at extreme temperatures and pressures.)";
-    			attr_dev(h2, "class", "body-header svelte-1itqo5w");
+    			attr_dev(h2, "class", "body-header svelte-uu24v0");
     			add_location(h2, file$4, 35, 0, 2194);
-    			attr_dev(p0, "class", "body-text svelte-1itqo5w");
+    			attr_dev(p0, "class", "body-text svelte-uu24v0");
     			add_location(p0, file$4, 36, 0, 2253);
-    			attr_dev(div0, "class", "steps-container svelte-1itqo5w");
+    			attr_dev(div0, "class", "steps-container svelte-uu24v0");
     			add_location(div0, file$4, 44, 8, 2786);
-    			attr_dev(div1, "class", "charts-container svelte-1itqo5w");
+    			attr_dev(div1, "class", "charts-container svelte-uu24v0");
     			add_location(div1, file$4, 57, 8, 3312);
-    			attr_dev(div2, "class", "section-container svelte-1itqo5w");
+    			attr_dev(div2, "class", "section-container svelte-uu24v0");
     			add_location(div2, file$4, 43, 4, 2745);
     			add_location(br0, file$4, 104, 4, 5148);
     			add_location(br1, file$4, 104, 10, 5154);
-    			attr_dev(p1, "class", "body-text svelte-1itqo5w");
+    			attr_dev(p1, "class", "body-text svelte-uu24v0");
     			add_location(p1, file$4, 105, 4, 5166);
     			add_location(section, file$4, 41, 0, 2699);
     		},
@@ -26223,7 +26223,7 @@ var app = (function () {
     /* src\components\References.svelte generated by Svelte v3.59.2 */
     const file$1 = "src\\components\\References.svelte";
 
-    // (11:4) {:else}
+    // (21:4) {:else}
     function create_else_block(ctx) {
     	let t;
 
@@ -26243,14 +26243,14 @@ var app = (function () {
     		block,
     		id: create_else_block.name,
     		type: "else",
-    		source: "(11:4) {:else}",
+    		source: "(21:4) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (9:4) {#if clicked}
+    // (19:4) {#if clicked}
     function create_if_block_1(ctx) {
     	let t;
 
@@ -26270,22 +26270,28 @@ var app = (function () {
     		block,
     		id: create_if_block_1.name,
     		type: "if",
-    		source: "(9:4) {#if clicked}",
+    		source: "(19:4) {#if clicked}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (16:0) {#if clicked}
+    // (26:0) {#if clicked}
     function create_if_block(ctx) {
     	let div;
     	let ul;
     	let li0;
+    	let h30;
     	let t1;
+    	let t2;
     	let li1;
-    	let t3;
+    	let h31;
+    	let t4;
+    	let t5;
     	let li2;
+    	let h32;
+    	let t7;
     	let div_transition;
     	let current;
 
@@ -26294,29 +26300,44 @@ var app = (function () {
     			div = element("div");
     			ul = element("ul");
     			li0 = element("li");
-    			li0.textContent = "Coffee";
-    			t1 = space();
+    			h30 = element("h3");
+    			h30.textContent = "Reference #1";
+    			t1 = text$2(" Reference 1 Description");
+    			t2 = space();
     			li1 = element("li");
-    			li1.textContent = "Tea";
-    			t3 = space();
+    			h31 = element("h3");
+    			h31.textContent = "Reference #2";
+    			t4 = text$2(" Reference 2 Description");
+    			t5 = space();
     			li2 = element("li");
-    			li2.textContent = "Milk";
-    			add_location(li0, file$1, 18, 8, 447);
-    			add_location(li1, file$1, 19, 8, 472);
-    			add_location(li2, file$1, 20, 8, 494);
-    			attr_dev(ul, "class", "list svelte-1s885vl");
-    			add_location(ul, file$1, 17, 4, 420);
-    			attr_dev(div, "class", "reference svelte-1s885vl");
-    			add_location(div, file$1, 16, 0, 343);
+    			h32 = element("h3");
+    			h32.textContent = "Reference #3";
+    			t7 = text$2(" Reference 3 Description");
+    			add_location(h30, file$1, 28, 12, 689);
+    			add_location(li0, file$1, 28, 8, 685);
+    			add_location(h31, file$1, 29, 12, 753);
+    			add_location(li1, file$1, 29, 8, 749);
+    			add_location(h32, file$1, 30, 12, 817);
+    			add_location(li2, file$1, 30, 8, 813);
+    			attr_dev(ul, "class", "list svelte-11lqbzi");
+    			add_location(ul, file$1, 27, 4, 658);
+    			attr_dev(div, "class", "reference svelte-11lqbzi");
+    			add_location(div, file$1, 26, 0, 581);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
     			append_dev(div, ul);
     			append_dev(ul, li0);
-    			append_dev(ul, t1);
+    			append_dev(li0, h30);
+    			append_dev(li0, t1);
+    			append_dev(ul, t2);
     			append_dev(ul, li1);
-    			append_dev(ul, t3);
+    			append_dev(li1, h31);
+    			append_dev(li1, t4);
+    			append_dev(ul, t5);
     			append_dev(ul, li2);
+    			append_dev(li2, h32);
+    			append_dev(li2, t7);
     			current = true;
     		},
     		i: function intro(local) {
@@ -26345,7 +26366,7 @@ var app = (function () {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(16:0) {#if clicked}",
+    		source: "(26:0) {#if clicked}",
     		ctx
     	});
 
@@ -26353,12 +26374,13 @@ var app = (function () {
     }
 
     function create_fragment$1(ctx) {
-    	let button;
+    	let input;
     	let t0;
+    	let label;
     	let t1;
-    	let t2;
-    	let div;
-    	let p;
+    	let strong;
+    	let t3;
+    	let if_block1_anchor;
     	let current;
     	let mounted;
     	let dispose;
@@ -26374,38 +26396,43 @@ var app = (function () {
 
     	const block = {
     		c: function create() {
-    			button = element("button");
+    			input = element("input");
+    			t0 = space();
+    			label = element("label");
     			if_block0.c();
-    			t0 = text$2("\r\n    References");
     			t1 = space();
+    			strong = element("strong");
+    			strong.textContent = "References";
+    			t3 = space();
     			if (if_block1) if_block1.c();
-    			t2 = space();
-    			div = element("div");
-    			p = element("p");
-    			p.textContent = "Therefore, it becomes necessary to have tools to properly characterize a fuel cell in order to design an efficient one.\r\n        Enter, the current-density vs. voltage curve! Also known as a polarization curve, it tells a story of a fuel cell's effectiveness.";
-    			attr_dev(button, "type", "button");
-    			attr_dev(button, "class", "button svelte-1s885vl");
-    			add_location(button, file$1, 7, 0, 160);
-    			add_location(p, file$1, 25, 4, 559);
-    			attr_dev(div, "class", "body svelte-1s885vl");
-    			add_location(div, file$1, 24, 0, 535);
+    			if_block1_anchor = empty$1();
+    			attr_dev(input, "type", "checkbox");
+    			attr_dev(input, "id", "check");
+    			input.hidden = true;
+    			attr_dev(input, "class", "svelte-11lqbzi");
+    			add_location(input, file$1, 16, 0, 339);
+    			add_location(strong, file$1, 23, 4, 526);
+    			attr_dev(label, "for", "check");
+    			attr_dev(label, "class", "button svelte-11lqbzi");
+    			add_location(label, file$1, 17, 0, 423);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, button, anchor);
-    			if_block0.m(button, null);
-    			append_dev(button, t0);
-    			insert_dev(target, t1, anchor);
+    			insert_dev(target, input, anchor);
+    			insert_dev(target, t0, anchor);
+    			insert_dev(target, label, anchor);
+    			if_block0.m(label, null);
+    			append_dev(label, t1);
+    			append_dev(label, strong);
+    			insert_dev(target, t3, anchor);
     			if (if_block1) if_block1.m(target, anchor);
-    			insert_dev(target, t2, anchor);
-    			insert_dev(target, div, anchor);
-    			append_dev(div, p);
+    			insert_dev(target, if_block1_anchor, anchor);
     			current = true;
 
     			if (!mounted) {
-    				dispose = listen_dev(button, "click", /*click_handler*/ ctx[2], false, false, false, false);
+    				dispose = listen_dev(input, "change", /*change_handler*/ ctx[2], false, false, false, false);
     				mounted = true;
     			}
     		},
@@ -26416,7 +26443,7 @@ var app = (function () {
 
     				if (if_block0) {
     					if_block0.c();
-    					if_block0.m(button, t0);
+    					if_block0.m(label, t1);
     				}
     			}
 
@@ -26429,7 +26456,7 @@ var app = (function () {
     					if_block1 = create_if_block(ctx);
     					if_block1.c();
     					transition_in(if_block1, 1);
-    					if_block1.m(t2.parentNode, t2);
+    					if_block1.m(if_block1_anchor.parentNode, if_block1_anchor);
     				}
     			} else if (if_block1) {
     				group_outros();
@@ -26451,12 +26478,13 @@ var app = (function () {
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(button);
+    			if (detaching) detach_dev(input);
+    			if (detaching) detach_dev(t0);
+    			if (detaching) detach_dev(label);
     			if_block0.d();
-    			if (detaching) detach_dev(t1);
+    			if (detaching) detach_dev(t3);
     			if (if_block1) if_block1.d(detaching);
-    			if (detaching) detach_dev(t2);
-    			if (detaching) detach_dev(div);
+    			if (detaching) detach_dev(if_block1_anchor);
     			mounted = false;
     			dispose();
     		}
@@ -26488,7 +26516,7 @@ var app = (function () {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<References> was created with unknown prop '${key}'`);
     	});
 
-    	const click_handler = event => {
+    	const change_handler = event => {
     		flip_clicked();
     	};
 
@@ -26502,7 +26530,7 @@ var app = (function () {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	return [clicked, flip_clicked, click_handler];
+    	return [clicked, flip_clicked, change_handler];
     }
 
     class References extends SvelteComponentDev {
