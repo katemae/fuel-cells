@@ -26341,9 +26341,9 @@ var app = (function () {
     			add_location(li1, file$1, 29, 8, 749);
     			add_location(h32, file$1, 30, 12, 817);
     			add_location(li2, file$1, 30, 8, 813);
-    			attr_dev(ul, "class", "list svelte-ky4gt0");
+    			attr_dev(ul, "class", "list svelte-cl4vs1");
     			add_location(ul, file$1, 27, 4, 658);
-    			attr_dev(div, "class", "reference svelte-ky4gt0");
+    			attr_dev(div, "class", "reference svelte-cl4vs1");
     			add_location(div, file$1, 26, 0, 581);
     		},
     		m: function mount(target, anchor) {
@@ -26431,11 +26431,11 @@ var app = (function () {
     			attr_dev(input, "type", "checkbox");
     			attr_dev(input, "id", "check");
     			input.hidden = true;
-    			attr_dev(input, "class", "svelte-ky4gt0");
+    			attr_dev(input, "class", "svelte-cl4vs1");
     			add_location(input, file$1, 16, 0, 339);
     			add_location(strong, file$1, 23, 4, 526);
     			attr_dev(label, "for", "check");
-    			attr_dev(label, "class", "button svelte-ky4gt0");
+    			attr_dev(label, "class", "button svelte-cl4vs1");
     			add_location(label, file$1, 17, 0, 423);
     		},
     		l: function claim(nodes) {

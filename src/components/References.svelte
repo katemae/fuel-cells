@@ -82,4 +82,11 @@
         list-style: none;
         margin-top: 0%;
     }
+
+    @media (max-width: 900px) {
+        .button {
+            padding-top: 3%;
+            padding-bottom: 3%;
+        }
+    }
 </style>
