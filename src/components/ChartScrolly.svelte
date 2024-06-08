@@ -1,14 +1,14 @@
-<!-- STATIC CHART FOR SCROLLYTELLING -->
-
 <script>
     import { onMount, onDestroy, setContext } from 'svelte';
-    import { scaleLinear, select, axisBottom, axisLeft, line } from 'd3';
+    import { scaleLinear, select, axisBottom, axisLeft, line, area } from 'd3';
 
     export let E0;
     export let b;
     export let R;
     export let m;
     export let n;
+    export let highlightRange = [0, 0]; // Default range for highlighting
+    export let highlightOpacity = 0; // Default opacity for highlight
 
     let svg;
     let container;
@@ -50,6 +50,16 @@
             .x(d => xScale(d.i))
             .y(d => yScale(d.E));
 
+        const highlightAreaAbove = area()
+            .x(d => xScale(d.i))
+            .y0(0)
+            .y1(d => yScale(d.E));
+
+        const highlightAreaBelow = area()
+            .x(d => xScale(d.i))
+            .y0(height)
+            .y1(d => yScale(d.E));
+
         select(svg).selectAll('*').remove();
 
         const g = select(svg)
@@ -87,6 +97,20 @@
             .attr('stroke', 'steelblue')
             .attr('stroke-width', 1.5)
             .attr('d', lineGenerator);
+
+        if (highlightRange[0] !== highlightRange[1]) {
+            const highlightData = data.filter(d => d.i >= highlightRange[0] && d.i <= highlightRange[1]);
+
+            g.append('path')
+                .datum(highlightData)
+                .attr('fill', 'rgba(204, 213, 174, ' + highlightOpacity + ')')
+                .attr('d', highlightAreaAbove);
+
+            g.append('path')
+                .datum(highlightData)
+                .attr('fill', 'rgba(204, 213, 174, ' + highlightOpacity + ')')
+                .attr('d', highlightAreaBelow);
+        }
     }
 
     onMount(() => {

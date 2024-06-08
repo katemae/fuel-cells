@@ -4751,6 +4751,112 @@ var app = (function () {
       return line;
     }
 
+    function area(x0, y0, y1) {
+      var x1 = null,
+          defined = constant(true),
+          context = null,
+          curve = curveLinear,
+          output = null,
+          path = withPath(area);
+
+      x0 = typeof x0 === "function" ? x0 : (x0 === undefined) ? x : constant(+x0);
+      y0 = typeof y0 === "function" ? y0 : (y0 === undefined) ? constant(0) : constant(+y0);
+      y1 = typeof y1 === "function" ? y1 : (y1 === undefined) ? y : constant(+y1);
+
+      function area(data) {
+        var i,
+            j,
+            k,
+            n = (data = array(data)).length,
+            d,
+            defined0 = false,
+            buffer,
+            x0z = new Array(n),
+            y0z = new Array(n);
+
+        if (context == null) output = curve(buffer = path());
+
+        for (i = 0; i <= n; ++i) {
+          if (!(i < n && defined(d = data[i], i, data)) === defined0) {
+            if (defined0 = !defined0) {
+              j = i;
+              output.areaStart();
+              output.lineStart();
+            } else {
+              output.lineEnd();
+              output.lineStart();
+              for (k = i - 1; k >= j; --k) {
+                output.point(x0z[k], y0z[k]);
+              }
+              output.lineEnd();
+              output.areaEnd();
+            }
+          }
+          if (defined0) {
+            x0z[i] = +x0(d, i, data), y0z[i] = +y0(d, i, data);
+            output.point(x1 ? +x1(d, i, data) : x0z[i], y1 ? +y1(d, i, data) : y0z[i]);
+          }
+        }
+
+        if (buffer) return output = null, buffer + "" || null;
+      }
+
+      function arealine() {
+        return line().defined(defined).curve(curve).context(context);
+      }
+
+      area.x = function(_) {
+        return arguments.length ? (x0 = typeof _ === "function" ? _ : constant(+_), x1 = null, area) : x0;
+      };
+
+      area.x0 = function(_) {
+        return arguments.length ? (x0 = typeof _ === "function" ? _ : constant(+_), area) : x0;
+      };
+
+      area.x1 = function(_) {
+        return arguments.length ? (x1 = _ == null ? null : typeof _ === "function" ? _ : constant(+_), area) : x1;
+      };
+
+      area.y = function(_) {
+        return arguments.length ? (y0 = typeof _ === "function" ? _ : constant(+_), y1 = null, area) : y0;
+      };
+
+      area.y0 = function(_) {
+        return arguments.length ? (y0 = typeof _ === "function" ? _ : constant(+_), area) : y0;
+      };
+
+      area.y1 = function(_) {
+        return arguments.length ? (y1 = _ == null ? null : typeof _ === "function" ? _ : constant(+_), area) : y1;
+      };
+
+      area.lineX0 =
+      area.lineY0 = function() {
+        return arealine().x(x0).y(y0);
+      };
+
+      area.lineY1 = function() {
+        return arealine().x(x0).y(y1);
+      };
+
+      area.lineX1 = function() {
+        return arealine().x(x1).y(y0);
+      };
+
+      area.defined = function(_) {
+        return arguments.length ? (defined = typeof _ === "function" ? _ : constant(!!_), area) : defined;
+      };
+
+      area.curve = function(_) {
+        return arguments.length ? (curve = _, context != null && (output = curve(context)), area) : curve;
+      };
+
+      area.context = function(_) {
+        return arguments.length ? (_ == null ? context = output = null : output = curve(context = _), area) : context;
+      };
+
+      return area;
+    }
+
     function Transform(k, x, y) {
       this.k = k;
       this.x = x;
@@ -5416,10 +5522,10 @@ var app = (function () {
     			div = element("div");
     			svg_1 = svg_element("svg");
     			attr_dev(svg_1, "class", "svelte-uvxlpj");
-    			add_location(svg_1, file$5, 108, 4, 3246);
+    			add_location(svg_1, file$5, 132, 4, 4205);
     			set_style(div, "width", "100%");
     			set_style(div, "height", "100%");
-    			add_location(div, file$5, 107, 0, 3178);
+    			add_location(div, file$5, 131, 0, 4137);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -5427,16 +5533,16 @@ var app = (function () {
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
     			append_dev(div, svg_1);
-    			/*svg_1_binding*/ ctx[7](svg_1);
-    			/*div_binding*/ ctx[8](div);
+    			/*svg_1_binding*/ ctx[9](svg_1);
+    			/*div_binding*/ ctx[10](div);
     		},
     		p: noop$1,
     		i: noop$1,
     		o: noop$1,
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div);
-    			/*svg_1_binding*/ ctx[7](null);
-    			/*div_binding*/ ctx[8](null);
+    			/*svg_1_binding*/ ctx[9](null);
+    			/*div_binding*/ ctx[10](null);
     		}
     	};
 
@@ -5459,6 +5565,8 @@ var app = (function () {
     	let { R } = $$props;
     	let { m } = $$props;
     	let { n } = $$props;
+    	let { highlightRange = [0, 0] } = $$props;
+    	let { highlightOpacity = 0 } = $$props;
     	let svg;
     	let container;
     	let margin = { top: 20, right: 10, bottom: 40, left: 50 };
@@ -5488,11 +5596,19 @@ var app = (function () {
     		const xAxis = axisBottom(xScale).tickSizeOuter(0).tickPadding(5).tickFormat(d => `${d}`);
     		const yAxis = axisLeft(yScale).tickSizeOuter(0).tickPadding(5).tickFormat(d => `${d}`);
     		const lineGenerator = line().x(d => xScale(d.i)).y(d => yScale(d.E));
+    		const highlightAreaAbove = area().x(d => xScale(d.i)).y0(0).y1(d => yScale(d.E));
+    		const highlightAreaBelow = area().x(d => xScale(d.i)).y0(height).y1(d => yScale(d.E));
     		select(svg).selectAll('*').remove();
     		const g = select(svg).attr('width', width + margin.left + margin.right).attr('height', height + margin.top + margin.bottom).append('g').attr('transform', `translate(${margin.left},${margin.top})`);
     		g.append('g').attr('transform', `translate(0,${height})`).call(xAxis).append('text').attr('x', width / 2).attr('y', margin.bottom - 5).attr('fill', '#000').attr('font-size', '14px').text('Current Density (mA/cm^2)').attr('text-anchor', 'middle');
     		g.append('g').call(yAxis).append('text').attr('transform', 'rotate(-90)').attr('y', -margin.left + 5).attr('x', -height / 2).attr('dy', '0.71em').attr('fill', '#000').attr('font-size', '14px').text('Voltage (V)').attr('text-anchor', 'middle');
     		g.append('path').datum(data).attr('fill', 'none').attr('stroke', 'steelblue').attr('stroke-width', 1.5).attr('d', lineGenerator);
+
+    		if (highlightRange[0] !== highlightRange[1]) {
+    			const highlightData = data.filter(d => d.i >= highlightRange[0] && d.i <= highlightRange[1]);
+    			g.append('path').datum(highlightData).attr('fill', 'rgba(204, 213, 174, ' + highlightOpacity + ')').attr('d', highlightAreaAbove);
+    			g.append('path').datum(highlightData).attr('fill', 'rgba(204, 213, 174, ' + highlightOpacity + ')').attr('d', highlightAreaBelow);
+    		}
     	}
 
     	onMount(() => {
@@ -5528,7 +5644,7 @@ var app = (function () {
     		}
     	});
 
-    	const writable_props = ['E0', 'b', 'R', 'm', 'n'];
+    	const writable_props = ['E0', 'b', 'R', 'm', 'n', 'highlightRange', 'highlightOpacity'];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<ChartScrolly> was created with unknown prop '${key}'`);
@@ -5554,6 +5670,8 @@ var app = (function () {
     		if ('R' in $$props) $$invalidate(4, R = $$props.R);
     		if ('m' in $$props) $$invalidate(5, m = $$props.m);
     		if ('n' in $$props) $$invalidate(6, n = $$props.n);
+    		if ('highlightRange' in $$props) $$invalidate(7, highlightRange = $$props.highlightRange);
+    		if ('highlightOpacity' in $$props) $$invalidate(8, highlightOpacity = $$props.highlightOpacity);
     	};
 
     	$$self.$capture_state = () => ({
@@ -5565,11 +5683,14 @@ var app = (function () {
     		axisBottom,
     		axisLeft,
     		line,
+    		area,
     		E0,
     		b,
     		R,
     		m,
     		n,
+    		highlightRange,
+    		highlightOpacity,
     		svg,
     		container,
     		margin,
@@ -5584,6 +5705,8 @@ var app = (function () {
     		if ('R' in $$props) $$invalidate(4, R = $$props.R);
     		if ('m' in $$props) $$invalidate(5, m = $$props.m);
     		if ('n' in $$props) $$invalidate(6, n = $$props.n);
+    		if ('highlightRange' in $$props) $$invalidate(7, highlightRange = $$props.highlightRange);
+    		if ('highlightOpacity' in $$props) $$invalidate(8, highlightOpacity = $$props.highlightOpacity);
     		if ('svg' in $$props) $$invalidate(0, svg = $$props.svg);
     		if ('container' in $$props) $$invalidate(1, container = $$props.container);
     		if ('margin' in $$props) margin = $$props.margin;
@@ -5597,13 +5720,34 @@ var app = (function () {
     		updateDimensions();
     	}
 
-    	return [svg, container, E0, b, R, m, n, svg_1_binding, div_binding];
+    	return [
+    		svg,
+    		container,
+    		E0,
+    		b,
+    		R,
+    		m,
+    		n,
+    		highlightRange,
+    		highlightOpacity,
+    		svg_1_binding,
+    		div_binding
+    	];
     }
 
     class ChartScrolly extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init$1(this, options, instance$5, create_fragment$5, safe_not_equal, { E0: 2, b: 3, R: 4, m: 5, n: 6 });
+
+    		init$1(this, options, instance$5, create_fragment$5, safe_not_equal, {
+    			E0: 2,
+    			b: 3,
+    			R: 4,
+    			m: 5,
+    			n: 6,
+    			highlightRange: 7,
+    			highlightOpacity: 8
+    		});
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
@@ -5650,6 +5794,22 @@ var app = (function () {
     	}
 
     	set n(value) {
+    		throw new Error("<ChartScrolly>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get highlightRange() {
+    		throw new Error("<ChartScrolly>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set highlightRange(value) {
+    		throw new Error("<ChartScrolly>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get highlightOpacity() {
+    		throw new Error("<ChartScrolly>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set highlightOpacity(value) {
     		throw new Error("<ChartScrolly>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
     }
@@ -24122,20 +24282,20 @@ var app = (function () {
 
     function get_each_context$1(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[5] = list[i];
-    	child_ctx[7] = i;
+    	child_ctx[6] = list[i];
+    	child_ctx[8] = i;
     	return child_ctx;
     }
 
-    // (47:16) {#each steps as step, i}
+    // (67:16) {#each steps as step, i}
     function create_each_block$1(ctx) {
     	let div1;
     	let div0;
     	let h1;
-    	let raw0_value = /*step*/ ctx[5].title + "";
+    	let raw0_value = /*step*/ ctx[6].title + "";
     	let t;
     	let p;
-    	let raw1_value = /*step*/ ctx[5].content + "";
+    	let raw1_value = /*step*/ ctx[6].content + "";
 
     	const block = {
     		c: function create() {
@@ -24145,13 +24305,13 @@ var app = (function () {
     			t = space();
     			p = element("p");
     			attr_dev(h1, "class", "step-title");
-    			add_location(h1, file$4, 49, 28, 3061);
-    			add_location(p, file$4, 50, 28, 3137);
-    			attr_dev(div0, "class", "step-content svelte-uu24v0");
-    			add_location(div0, file$4, 48, 24, 3005);
-    			attr_dev(div1, "class", "step svelte-uu24v0");
-    			toggle_class(div1, "active", /*value*/ ctx[0] === /*i*/ ctx[7]);
-    			add_location(div1, file$4, 47, 20, 2934);
+    			add_location(h1, file$4, 69, 28, 3570);
+    			add_location(p, file$4, 70, 28, 3646);
+    			attr_dev(div0, "class", "step-content svelte-1qgnk4w");
+    			add_location(div0, file$4, 68, 24, 3514);
+    			attr_dev(div1, "class", "step svelte-1qgnk4w");
+    			toggle_class(div1, "active", /*value*/ ctx[0] === /*i*/ ctx[8]);
+    			add_location(div1, file$4, 67, 20, 3443);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div1, anchor);
@@ -24163,9 +24323,9 @@ var app = (function () {
     			p.innerHTML = raw1_value;
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*steps*/ 2 && raw0_value !== (raw0_value = /*step*/ ctx[5].title + "")) h1.innerHTML = raw0_value;			if (dirty & /*steps*/ 2 && raw1_value !== (raw1_value = /*step*/ ctx[5].content + "")) p.innerHTML = raw1_value;
+    			if (dirty & /*steps*/ 2 && raw0_value !== (raw0_value = /*step*/ ctx[6].title + "")) h1.innerHTML = raw0_value;			if (dirty & /*steps*/ 2 && raw1_value !== (raw1_value = /*step*/ ctx[6].content + "")) p.innerHTML = raw1_value;
     			if (dirty & /*value*/ 1) {
-    				toggle_class(div1, "active", /*value*/ ctx[0] === /*i*/ ctx[7]);
+    				toggle_class(div1, "active", /*value*/ ctx[0] === /*i*/ ctx[8]);
     			}
     		},
     		d: function destroy(detaching) {
@@ -24177,14 +24337,14 @@ var app = (function () {
     		block,
     		id: create_each_block$1.name,
     		type: "each",
-    		source: "(47:16) {#each steps as step, i}",
+    		source: "(67:16) {#each steps as step, i}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (46:12) <Scrolly bind:value>
+    // (66:12) <Scrolly bind:value>
     function create_default_slot(ctx) {
     	let t;
     	let div;
@@ -24204,8 +24364,8 @@ var app = (function () {
 
     			t = space();
     			div = element("div");
-    			attr_dev(div, "class", "spacer svelte-uu24v0");
-    			add_location(div, file$4, 54, 16, 3267);
+    			attr_dev(div, "class", "spacer svelte-1qgnk4w");
+    			add_location(div, file$4, 74, 16, 3776);
     		},
     		m: function mount(target, anchor) {
     			for (let i = 0; i < each_blocks.length; i += 1) {
@@ -24253,95 +24413,79 @@ var app = (function () {
     		block,
     		id: create_default_slot.name,
     		type: "slot",
-    		source: "(46:12) <Scrolly bind:value>",
+    		source: "(66:12) <Scrolly bind:value>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (94:12) {:else}
+    // (95:12) {:else}
     function create_else_block$2(ctx) {
-    	let div0;
-    	let chartscrolly0;
-    	let t;
-    	let div1;
-    	let chartscrolly1;
+    	let div;
+    	let chartscrolly;
     	let current;
-    	const chartscrolly0_spread_levels = [/*chartParams1*/ ctx[2]];
-    	let chartscrolly0_props = {};
 
-    	for (let i = 0; i < chartscrolly0_spread_levels.length; i += 1) {
-    		chartscrolly0_props = assign(chartscrolly0_props, chartscrolly0_spread_levels[i]);
+    	const chartscrolly_spread_levels = [
+    		/*chartParams*/ ctx[4],
+    		{
+    			highlightRange: /*highlightRange*/ ctx[2]
+    		},
+    		{
+    			highlightOpacity: /*highlightOpacity*/ ctx[3]
+    		}
+    	];
+
+    	let chartscrolly_props = {};
+
+    	for (let i = 0; i < chartscrolly_spread_levels.length; i += 1) {
+    		chartscrolly_props = assign(chartscrolly_props, chartscrolly_spread_levels[i]);
     	}
 
-    	chartscrolly0 = new ChartScrolly({
-    			props: chartscrolly0_props,
-    			$$inline: true
-    		});
-
-    	const chartscrolly1_spread_levels = [/*chartParams2*/ ctx[3]];
-    	let chartscrolly1_props = {};
-
-    	for (let i = 0; i < chartscrolly1_spread_levels.length; i += 1) {
-    		chartscrolly1_props = assign(chartscrolly1_props, chartscrolly1_spread_levels[i]);
-    	}
-
-    	chartscrolly1 = new ChartScrolly({
-    			props: chartscrolly1_props,
+    	chartscrolly = new ChartScrolly({
+    			props: chartscrolly_props,
     			$$inline: true
     		});
 
     	const block = {
     		c: function create() {
-    			div0 = element("div");
-    			create_component(chartscrolly0.$$.fragment);
-    			t = space();
-    			div1 = element("div");
-    			create_component(chartscrolly1.$$.fragment);
-    			attr_dev(div0, "class", "chart-one svelte-uu24v0");
-    			add_location(div0, file$4, 94, 16, 4892);
-    			attr_dev(div1, "class", "chart-two svelte-uu24v0");
-    			add_location(div1, file$4, 97, 16, 5013);
+    			div = element("div");
+    			create_component(chartscrolly.$$.fragment);
+    			attr_dev(div, "class", "chart svelte-1qgnk4w");
+    			add_location(div, file$4, 95, 16, 4841);
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, div0, anchor);
-    			mount_component(chartscrolly0, div0, null);
-    			insert_dev(target, t, anchor);
-    			insert_dev(target, div1, anchor);
-    			mount_component(chartscrolly1, div1, null);
+    			insert_dev(target, div, anchor);
+    			mount_component(chartscrolly, div, null);
     			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			const chartscrolly0_changes = (dirty & /*chartParams1*/ 4)
-    			? get_spread_update(chartscrolly0_spread_levels, [get_spread_object(/*chartParams1*/ ctx[2])])
+    			const chartscrolly_changes = (dirty & /*chartParams, highlightRange, highlightOpacity*/ 28)
+    			? get_spread_update(chartscrolly_spread_levels, [
+    					dirty & /*chartParams*/ 16 && get_spread_object(/*chartParams*/ ctx[4]),
+    					dirty & /*highlightRange*/ 4 && {
+    						highlightRange: /*highlightRange*/ ctx[2]
+    					},
+    					dirty & /*highlightOpacity*/ 8 && {
+    						highlightOpacity: /*highlightOpacity*/ ctx[3]
+    					}
+    				])
     			: {};
 
-    			chartscrolly0.$set(chartscrolly0_changes);
-
-    			const chartscrolly1_changes = (dirty & /*chartParams2*/ 8)
-    			? get_spread_update(chartscrolly1_spread_levels, [get_spread_object(/*chartParams2*/ ctx[3])])
-    			: {};
-
-    			chartscrolly1.$set(chartscrolly1_changes);
+    			chartscrolly.$set(chartscrolly_changes);
     		},
     		i: function intro(local) {
     			if (current) return;
-    			transition_in(chartscrolly0.$$.fragment, local);
-    			transition_in(chartscrolly1.$$.fragment, local);
+    			transition_in(chartscrolly.$$.fragment, local);
     			current = true;
     		},
     		o: function outro(local) {
-    			transition_out(chartscrolly0.$$.fragment, local);
-    			transition_out(chartscrolly1.$$.fragment, local);
+    			transition_out(chartscrolly.$$.fragment, local);
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div0);
-    			destroy_component(chartscrolly0);
-    			if (detaching) detach_dev(t);
-    			if (detaching) detach_dev(div1);
-    			destroy_component(chartscrolly1);
+    			if (detaching) detach_dev(div);
+    			destroy_component(chartscrolly);
     		}
     	};
 
@@ -24349,7 +24493,91 @@ var app = (function () {
     		block,
     		id: create_else_block$2.name,
     		type: "else",
-    		source: "(94:12) {:else}",
+    		source: "(95:12) {:else}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (91:34) 
+    function create_if_block_3$1(ctx) {
+    	let div;
+    	let chartscrolly;
+    	let current;
+
+    	const chartscrolly_spread_levels = [
+    		/*chartParams*/ ctx[4],
+    		{ m: 0.0001 },
+    		{ n: 0.0085 },
+    		{
+    			highlightRange: /*highlightRange*/ ctx[2]
+    		},
+    		{
+    			highlightOpacity: /*highlightOpacity*/ ctx[3]
+    		}
+    	];
+
+    	let chartscrolly_props = {};
+
+    	for (let i = 0; i < chartscrolly_spread_levels.length; i += 1) {
+    		chartscrolly_props = assign(chartscrolly_props, chartscrolly_spread_levels[i]);
+    	}
+
+    	chartscrolly = new ChartScrolly({
+    			props: chartscrolly_props,
+    			$$inline: true
+    		});
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			create_component(chartscrolly.$$.fragment);
+    			attr_dev(div, "class", "chart svelte-1qgnk4w");
+    			add_location(div, file$4, 91, 16, 4614);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    			mount_component(chartscrolly, div, null);
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			const chartscrolly_changes = (dirty & /*chartParams, highlightRange, highlightOpacity*/ 28)
+    			? get_spread_update(chartscrolly_spread_levels, [
+    					dirty & /*chartParams*/ 16 && get_spread_object(/*chartParams*/ ctx[4]),
+    					chartscrolly_spread_levels[1],
+    					chartscrolly_spread_levels[2],
+    					dirty & /*highlightRange*/ 4 && {
+    						highlightRange: /*highlightRange*/ ctx[2]
+    					},
+    					dirty & /*highlightOpacity*/ 8 && {
+    						highlightOpacity: /*highlightOpacity*/ ctx[3]
+    					}
+    				])
+    			: {};
+
+    			chartscrolly.$set(chartscrolly_changes);
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(chartscrolly.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(chartscrolly.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    			destroy_component(chartscrolly);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_3$1.name,
+    		type: "if",
+    		source: "(91:34) ",
     		ctx
     	});
 
@@ -24357,99 +24585,79 @@ var app = (function () {
     }
 
     // (87:34) 
-    function create_if_block_4$1(ctx) {
-    	let div0;
-    	let chartscrolly0;
-    	let t;
-    	let div1;
-    	let chartscrolly1;
+    function create_if_block_2$1(ctx) {
+    	let div;
+    	let chartscrolly;
     	let current;
-    	const chartscrolly0_spread_levels = [/*chartParams1*/ ctx[2], { n: 0.01 }];
-    	let chartscrolly0_props = {};
 
-    	for (let i = 0; i < chartscrolly0_spread_levels.length; i += 1) {
-    		chartscrolly0_props = assign(chartscrolly0_props, chartscrolly0_spread_levels[i]);
+    	const chartscrolly_spread_levels = [
+    		/*chartParams*/ ctx[4],
+    		{ R: 0.0005 },
+    		{
+    			highlightRange: /*highlightRange*/ ctx[2]
+    		},
+    		{
+    			highlightOpacity: /*highlightOpacity*/ ctx[3]
+    		}
+    	];
+
+    	let chartscrolly_props = {};
+
+    	for (let i = 0; i < chartscrolly_spread_levels.length; i += 1) {
+    		chartscrolly_props = assign(chartscrolly_props, chartscrolly_spread_levels[i]);
     	}
 
-    	chartscrolly0 = new ChartScrolly({
-    			props: chartscrolly0_props,
-    			$$inline: true
-    		});
-
-    	const chartscrolly1_spread_levels = [/*chartParams2*/ ctx[3], { n: 0.001 }];
-    	let chartscrolly1_props = {};
-
-    	for (let i = 0; i < chartscrolly1_spread_levels.length; i += 1) {
-    		chartscrolly1_props = assign(chartscrolly1_props, chartscrolly1_spread_levels[i]);
-    	}
-
-    	chartscrolly1 = new ChartScrolly({
-    			props: chartscrolly1_props,
+    	chartscrolly = new ChartScrolly({
+    			props: chartscrolly_props,
     			$$inline: true
     		});
 
     	const block = {
     		c: function create() {
-    			div0 = element("div");
-    			create_component(chartscrolly0.$$.fragment);
-    			t = space();
-    			div1 = element("div");
-    			create_component(chartscrolly1.$$.fragment);
-    			attr_dev(div0, "class", "chart-one svelte-uu24v0");
-    			add_location(div0, file$4, 87, 16, 4610);
-    			attr_dev(div1, "class", "chart-two svelte-uu24v0");
-    			add_location(div1, file$4, 90, 16, 4740);
+    			div = element("div");
+    			create_component(chartscrolly.$$.fragment);
+    			attr_dev(div, "class", "chart svelte-1qgnk4w");
+    			add_location(div, file$4, 87, 16, 4383);
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, div0, anchor);
-    			mount_component(chartscrolly0, div0, null);
-    			insert_dev(target, t, anchor);
-    			insert_dev(target, div1, anchor);
-    			mount_component(chartscrolly1, div1, null);
+    			insert_dev(target, div, anchor);
+    			mount_component(chartscrolly, div, null);
     			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			const chartscrolly0_changes = (dirty & /*chartParams1*/ 4)
-    			? get_spread_update(chartscrolly0_spread_levels, [
-    					get_spread_object(/*chartParams1*/ ctx[2]),
-    					chartscrolly0_spread_levels[1]
+    			const chartscrolly_changes = (dirty & /*chartParams, highlightRange, highlightOpacity*/ 28)
+    			? get_spread_update(chartscrolly_spread_levels, [
+    					dirty & /*chartParams*/ 16 && get_spread_object(/*chartParams*/ ctx[4]),
+    					chartscrolly_spread_levels[1],
+    					dirty & /*highlightRange*/ 4 && {
+    						highlightRange: /*highlightRange*/ ctx[2]
+    					},
+    					dirty & /*highlightOpacity*/ 8 && {
+    						highlightOpacity: /*highlightOpacity*/ ctx[3]
+    					}
     				])
     			: {};
 
-    			chartscrolly0.$set(chartscrolly0_changes);
-
-    			const chartscrolly1_changes = (dirty & /*chartParams2*/ 8)
-    			? get_spread_update(chartscrolly1_spread_levels, [
-    					get_spread_object(/*chartParams2*/ ctx[3]),
-    					chartscrolly1_spread_levels[1]
-    				])
-    			: {};
-
-    			chartscrolly1.$set(chartscrolly1_changes);
+    			chartscrolly.$set(chartscrolly_changes);
     		},
     		i: function intro(local) {
     			if (current) return;
-    			transition_in(chartscrolly0.$$.fragment, local);
-    			transition_in(chartscrolly1.$$.fragment, local);
+    			transition_in(chartscrolly.$$.fragment, local);
     			current = true;
     		},
     		o: function outro(local) {
-    			transition_out(chartscrolly0.$$.fragment, local);
-    			transition_out(chartscrolly1.$$.fragment, local);
+    			transition_out(chartscrolly.$$.fragment, local);
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div0);
-    			destroy_component(chartscrolly0);
-    			if (detaching) detach_dev(t);
-    			if (detaching) detach_dev(div1);
-    			destroy_component(chartscrolly1);
+    			if (detaching) detach_dev(div);
+    			destroy_component(chartscrolly);
     		}
     	};
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_4$1.name,
+    		id: create_if_block_2$1.name,
     		type: "if",
     		source: "(87:34) ",
     		ctx
@@ -24458,298 +24666,72 @@ var app = (function () {
     	return block;
     }
 
-    // (80:34) 
-    function create_if_block_3$1(ctx) {
-    	let div0;
-    	let chartscrolly0;
-    	let t;
-    	let div1;
-    	let chartscrolly1;
-    	let current;
-    	const chartscrolly0_spread_levels = [/*chartParams1*/ ctx[2], { m: 0.0001 }];
-    	let chartscrolly0_props = {};
-
-    	for (let i = 0; i < chartscrolly0_spread_levels.length; i += 1) {
-    		chartscrolly0_props = assign(chartscrolly0_props, chartscrolly0_spread_levels[i]);
-    	}
-
-    	chartscrolly0 = new ChartScrolly({
-    			props: chartscrolly0_props,
-    			$$inline: true
-    		});
-
-    	const chartscrolly1_spread_levels = [/*chartParams2*/ ctx[3], { m: 0.00001 }];
-    	let chartscrolly1_props = {};
-
-    	for (let i = 0; i < chartscrolly1_spread_levels.length; i += 1) {
-    		chartscrolly1_props = assign(chartscrolly1_props, chartscrolly1_spread_levels[i]);
-    	}
-
-    	chartscrolly1 = new ChartScrolly({
-    			props: chartscrolly1_props,
-    			$$inline: true
-    		});
-
-    	const block = {
-    		c: function create() {
-    			div0 = element("div");
-    			create_component(chartscrolly0.$$.fragment);
-    			t = space();
-    			div1 = element("div");
-    			create_component(chartscrolly1.$$.fragment);
-    			attr_dev(div0, "class", "chart-one svelte-uu24v0");
-    			add_location(div0, file$4, 80, 16, 4309);
-    			attr_dev(div1, "class", "chart-two svelte-uu24v0");
-    			add_location(div1, file$4, 83, 16, 4441);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, div0, anchor);
-    			mount_component(chartscrolly0, div0, null);
-    			insert_dev(target, t, anchor);
-    			insert_dev(target, div1, anchor);
-    			mount_component(chartscrolly1, div1, null);
-    			current = true;
-    		},
-    		p: function update(ctx, dirty) {
-    			const chartscrolly0_changes = (dirty & /*chartParams1*/ 4)
-    			? get_spread_update(chartscrolly0_spread_levels, [
-    					get_spread_object(/*chartParams1*/ ctx[2]),
-    					chartscrolly0_spread_levels[1]
-    				])
-    			: {};
-
-    			chartscrolly0.$set(chartscrolly0_changes);
-
-    			const chartscrolly1_changes = (dirty & /*chartParams2*/ 8)
-    			? get_spread_update(chartscrolly1_spread_levels, [
-    					get_spread_object(/*chartParams2*/ ctx[3]),
-    					chartscrolly1_spread_levels[1]
-    				])
-    			: {};
-
-    			chartscrolly1.$set(chartscrolly1_changes);
-    		},
-    		i: function intro(local) {
-    			if (current) return;
-    			transition_in(chartscrolly0.$$.fragment, local);
-    			transition_in(chartscrolly1.$$.fragment, local);
-    			current = true;
-    		},
-    		o: function outro(local) {
-    			transition_out(chartscrolly0.$$.fragment, local);
-    			transition_out(chartscrolly1.$$.fragment, local);
-    			current = false;
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div0);
-    			destroy_component(chartscrolly0);
-    			if (detaching) detach_dev(t);
-    			if (detaching) detach_dev(div1);
-    			destroy_component(chartscrolly1);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_if_block_3$1.name,
-    		type: "if",
-    		source: "(80:34) ",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (73:34) 
-    function create_if_block_2$1(ctx) {
-    	let div0;
-    	let chartscrolly0;
-    	let t;
-    	let div1;
-    	let chartscrolly1;
-    	let current;
-    	const chartscrolly0_spread_levels = [/*chartParams1*/ ctx[2], { R: 0.001 }];
-    	let chartscrolly0_props = {};
-
-    	for (let i = 0; i < chartscrolly0_spread_levels.length; i += 1) {
-    		chartscrolly0_props = assign(chartscrolly0_props, chartscrolly0_spread_levels[i]);
-    	}
-
-    	chartscrolly0 = new ChartScrolly({
-    			props: chartscrolly0_props,
-    			$$inline: true
-    		});
-
-    	const chartscrolly1_spread_levels = [/*chartParams2*/ ctx[3], { R: 0.00001 }];
-    	let chartscrolly1_props = {};
-
-    	for (let i = 0; i < chartscrolly1_spread_levels.length; i += 1) {
-    		chartscrolly1_props = assign(chartscrolly1_props, chartscrolly1_spread_levels[i]);
-    	}
-
-    	chartscrolly1 = new ChartScrolly({
-    			props: chartscrolly1_props,
-    			$$inline: true
-    		});
-
-    	const block = {
-    		c: function create() {
-    			div0 = element("div");
-    			create_component(chartscrolly0.$$.fragment);
-    			t = space();
-    			div1 = element("div");
-    			create_component(chartscrolly1.$$.fragment);
-    			attr_dev(div0, "class", "chart-one svelte-uu24v0");
-    			add_location(div0, file$4, 73, 16, 4009);
-    			attr_dev(div1, "class", "chart-two svelte-uu24v0");
-    			add_location(div1, file$4, 76, 16, 4140);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, div0, anchor);
-    			mount_component(chartscrolly0, div0, null);
-    			insert_dev(target, t, anchor);
-    			insert_dev(target, div1, anchor);
-    			mount_component(chartscrolly1, div1, null);
-    			current = true;
-    		},
-    		p: function update(ctx, dirty) {
-    			const chartscrolly0_changes = (dirty & /*chartParams1*/ 4)
-    			? get_spread_update(chartscrolly0_spread_levels, [
-    					get_spread_object(/*chartParams1*/ ctx[2]),
-    					chartscrolly0_spread_levels[1]
-    				])
-    			: {};
-
-    			chartscrolly0.$set(chartscrolly0_changes);
-
-    			const chartscrolly1_changes = (dirty & /*chartParams2*/ 8)
-    			? get_spread_update(chartscrolly1_spread_levels, [
-    					get_spread_object(/*chartParams2*/ ctx[3]),
-    					chartscrolly1_spread_levels[1]
-    				])
-    			: {};
-
-    			chartscrolly1.$set(chartscrolly1_changes);
-    		},
-    		i: function intro(local) {
-    			if (current) return;
-    			transition_in(chartscrolly0.$$.fragment, local);
-    			transition_in(chartscrolly1.$$.fragment, local);
-    			current = true;
-    		},
-    		o: function outro(local) {
-    			transition_out(chartscrolly0.$$.fragment, local);
-    			transition_out(chartscrolly1.$$.fragment, local);
-    			current = false;
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div0);
-    			destroy_component(chartscrolly0);
-    			if (detaching) detach_dev(t);
-    			if (detaching) detach_dev(div1);
-    			destroy_component(chartscrolly1);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_if_block_2$1.name,
-    		type: "if",
-    		source: "(73:34) ",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (66:34) 
+    // (83:34) 
     function create_if_block_1$2(ctx) {
-    	let div0;
-    	let chartscrolly0;
-    	let t;
-    	let div1;
-    	let chartscrolly1;
+    	let div;
+    	let chartscrolly;
     	let current;
-    	const chartscrolly0_spread_levels = [/*chartParams1*/ ctx[2], { b: 0.1 }];
-    	let chartscrolly0_props = {};
 
-    	for (let i = 0; i < chartscrolly0_spread_levels.length; i += 1) {
-    		chartscrolly0_props = assign(chartscrolly0_props, chartscrolly0_spread_levels[i]);
+    	const chartscrolly_spread_levels = [
+    		/*chartParams*/ ctx[4],
+    		{
+    			highlightRange: /*highlightRange*/ ctx[2]
+    		},
+    		{
+    			highlightOpacity: /*highlightOpacity*/ ctx[3]
+    		}
+    	];
+
+    	let chartscrolly_props = {};
+
+    	for (let i = 0; i < chartscrolly_spread_levels.length; i += 1) {
+    		chartscrolly_props = assign(chartscrolly_props, chartscrolly_spread_levels[i]);
     	}
 
-    	chartscrolly0 = new ChartScrolly({
-    			props: chartscrolly0_props,
-    			$$inline: true
-    		});
-
-    	const chartscrolly1_spread_levels = [/*chartParams2*/ ctx[3], { b: 0.01 }];
-    	let chartscrolly1_props = {};
-
-    	for (let i = 0; i < chartscrolly1_spread_levels.length; i += 1) {
-    		chartscrolly1_props = assign(chartscrolly1_props, chartscrolly1_spread_levels[i]);
-    	}
-
-    	chartscrolly1 = new ChartScrolly({
-    			props: chartscrolly1_props,
+    	chartscrolly = new ChartScrolly({
+    			props: chartscrolly_props,
     			$$inline: true
     		});
 
     	const block = {
     		c: function create() {
-    			div0 = element("div");
-    			create_component(chartscrolly0.$$.fragment);
-    			t = space();
-    			div1 = element("div");
-    			create_component(chartscrolly1.$$.fragment);
-    			attr_dev(div0, "class", "chart-one svelte-uu24v0");
-    			add_location(div0, file$4, 66, 16, 3714);
-    			attr_dev(div1, "class", "chart-two svelte-uu24v0");
-    			add_location(div1, file$4, 69, 16, 3843);
+    			div = element("div");
+    			create_component(chartscrolly.$$.fragment);
+    			attr_dev(div, "class", "chart svelte-1qgnk4w");
+    			add_location(div, file$4, 83, 16, 4164);
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, div0, anchor);
-    			mount_component(chartscrolly0, div0, null);
-    			insert_dev(target, t, anchor);
-    			insert_dev(target, div1, anchor);
-    			mount_component(chartscrolly1, div1, null);
+    			insert_dev(target, div, anchor);
+    			mount_component(chartscrolly, div, null);
     			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			const chartscrolly0_changes = (dirty & /*chartParams1*/ 4)
-    			? get_spread_update(chartscrolly0_spread_levels, [
-    					get_spread_object(/*chartParams1*/ ctx[2]),
-    					chartscrolly0_spread_levels[1]
+    			const chartscrolly_changes = (dirty & /*chartParams, highlightRange, highlightOpacity*/ 28)
+    			? get_spread_update(chartscrolly_spread_levels, [
+    					dirty & /*chartParams*/ 16 && get_spread_object(/*chartParams*/ ctx[4]),
+    					dirty & /*highlightRange*/ 4 && {
+    						highlightRange: /*highlightRange*/ ctx[2]
+    					},
+    					dirty & /*highlightOpacity*/ 8 && {
+    						highlightOpacity: /*highlightOpacity*/ ctx[3]
+    					}
     				])
     			: {};
 
-    			chartscrolly0.$set(chartscrolly0_changes);
-
-    			const chartscrolly1_changes = (dirty & /*chartParams2*/ 8)
-    			? get_spread_update(chartscrolly1_spread_levels, [
-    					get_spread_object(/*chartParams2*/ ctx[3]),
-    					chartscrolly1_spread_levels[1]
-    				])
-    			: {};
-
-    			chartscrolly1.$set(chartscrolly1_changes);
+    			chartscrolly.$set(chartscrolly_changes);
     		},
     		i: function intro(local) {
     			if (current) return;
-    			transition_in(chartscrolly0.$$.fragment, local);
-    			transition_in(chartscrolly1.$$.fragment, local);
+    			transition_in(chartscrolly.$$.fragment, local);
     			current = true;
     		},
     		o: function outro(local) {
-    			transition_out(chartscrolly0.$$.fragment, local);
-    			transition_out(chartscrolly1.$$.fragment, local);
+    			transition_out(chartscrolly.$$.fragment, local);
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div0);
-    			destroy_component(chartscrolly0);
-    			if (detaching) detach_dev(t);
-    			if (detaching) detach_dev(div1);
-    			destroy_component(chartscrolly1);
+    			if (detaching) detach_dev(div);
+    			destroy_component(chartscrolly);
     		}
     	};
 
@@ -24757,101 +24739,83 @@ var app = (function () {
     		block,
     		id: create_if_block_1$2.name,
     		type: "if",
-    		source: "(66:34) ",
+    		source: "(83:34) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (59:12) {#if value === 0}
+    // (79:12) {#if value === 0}
     function create_if_block$2(ctx) {
-    	let div0;
-    	let chartscrolly0;
-    	let t;
-    	let div1;
-    	let chartscrolly1;
+    	let div;
+    	let chartscrolly;
     	let current;
-    	const chartscrolly0_spread_levels = [/*chartParams1*/ ctx[2], { E0: 1.2 }];
-    	let chartscrolly0_props = {};
 
-    	for (let i = 0; i < chartscrolly0_spread_levels.length; i += 1) {
-    		chartscrolly0_props = assign(chartscrolly0_props, chartscrolly0_spread_levels[i]);
+    	const chartscrolly_spread_levels = [
+    		/*chartParams*/ ctx[4],
+    		{ E0: 1.2 },
+    		{ b: 0.1 },
+    		{
+    			highlightRange: /*highlightRange*/ ctx[2]
+    		},
+    		{
+    			highlightOpacity: /*highlightOpacity*/ ctx[3]
+    		}
+    	];
+
+    	let chartscrolly_props = {};
+
+    	for (let i = 0; i < chartscrolly_spread_levels.length; i += 1) {
+    		chartscrolly_props = assign(chartscrolly_props, chartscrolly_spread_levels[i]);
     	}
 
-    	chartscrolly0 = new ChartScrolly({
-    			props: chartscrolly0_props,
-    			$$inline: true
-    		});
-
-    	const chartscrolly1_spread_levels = [/*chartParams2*/ ctx[3], { E0: 0.5 }];
-    	let chartscrolly1_props = {};
-
-    	for (let i = 0; i < chartscrolly1_spread_levels.length; i += 1) {
-    		chartscrolly1_props = assign(chartscrolly1_props, chartscrolly1_spread_levels[i]);
-    	}
-
-    	chartscrolly1 = new ChartScrolly({
-    			props: chartscrolly1_props,
+    	chartscrolly = new ChartScrolly({
+    			props: chartscrolly_props,
     			$$inline: true
     		});
 
     	const block = {
     		c: function create() {
-    			div0 = element("div");
-    			create_component(chartscrolly0.$$.fragment);
-    			t = space();
-    			div1 = element("div");
-    			create_component(chartscrolly1.$$.fragment);
-    			attr_dev(div0, "class", "chart-one svelte-uu24v0");
-    			add_location(div0, file$4, 59, 16, 3418);
-    			attr_dev(div1, "class", "chart-two svelte-uu24v0");
-    			add_location(div1, file$4, 62, 16, 3548);
+    			div = element("div");
+    			create_component(chartscrolly.$$.fragment);
+    			attr_dev(div, "class", "chart svelte-1qgnk4w");
+    			add_location(div, file$4, 79, 16, 3927);
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, div0, anchor);
-    			mount_component(chartscrolly0, div0, null);
-    			insert_dev(target, t, anchor);
-    			insert_dev(target, div1, anchor);
-    			mount_component(chartscrolly1, div1, null);
+    			insert_dev(target, div, anchor);
+    			mount_component(chartscrolly, div, null);
     			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			const chartscrolly0_changes = (dirty & /*chartParams1*/ 4)
-    			? get_spread_update(chartscrolly0_spread_levels, [
-    					get_spread_object(/*chartParams1*/ ctx[2]),
-    					chartscrolly0_spread_levels[1]
+    			const chartscrolly_changes = (dirty & /*chartParams, highlightRange, highlightOpacity*/ 28)
+    			? get_spread_update(chartscrolly_spread_levels, [
+    					dirty & /*chartParams*/ 16 && get_spread_object(/*chartParams*/ ctx[4]),
+    					chartscrolly_spread_levels[1],
+    					chartscrolly_spread_levels[2],
+    					dirty & /*highlightRange*/ 4 && {
+    						highlightRange: /*highlightRange*/ ctx[2]
+    					},
+    					dirty & /*highlightOpacity*/ 8 && {
+    						highlightOpacity: /*highlightOpacity*/ ctx[3]
+    					}
     				])
     			: {};
 
-    			chartscrolly0.$set(chartscrolly0_changes);
-
-    			const chartscrolly1_changes = (dirty & /*chartParams2*/ 8)
-    			? get_spread_update(chartscrolly1_spread_levels, [
-    					get_spread_object(/*chartParams2*/ ctx[3]),
-    					chartscrolly1_spread_levels[1]
-    				])
-    			: {};
-
-    			chartscrolly1.$set(chartscrolly1_changes);
+    			chartscrolly.$set(chartscrolly_changes);
     		},
     		i: function intro(local) {
     			if (current) return;
-    			transition_in(chartscrolly0.$$.fragment, local);
-    			transition_in(chartscrolly1.$$.fragment, local);
+    			transition_in(chartscrolly.$$.fragment, local);
     			current = true;
     		},
     		o: function outro(local) {
-    			transition_out(chartscrolly0.$$.fragment, local);
-    			transition_out(chartscrolly1.$$.fragment, local);
+    			transition_out(chartscrolly.$$.fragment, local);
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div0);
-    			destroy_component(chartscrolly0);
-    			if (detaching) detach_dev(t);
-    			if (detaching) detach_dev(div1);
-    			destroy_component(chartscrolly1);
+    			if (detaching) detach_dev(div);
+    			destroy_component(chartscrolly);
     		}
     	};
 
@@ -24859,7 +24823,7 @@ var app = (function () {
     		block,
     		id: create_if_block$2.name,
     		type: "if",
-    		source: "(59:12) {#if value === 0}",
+    		source: "(79:12) {#if value === 0}",
     		ctx
     	});
 
@@ -24888,7 +24852,7 @@ var app = (function () {
     	let current;
 
     	function scrolly_value_binding(value) {
-    		/*scrolly_value_binding*/ ctx[4](value);
+    		/*scrolly_value_binding*/ ctx[5](value);
     	}
 
     	let scrolly_props = {
@@ -24908,7 +24872,6 @@ var app = (function () {
     		create_if_block_1$2,
     		create_if_block_2$1,
     		create_if_block_3$1,
-    		create_if_block_4$1,
     		create_else_block$2
     	];
 
@@ -24919,8 +24882,7 @@ var app = (function () {
     		if (/*value*/ ctx[0] === 1) return 1;
     		if (/*value*/ ctx[0] === 2) return 2;
     		if (/*value*/ ctx[0] === 3) return 3;
-    		if (/*value*/ ctx[0] === 4) return 4;
-    		return 5;
+    		return 4;
     	}
 
     	current_block_type_index = select_block_type(ctx);
@@ -24947,21 +24909,21 @@ var app = (function () {
     			t6 = space();
     			p1 = element("p");
     			p1.textContent = "In conclusion, each source of voltage loss plays a role in the effectiveness of the fuel cell. \r\n        From the current-density versus voltage curve, these parameters can be fitted from collected data, and key sources of fuel cell losses can be determined.\r\n        Therefore, with a solid understanding of this characterization method, better fuel cells can be designed for an energy efficient future.\r\n        (Note: this website provides a simplified view of this curve; lots of active research is still being done to accurately model a fuel cell's behavior, especially at extreme temperatures and pressures.)";
-    			attr_dev(h2, "class", "body-header svelte-uu24v0");
-    			add_location(h2, file$4, 35, 0, 2215);
-    			attr_dev(p0, "class", "body-text svelte-uu24v0");
-    			add_location(p0, file$4, 36, 0, 2274);
-    			attr_dev(div0, "class", "steps-container svelte-uu24v0");
-    			add_location(div0, file$4, 44, 8, 2807);
-    			attr_dev(div1, "class", "charts-container svelte-uu24v0");
-    			add_location(div1, file$4, 57, 8, 3339);
-    			attr_dev(div2, "class", "section-container svelte-uu24v0");
-    			add_location(div2, file$4, 43, 4, 2766);
-    			add_location(br0, file$4, 104, 4, 5175);
-    			add_location(br1, file$4, 104, 10, 5181);
-    			attr_dev(p1, "class", "body-text svelte-uu24v0");
-    			add_location(p1, file$4, 105, 4, 5193);
-    			add_location(section, file$4, 41, 0, 2720);
+    			attr_dev(h2, "class", "body-header svelte-1qgnk4w");
+    			add_location(h2, file$4, 55, 0, 2724);
+    			attr_dev(p0, "class", "body-text svelte-1qgnk4w");
+    			add_location(p0, file$4, 56, 0, 2783);
+    			attr_dev(div0, "class", "steps-container svelte-1qgnk4w");
+    			add_location(div0, file$4, 64, 8, 3316);
+    			attr_dev(div1, "class", "charts-container svelte-1qgnk4w");
+    			add_location(div1, file$4, 77, 8, 3848);
+    			attr_dev(div2, "class", "section-container svelte-1qgnk4w");
+    			add_location(div2, file$4, 63, 4, 3275);
+    			add_location(br0, file$4, 102, 4, 5066);
+    			add_location(br1, file$4, 102, 10, 5072);
+    			attr_dev(p1, "class", "body-text svelte-1qgnk4w");
+    			add_location(p1, file$4, 103, 4, 5084);
+    			add_location(section, file$4, 61, 0, 3229);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -24988,7 +24950,7 @@ var app = (function () {
     		p: function update(ctx, [dirty]) {
     			const scrolly_changes = {};
 
-    			if (dirty & /*$$scope, steps, value*/ 259) {
+    			if (dirty & /*$$scope, steps, value*/ 515) {
     				scrolly_changes.$$scope = { dirty, ctx };
     			}
 
@@ -25072,7 +25034,7 @@ var app = (function () {
 
     	steps = [
     		{
-    			title: 'Activation Losses: E<sub>0</sub>  and b',
+    			title: 'Activation Losses: E<sub>0</sub> and b',
     			content: "Activation losses arise from the rate of the reaction at each electrode. E<sub>0</sub> encompasses the voltage differential between the reversible voltage and the measured voltage. b comes from the non-linear Tafel equation, which describes the variation in reaction rate at different current densities. A higher b indicates a slower reaction. Together, they form the low current density region."
     		},
     		{
@@ -25089,8 +25051,9 @@ var app = (function () {
     		}
     	];
 
-    	let chartParams1 = { E0, b, R, m, n };
-    	let chartParams2 = { E0, b, R, m, n };
+    	let chartParams = { E0, b, R, m, n };
+    	let highlightRange = [0, 0];
+    	let highlightOpacity = 0;
 
     	$$self.$$.on_mount.push(function () {
     		if (value === undefined && !('value' in $$props || $$self.$$.bound[$$self.$$.props['value']])) {
@@ -25124,22 +25087,51 @@ var app = (function () {
     		m,
     		n,
     		steps,
-    		chartParams1,
-    		chartParams2
+    		chartParams,
+    		highlightRange,
+    		highlightOpacity
     	});
 
     	$$self.$inject_state = $$props => {
     		if ('value' in $$props) $$invalidate(0, value = $$props.value);
     		if ('steps' in $$props) $$invalidate(1, steps = $$props.steps);
-    		if ('chartParams1' in $$props) $$invalidate(2, chartParams1 = $$props.chartParams1);
-    		if ('chartParams2' in $$props) $$invalidate(3, chartParams2 = $$props.chartParams2);
+    		if ('chartParams' in $$props) $$invalidate(4, chartParams = $$props.chartParams);
+    		if ('highlightRange' in $$props) $$invalidate(2, highlightRange = $$props.highlightRange);
+    		if ('highlightOpacity' in $$props) $$invalidate(3, highlightOpacity = $$props.highlightOpacity);
     	};
 
     	if ($$props && "$$inject" in $$props) {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	return [value, steps, chartParams1, chartParams2, scrolly_value_binding];
+    	$$self.$$.update = () => {
+    		if ($$self.$$.dirty & /*value*/ 1) {
+    			{
+    				if (value === 0 || value === 1) {
+    					$$invalidate(2, highlightRange = [0, 200]);
+    					$$invalidate(3, highlightOpacity = 0.3);
+    				} else if (value === 2) {
+    					$$invalidate(2, highlightRange = [200, 700]);
+    					$$invalidate(3, highlightOpacity = 0.3);
+    				} else if (value === 3) {
+    					$$invalidate(2, highlightRange = [700, 999]);
+    					$$invalidate(3, highlightOpacity = 0.3);
+    				} else {
+    					$$invalidate(2, highlightRange = [0, 0]);
+    					$$invalidate(3, highlightOpacity = 0);
+    				}
+    			}
+    		}
+    	};
+
+    	return [
+    		value,
+    		steps,
+    		highlightRange,
+    		highlightOpacity,
+    		chartParams,
+    		scrolly_value_binding
+    	];
     }
 
     class VariablesScrolly extends SvelteComponentDev {
