@@ -101,11 +101,14 @@
     </div>
     
     <br /><br />
+    <h2 class="body-header">Conclusion</h2>
     <p class="body-text">
-        In conclusion, each source of voltage loss plays a role in the effectiveness of the fuel cell. 
+        The main takeaway from this website is that each a wide range of voltage losses can play a role in the effectiveness of the fuel cell.
+        The following interactive visualization gives a way for you to see how each parameter changes the shape of the characteristic curve.
+        Hopefully, this website illustrates the properties of a fuel cell, and how they operate.
         From the current-density versus voltage curve, these parameters can be fitted from collected data, and key sources of fuel cell losses can be determined.
         Therefore, with a solid understanding of this characterization method, better fuel cells can be designed for an energy efficient future.
-        (Note: this website provides a simplified view of this curve; lots of active research is still being done to accurately model a fuel cell's behavior, especially at extreme temperatures and pressures.)
+        (Note: this website provides a simplified view of this curve; lots of active research is still being done to more accurately model a fuel cell's behavior, especially at extreme temperatures and pressures.)
     </p>
 </section>
 

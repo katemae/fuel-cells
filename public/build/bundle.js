@@ -24870,7 +24870,7 @@ var app = (function () {
     }
 
     function create_fragment$4(ctx) {
-    	let h2;
+    	let h20;
     	let t1;
     	let p0;
     	let t3;
@@ -24887,6 +24887,8 @@ var app = (function () {
     	let br0;
     	let br1;
     	let t6;
+    	let h21;
+    	let t8;
     	let p1;
     	let current;
 
@@ -24929,8 +24931,8 @@ var app = (function () {
 
     	const block = {
     		c: function create() {
-    			h2 = element("h2");
-    			h2.textContent = "Understanding the Parameters";
+    			h20 = element("h2");
+    			h20.textContent = "Understanding the Parameters";
     			t1 = space();
     			p0 = element("p");
     			p0.textContent = "Ideally, a fuel cell would operate at its theoretical voltage of 1.2 volts, no matter the condition. \r\n    However, fuel cells in real life are not perfect; factors such as temperature, pressure of the fuel, materials, and construction all contribute to fuel cell voltage losses, also known as irreversibilities.\r\n    Each parameter of this fitted characterization curve helps describe a different type of loss.";
@@ -24946,10 +24948,13 @@ var app = (function () {
     			br0 = element("br");
     			br1 = element("br");
     			t6 = space();
+    			h21 = element("h2");
+    			h21.textContent = "Conclusion";
+    			t8 = space();
     			p1 = element("p");
-    			p1.textContent = "In conclusion, each source of voltage loss plays a role in the effectiveness of the fuel cell. \r\n        From the current-density versus voltage curve, these parameters can be fitted from collected data, and key sources of fuel cell losses can be determined.\r\n        Therefore, with a solid understanding of this characterization method, better fuel cells can be designed for an energy efficient future.\r\n        (Note: this website provides a simplified view of this curve; lots of active research is still being done to accurately model a fuel cell's behavior, especially at extreme temperatures and pressures.)";
-    			attr_dev(h2, "class", "body-header svelte-1qgnk4w");
-    			add_location(h2, file$4, 55, 0, 2724);
+    			p1.textContent = "The main takeaway from this website is that each a wide range of voltage losses can play a role in the effectiveness of the fuel cell.\r\n        The following interactive visualization gives a way for you to see how each parameter changes the shape of the characteristic curve.\r\n        Hopefully, this website illustrates the properties of a fuel cell, and how they operate.\r\n        From the current-density versus voltage curve, these parameters can be fitted from collected data, and key sources of fuel cell losses can be determined.\r\n        Therefore, with a solid understanding of this characterization method, better fuel cells can be designed for an energy efficient future.\r\n        (Note: this website provides a simplified view of this curve; lots of active research is still being done to more accurately model a fuel cell's behavior, especially at extreme temperatures and pressures.)";
+    			attr_dev(h20, "class", "body-header svelte-1qgnk4w");
+    			add_location(h20, file$4, 55, 0, 2724);
     			attr_dev(p0, "class", "body-text svelte-1qgnk4w");
     			add_location(p0, file$4, 56, 0, 2783);
     			attr_dev(div0, "class", "steps-container svelte-1qgnk4w");
@@ -24960,15 +24965,17 @@ var app = (function () {
     			add_location(div2, file$4, 63, 4, 3275);
     			add_location(br0, file$4, 102, 4, 5066);
     			add_location(br1, file$4, 102, 10, 5072);
+    			attr_dev(h21, "class", "body-header svelte-1qgnk4w");
+    			add_location(h21, file$4, 103, 4, 5084);
     			attr_dev(p1, "class", "body-text svelte-1qgnk4w");
-    			add_location(p1, file$4, 103, 4, 5084);
+    			add_location(p1, file$4, 104, 4, 5129);
     			add_location(section, file$4, 61, 0, 3229);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, h2, anchor);
+    			insert_dev(target, h20, anchor);
     			insert_dev(target, t1, anchor);
     			insert_dev(target, p0, anchor);
     			insert_dev(target, t3, anchor);
@@ -24983,6 +24990,8 @@ var app = (function () {
     			append_dev(section, br0);
     			append_dev(section, br1);
     			append_dev(section, t6);
+    			append_dev(section, h21);
+    			append_dev(section, t8);
     			append_dev(section, p1);
     			current = true;
     		},
@@ -25038,7 +25047,7 @@ var app = (function () {
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(h2);
+    			if (detaching) detach_dev(h20);
     			if (detaching) detach_dev(t1);
     			if (detaching) detach_dev(p0);
     			if (detaching) detach_dev(t3);
