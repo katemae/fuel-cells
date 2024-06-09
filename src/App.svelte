@@ -137,7 +137,7 @@
     }
 
     .graph-container {
-        flex: 10;
+        flex: 8;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -145,7 +145,7 @@
     }
 
     .controls-container {
-        flex: 1;
+        flex: 4;
         display: flex;
         flex-direction: column;
         align-items: flex-start;
@@ -195,6 +195,7 @@
 
         .graph-container {
             width: 100%;
+            height: 30vh;
         }
 
         .control {

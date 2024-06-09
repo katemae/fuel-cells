@@ -125,4 +125,16 @@
             margin: auto;
         }
     }
+
+    @media (max-width: 950px) {
+        .chart-container {
+            height: 50vh;
+            margin-top: 20px;
+        }
+
+        svg {
+            width: 100%;
+            height: 50vh;
+        }
+    }
 </style>
