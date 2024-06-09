@@ -5162,7 +5162,7 @@ var app = (function () {
     		c: function create() {
     			div = element("div");
     			if (default_slot) default_slot.c();
-    			add_location(div, file$6, 80, 2, 2142);
+    			add_location(div, file$6, 80, 2, 2222);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -26324,23 +26324,23 @@ var app = (function () {
     			li0 = element("li");
     			h30 = element("h3");
     			h30.textContent = "Reference #1";
-    			t1 = text$2(" Reference 1 Description");
+    			t1 = text$2(" Dicks, A. L.; Rand, D. A. J., Fuel Cell Systems Explained, 3rd ed.; John Wiley and Sons:\r\n            New Jersey, 2018.");
     			t2 = space();
     			li1 = element("li");
     			h31 = element("h3");
     			h31.textContent = "Reference #2";
-    			t4 = text$2(" Reference 2 Description");
+    			t4 = text$2(" Kim, J. et al. Modeling of Proton Exchange Membrane Fuel Cell Performance with an Empirical Equation. \r\n            J. Electrochem. Soc. 1995, 142, 2670–2674, DOI: 10.1149/1.2050072.");
     			t5 = space();
     			li2 = element("li");
     			h32 = element("h3");
     			h32.textContent = "Reference #3";
-    			t7 = text$2(" Reference 3 Description");
+    			t7 = text$2(" Spiegel, C., PEM Fuel Cell Modeling and Simulation Using MATLAB; Elsevier: 2008.");
     			add_location(h30, file$1, 28, 12, 689);
     			add_location(li0, file$1, 28, 8, 685);
-    			add_location(h31, file$1, 29, 12, 753);
-    			add_location(li1, file$1, 29, 8, 749);
-    			add_location(h32, file$1, 30, 12, 817);
-    			add_location(li2, file$1, 30, 8, 813);
+    			add_location(h31, file$1, 30, 12, 849);
+    			add_location(li1, file$1, 30, 8, 845);
+    			add_location(h32, file$1, 32, 12, 1072);
+    			add_location(li2, file$1, 32, 8, 1068);
     			attr_dev(ul, "class", "list svelte-cl4vs1");
     			add_location(ul, file$1, 27, 4, 658);
     			attr_dev(div, "class", "reference svelte-cl4vs1");

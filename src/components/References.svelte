@@ -26,9 +26,11 @@
 {#if clicked}
 <div class="reference" transition:slide={{ duration: 250, axis: 'y' }}>
     <ul class="list">
-        <li><h3>Reference #1</h3> Reference 1 Description</li>
-        <li><h3>Reference #2</h3> Reference 2 Description</li>
-        <li><h3>Reference #3</h3> Reference 3 Description</li>
+        <li><h3>Reference #1</h3> Dicks, A. L.; Rand, D. A. J., Fuel Cell Systems Explained, 3rd ed.; John Wiley and Sons:
+            New Jersey, 2018.</li>
+        <li><h3>Reference #2</h3> Kim, J. et al. Modeling of Proton Exchange Membrane Fuel Cell Performance with an Empirical Equation. 
+            J. Electrochem. Soc. 1995, 142, 2670–2674, DOI: 10.1149/1.2050072.</li>
+        <li><h3>Reference #3</h3> Spiegel, C., PEM Fuel Cell Modeling and Simulation Using MATLAB; Elsevier: 2008.</li>
     </ul>
 </div>
 {/if}
