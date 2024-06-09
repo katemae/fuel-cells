@@ -5268,7 +5268,7 @@ var app = (function () {
     		c: function create() {
     			div = element("div");
     			if (default_slot) default_slot.c();
-    			add_location(div, file$6, 80, 2, 2142);
+    			add_location(div, file$6, 80, 2, 2222);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -25209,10 +25209,231 @@ var app = (function () {
     	return child_ctx;
     }
 
-    // (67:16) {#if clicked === 3}
+    function get_each_context_1(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[14] = list[i];
+    	child_ctx[16] = i;
+    	return child_ctx;
+    }
+
+    function get_each_context_2(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[14] = list[i];
+    	child_ctx[16] = i;
+    	return child_ctx;
+    }
+
+    // (68:16) {#if clicked === 0}
+    function create_if_block_6(ctx) {
+    	let each_1_anchor;
+    	let each_value_2 = Array(10);
+    	validate_each_argument(each_value_2);
+    	let each_blocks = [];
+
+    	for (let i = 0; i < each_value_2.length; i += 1) {
+    		each_blocks[i] = create_each_block_2(get_each_context_2(ctx, each_value_2, i));
+    	}
+
+    	const block = {
+    		c: function create() {
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			each_1_anchor = empty$1();
+    		},
+    		m: function mount(target, anchor) {
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				if (each_blocks[i]) {
+    					each_blocks[i].m(target, anchor);
+    				}
+    			}
+
+    			insert_dev(target, each_1_anchor, anchor);
+    		},
+    		p: noop$1,
+    		d: function destroy(detaching) {
+    			destroy_each(each_blocks, detaching);
+    			if (detaching) detach_dev(each_1_anchor);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_6.name,
+    		type: "if",
+    		source: "(68:16) {#if clicked === 0}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (69:20) {#each Array(10) as _, i}
+    function create_each_block_2(ctx) {
+    	let g;
+    	let circle0;
+    	let animateMotion0;
+    	let mpath0;
+    	let circle1;
+    	let animateMotion1;
+    	let mpath1;
+
+    	const block = {
+    		c: function create() {
+    			g = svg_element("g");
+    			circle0 = svg_element("circle");
+    			animateMotion0 = svg_element("animateMotion");
+    			mpath0 = svg_element("mpath");
+    			circle1 = svg_element("circle");
+    			animateMotion1 = svg_element("animateMotion");
+    			mpath1 = svg_element("mpath");
+    			attr_dev(mpath0, "href", "#hydrogenPath");
+    			add_location(mpath0, file$3, 78, 36, 3358);
+    			attr_dev(animateMotion0, "class", "hydrogenMotion");
+    			attr_dev(animateMotion0, "dur", "5s");
+    			attr_dev(animateMotion0, "repeatCount", "indefinite");
+    			attr_dev(animateMotion0, "begin", /*i*/ ctx[16] * 0.5 + "s");
+    			add_location(animateMotion0, file$3, 72, 32, 3042);
+    			attr_dev(circle0, "class", "hydrogen-circle");
+    			attr_dev(circle0, "r", "20");
+    			attr_dev(circle0, "fill", "red");
+    			add_location(circle0, file$3, 71, 28, 2958);
+    			attr_dev(mpath1, "href", "#hydrogenPath");
+    			add_location(mpath1, file$3, 89, 36, 3992);
+    			attr_dev(animateMotion1, "class", "hydrogenMotion");
+    			attr_dev(animateMotion1, "dur", "5s");
+    			attr_dev(animateMotion1, "repeatCount", "indefinite");
+    			attr_dev(animateMotion1, "begin", /*i*/ ctx[16] * 0.5 + "s");
+    			add_location(animateMotion1, file$3, 83, 32, 3676);
+    			attr_dev(circle1, "class", "hydrogen-circle");
+    			attr_dev(circle1, "r", "20");
+    			attr_dev(circle1, "fill", "red");
+    			attr_dev(circle1, "transform", "translate(0, 25)");
+    			add_location(circle1, file$3, 82, 28, 3563);
+    			add_location(g, file$3, 69, 24, 2869);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, g, anchor);
+    			append_dev(g, circle0);
+    			append_dev(circle0, animateMotion0);
+    			append_dev(animateMotion0, mpath0);
+    			append_dev(g, circle1);
+    			append_dev(circle1, animateMotion1);
+    			append_dev(animateMotion1, mpath1);
+    		},
+    		p: noop$1,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(g);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_2.name,
+    		type: "each",
+    		source: "(69:20) {#each Array(10) as _, i}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (120:16) {#if clicked === 3}
+    function create_if_block_5(ctx) {
+    	let each_1_anchor;
+    	let each_value_1 = Array(5);
+    	validate_each_argument(each_value_1);
+    	let each_blocks = [];
+
+    	for (let i = 0; i < each_value_1.length; i += 1) {
+    		each_blocks[i] = create_each_block_1(get_each_context_1(ctx, each_value_1, i));
+    	}
+
+    	const block = {
+    		c: function create() {
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			each_1_anchor = empty$1();
+    		},
+    		m: function mount(target, anchor) {
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				if (each_blocks[i]) {
+    					each_blocks[i].m(target, anchor);
+    				}
+    			}
+
+    			insert_dev(target, each_1_anchor, anchor);
+    		},
+    		p: noop$1,
+    		d: function destroy(detaching) {
+    			destroy_each(each_blocks, detaching);
+    			if (detaching) detach_dev(each_1_anchor);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_5.name,
+    		type: "if",
+    		source: "(120:16) {#if clicked === 3}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (121:20) {#each Array(5) as _, i}
+    function create_each_block_1(ctx) {
+    	let circle;
+    	let animateMotion;
+    	let mpath;
+
+    	const block = {
+    		c: function create() {
+    			circle = svg_element("circle");
+    			animateMotion = svg_element("animateMotion");
+    			mpath = svg_element("mpath");
+    			attr_dev(mpath, "href", "#circuitPath");
+    			add_location(mpath, file$3, 127, 32, 5541);
+    			attr_dev(animateMotion, "class", "electronMotion");
+    			attr_dev(animateMotion, "dur", "5s");
+    			attr_dev(animateMotion, "repeatCount", "indefinite");
+    			attr_dev(animateMotion, "begin", /*i*/ ctx[16] * 1 + "s; anim" + /*i*/ ctx[16] + ".begin");
+    			add_location(animateMotion, file$3, 122, 28, 5260);
+    			attr_dev(circle, "class", "electron svelte-1lqswlk");
+    			attr_dev(circle, "r", "15");
+    			attr_dev(circle, "fill", "#ffb703");
+    			add_location(circle, file$3, 121, 24, 5183);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, circle, anchor);
+    			append_dev(circle, animateMotion);
+    			append_dev(animateMotion, mpath);
+    		},
+    		p: noop$1,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(circle);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_1.name,
+    		type: "each",
+    		source: "(121:20) {#each Array(5) as _, i}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (156:16) {#if clicked === 2}
     function create_if_block_4(ctx) {
     	let each_1_anchor;
-    	let each_value = Array(5);
+    	let each_value = Array(10);
     	validate_each_argument(each_value);
     	let each_blocks = [];
 
@@ -25248,44 +25469,69 @@ var app = (function () {
     		block,
     		id: create_if_block_4.name,
     		type: "if",
-    		source: "(67:16) {#if clicked === 3}",
+    		source: "(156:16) {#if clicked === 2}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (68:20) {#each Array(5) as _, i}
+    // (157:20) {#each Array(10) as _, i}
     function create_each_block(ctx) {
-    	let circle;
-    	let animateMotion;
-    	let mpath;
+    	let g;
+    	let circle0;
+    	let animateMotion0;
+    	let mpath0;
+    	let circle1;
+    	let animateMotion1;
+    	let mpath1;
 
     	const block = {
     		c: function create() {
-    			circle = svg_element("circle");
-    			animateMotion = svg_element("animateMotion");
-    			mpath = svg_element("mpath");
-    			attr_dev(mpath, "href", "#circuitPath");
-    			add_location(mpath, file$3, 74, 32, 3297);
-    			attr_dev(animateMotion, "class", "electronMotion");
-    			attr_dev(animateMotion, "dur", "5s");
-    			attr_dev(animateMotion, "repeatCount", "indefinite");
-    			attr_dev(animateMotion, "begin", /*i*/ ctx[16] * 1 + "s; anim" + /*i*/ ctx[16] + ".begin");
-    			add_location(animateMotion, file$3, 69, 28, 3016);
-    			attr_dev(circle, "class", "electron svelte-1lqswlk");
-    			attr_dev(circle, "r", "15");
-    			attr_dev(circle, "fill", "#ffb703");
-    			add_location(circle, file$3, 68, 24, 2939);
+    			g = svg_element("g");
+    			circle0 = svg_element("circle");
+    			animateMotion0 = svg_element("animateMotion");
+    			mpath0 = svg_element("mpath");
+    			circle1 = svg_element("circle");
+    			animateMotion1 = svg_element("animateMotion");
+    			mpath1 = svg_element("mpath");
+    			attr_dev(mpath0, "href", "#oxygenPath");
+    			add_location(mpath0, file$3, 166, 36, 7083);
+    			attr_dev(animateMotion0, "class", "oxygenMotion");
+    			attr_dev(animateMotion0, "dur", "5s");
+    			attr_dev(animateMotion0, "repeatCount", "indefinite");
+    			attr_dev(animateMotion0, "begin", /*i*/ ctx[16] * 0.5 + "s");
+    			add_location(animateMotion0, file$3, 160, 32, 6769);
+    			attr_dev(circle0, "class", "oxygen-circle");
+    			attr_dev(circle0, "r", "20");
+    			attr_dev(circle0, "fill", "blue");
+    			add_location(circle0, file$3, 159, 28, 6686);
+    			attr_dev(mpath1, "href", "#oxygenPath");
+    			add_location(mpath1, file$3, 177, 36, 7712);
+    			attr_dev(animateMotion1, "class", "oxygenMotion");
+    			attr_dev(animateMotion1, "dur", "5s");
+    			attr_dev(animateMotion1, "repeatCount", "indefinite");
+    			attr_dev(animateMotion1, "begin", /*i*/ ctx[16] * 0.5 + "s");
+    			add_location(animateMotion1, file$3, 171, 32, 7398);
+    			attr_dev(circle1, "class", "oxygen-circle");
+    			attr_dev(circle1, "r", "20");
+    			attr_dev(circle1, "fill", "blue");
+    			attr_dev(circle1, "transform", "translate(0, 25)");
+    			add_location(circle1, file$3, 170, 28, 7286);
+    			add_location(g, file$3, 157, 24, 6597);
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, circle, anchor);
-    			append_dev(circle, animateMotion);
-    			append_dev(animateMotion, mpath);
+    			insert_dev(target, g, anchor);
+    			append_dev(g, circle0);
+    			append_dev(circle0, animateMotion0);
+    			append_dev(animateMotion0, mpath0);
+    			append_dev(g, circle1);
+    			append_dev(circle1, animateMotion1);
+    			append_dev(animateMotion1, mpath1);
     		},
     		p: noop$1,
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(circle);
+    			if (detaching) detach_dev(g);
     		}
     	};
 
@@ -25293,14 +25539,14 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(68:20) {#each Array(5) as _, i}",
+    		source: "(157:20) {#each Array(10) as _, i}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (235:12) {:else}
+    // (314:12) {:else}
     function create_else_block$1(ctx) {
     	let p;
 
@@ -25309,7 +25555,7 @@ var app = (function () {
     			p = element("p");
     			p.textContent = "Click any component of the fuel cell!";
     			set_style(p, "text-align", "center");
-    			add_location(p, file$3, 235, 12, 10431);
+    			add_location(p, file$3, 314, 12, 13834);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -25325,14 +25571,14 @@ var app = (function () {
     		block,
     		id: create_else_block$1.name,
     		type: "else",
-    		source: "(235:12) {:else}",
+    		source: "(314:12) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (223:36) 
+    // (302:36) 
     function create_if_block_3(ctx) {
     	let div;
     	let header;
@@ -25351,9 +25597,9 @@ var app = (function () {
     			i.textContent = "opposite";
     			t3 = text$2(" to the direction of current. The arrows drawn in this diagram portray the movement of electrons, not current flow.");
     			attr_dev(header, "class", "svelte-1lqswlk");
-    			add_location(header, file$3, 224, 16, 9584);
-    			add_location(i, file$3, 226, 62, 9848);
-    			add_location(div, file$3, 223, 12, 9553);
+    			add_location(header, file$3, 303, 16, 12987);
+    			add_location(i, file$3, 305, 62, 13251);
+    			add_location(div, file$3, 302, 12, 12956);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -25380,14 +25626,14 @@ var app = (function () {
     		block,
     		id: create_if_block_3.name,
     		type: "if",
-    		source: "(223:36) ",
+    		source: "(302:36) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (213:36) 
+    // (292:36) 
     function create_if_block_2(ctx) {
     	let div;
     	let header;
@@ -25430,15 +25676,15 @@ var app = (function () {
     			t11 = text$2("O");
     			t12 = text$2("\r\n                    receiving electrons from the circuit and producing water from the oxygen. \r\n                    On this side, both atmospheric air or pure oxygen can be inputted, and water vapor is released into the atmosphere.");
     			attr_dev(header, "class", "svelte-1lqswlk");
-    			add_location(header, file$3, 214, 16, 8937);
-    			add_location(sub0, file$3, 217, 25, 9142);
-    			add_location(i, file$3, 217, 41, 9158);
-    			add_location(sup0, file$3, 217, 49, 9166);
-    			add_location(sup1, file$3, 217, 66, 9183);
-    			add_location(sub1, file$3, 217, 88, 9205);
+    			add_location(header, file$3, 293, 16, 12340);
+    			add_location(sub0, file$3, 296, 25, 12545);
+    			add_location(i, file$3, 296, 41, 12561);
+    			add_location(sup0, file$3, 296, 49, 12569);
+    			add_location(sup1, file$3, 296, 66, 12586);
+    			add_location(sub1, file$3, 296, 88, 12608);
     			attr_dev(p, "class", "equation svelte-1lqswlk");
-    			add_location(p, file$3, 216, 20, 9095);
-    			add_location(div, file$3, 213, 12, 8906);
+    			add_location(p, file$3, 295, 20, 12498);
+    			add_location(div, file$3, 292, 12, 12309);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -25475,14 +25721,14 @@ var app = (function () {
     		block,
     		id: create_if_block_2.name,
     		type: "if",
-    		source: "(213:36) ",
+    		source: "(292:36) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (206:36) 
+    // (285:36) 
     function create_if_block_1$1(ctx) {
     	let header;
     	let header_intro;
@@ -25498,8 +25744,8 @@ var app = (function () {
     			p = element("p");
     			p.textContent = "The electrolyte is typically an ionic solution which enables the transfer of charged ions between electrodes. It also separates the two electrodes to prevent short circuiting.\r\n                However, in PEM fuel cells, the electrolyte is a semi-conductive polymer membrane, solely allowing the movement of hydrogen ions.\r\n                Once oxidized, hydrogen ions bond with the membrane, in which they can be used at the cathode for its reduction half-reaction.";
     			attr_dev(header, "class", "svelte-1lqswlk");
-    			add_location(header, file$3, 206, 12, 8291);
-    			add_location(p, file$3, 207, 12, 8341);
+    			add_location(header, file$3, 285, 12, 11694);
+    			add_location(p, file$3, 286, 12, 11744);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, header, anchor);
@@ -25533,14 +25779,14 @@ var app = (function () {
     		block,
     		id: create_if_block_1$1.name,
     		type: "if",
-    		source: "(206:36) ",
+    		source: "(285:36) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (194:12) {#if clicked === 0}
+    // (273:12) {#if clicked === 0}
     function create_if_block$1(ctx) {
     	let div;
     	let header;
@@ -25576,14 +25822,14 @@ var app = (function () {
     			sup1.textContent = "-";
     			t9 = text$2("\r\n                releasing electrons which do electrical work through the connected circuit. \r\n                The anode takes in pure hydrogen gas, and ionizes the hydrogen. \r\n                The electrode itself is a conductive material to easily transfer electrons to the circuit.\r\n                Typically, both electrodes use a catalyst such as platinum to speed up the reaction process, generating more energy.");
     			attr_dev(header, "class", "svelte-1lqswlk");
-    			add_location(header, file$3, 195, 12, 7528);
-    			add_location(sub, file$3, 198, 22, 7721);
-    			add_location(sup0, file$3, 198, 44, 7743);
-    			add_location(i, file$3, 198, 60, 7759);
-    			add_location(sup1, file$3, 198, 68, 7767);
+    			add_location(header, file$3, 274, 12, 10931);
+    			add_location(sub, file$3, 277, 22, 11124);
+    			add_location(sup0, file$3, 277, 44, 11146);
+    			add_location(i, file$3, 277, 60, 11162);
+    			add_location(sup1, file$3, 277, 68, 11170);
     			attr_dev(p, "class", "equation svelte-1lqswlk");
-    			add_location(p, file$3, 197, 16, 7677);
-    			add_location(div, file$3, 194, 12, 7501);
+    			add_location(p, file$3, 276, 16, 11080);
+    			add_location(div, file$3, 273, 12, 10904);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -25617,7 +25863,7 @@ var app = (function () {
     		block,
     		id: create_if_block$1.name,
     		type: "if",
-    		source: "(194:12) {#if clicked === 0}",
+    		source: "(273:12) {#if clicked === 0}",
     		ctx
     	});
 
@@ -25656,13 +25902,15 @@ var app = (function () {
     	let feDropShadow;
     	let marker;
     	let path0;
-    	let path1;
-    	let path1_fill_value;
-    	let path2;
     	let rect0;
     	let rect0_fill_value;
+    	let path1;
+    	let path2;
+    	let path2_fill_value;
+    	let path3;
     	let rect1;
     	let rect1_fill_value;
+    	let path4;
     	let rect2;
     	let rect2_fill_value;
     	let circle0;
@@ -25670,13 +25918,15 @@ var app = (function () {
     	let circle1;
     	let line1;
     	let line2;
-    	let path3;
-    	let path4;
+    	let path5;
+    	let path6;
     	let t16;
     	let div2;
     	let mounted;
     	let dispose;
-    	let if_block0 = /*clicked*/ ctx[0] === 3 && create_if_block_4(ctx);
+    	let if_block0 = /*clicked*/ ctx[0] === 0 && create_if_block_6(ctx);
+    	let if_block1 = /*clicked*/ ctx[0] === 3 && create_if_block_5(ctx);
+    	let if_block2 = /*clicked*/ ctx[0] === 2 && create_if_block_4(ctx);
 
     	function select_block_type(ctx, dirty) {
     		if (/*clicked*/ ctx[0] === 0) return create_if_block$1;
@@ -25687,7 +25937,7 @@ var app = (function () {
     	}
 
     	let current_block_type = select_block_type(ctx);
-    	let if_block1 = current_block_type(ctx);
+    	let if_block3 = current_block_type(ctx);
 
     	const block = {
     		c: function create() {
@@ -25728,22 +25978,26 @@ var app = (function () {
     			feDropShadow = svg_element("feDropShadow");
     			marker = svg_element("marker");
     			path0 = svg_element("path");
-    			path1 = svg_element("path");
-    			path2 = svg_element("path");
-    			if (if_block0) if_block0.c();
     			rect0 = svg_element("rect");
+    			path1 = svg_element("path");
+    			if (if_block0) if_block0.c();
+    			path2 = svg_element("path");
+    			path3 = svg_element("path");
+    			if (if_block1) if_block1.c();
     			rect1 = svg_element("rect");
+    			path4 = svg_element("path");
+    			if (if_block2) if_block2.c();
     			rect2 = svg_element("rect");
     			circle0 = svg_element("circle");
     			line0 = svg_element("line");
     			circle1 = svg_element("circle");
     			line1 = svg_element("line");
     			line2 = svg_element("line");
-    			path3 = svg_element("path");
-    			path4 = svg_element("path");
+    			path5 = svg_element("path");
+    			path6 = svg_element("path");
     			t16 = space();
     			div2 = element("div");
-    			if_block1.c();
+    			if_block3.c();
     			add_location(h2, file$3, 12, 8, 261);
     			add_location(b0, file$3, 16, 12, 683);
     			attr_dev(a0, "href", "https://chem.libretexts.org/Bookshelves/Analytical_Chemistry/Supplemental_Modules_(Analytical_Chemistry)/Electrochemistry/Redox_Chemistry/Half-Reactions");
@@ -25779,17 +26033,6 @@ var app = (function () {
     			attr_dev(marker, "refY", "2");
     			add_location(marker, file$3, 37, 20, 1668);
     			add_location(defs, file$3, 33, 16, 1476);
-    			attr_dev(path1, "class", "hoverable svelte-1lqswlk");
-    			attr_dev(path1, "d", "M-400 -490\r\n                    L-400 -740\r\n                    L 400 -740\r\n                    L 400 -490\r\n                    L 350 -490\r\n                    L 350 -690\r\n                    L-350 -690\r\n                    L-350 -490\r\n                    Z");
-    			attr_dev(path1, "fill", path1_fill_value = /*hovered*/ ctx[1] === 3 ? hovered_color : "white");
-    			attr_dev(path1, "stroke", "black");
-    			attr_dev(path1, "stroke-width", "5px");
-    			add_location(path1, file$3, 45, 16, 1972);
-    			attr_dev(path2, "id", "circuitPath");
-    			attr_dev(path2, "d", "M-400 -490 V -740 H 400 V -490");
-    			attr_dev(path2, "fill", "none");
-    			attr_dev(path2, "stroke", "none");
-    			add_location(path2, file$3, 65, 16, 2745);
     			attr_dev(rect0, "id", "anode");
     			attr_dev(rect0, "width", "400");
     			attr_dev(rect0, "height", "950");
@@ -25799,81 +26042,102 @@ var app = (function () {
     			attr_dev(rect0, "stroke", "black");
     			attr_dev(rect0, "stroke-width", "5");
     			attr_dev(rect0, "class", "svelte-1lqswlk");
-    			add_location(rect0, file$3, 80, 16, 3478);
-    			attr_dev(rect1, "id", "electrolyte");
-    			attr_dev(rect1, "width", "200");
+    			add_location(rect0, file$3, 45, 16, 1972);
+    			attr_dev(path1, "id", "hydrogenPath");
+    			attr_dev(path1, "d", "M -490 -400 H -175 V 370 H -490");
+    			attr_dev(path1, "fill", "none");
+    			attr_dev(path1, "stroke", "none");
+    			add_location(path1, file$3, 60, 16, 2552);
+    			attr_dev(path2, "class", "hoverable svelte-1lqswlk");
+    			attr_dev(path2, "d", "M-400 -490\r\n                    L-400 -740\r\n                    L 400 -740\r\n                    L 400 -490\r\n                    L 350 -490\r\n                    L 350 -690\r\n                    L-350 -690\r\n                    L-350 -490\r\n                    Z");
+    			attr_dev(path2, "fill", path2_fill_value = /*hovered*/ ctx[1] === 3 ? hovered_color : "white");
+    			attr_dev(path2, "stroke", "black");
+    			attr_dev(path2, "stroke-width", "5px");
+    			add_location(path2, file$3, 98, 16, 4216);
+    			attr_dev(path3, "id", "circuitPath");
+    			attr_dev(path3, "d", "M-400 -490 V -740 H 400 V -490");
+    			attr_dev(path3, "fill", "none");
+    			attr_dev(path3, "stroke", "none");
+    			add_location(path3, file$3, 118, 16, 4989);
+    			attr_dev(rect1, "id", "cathode");
+    			attr_dev(rect1, "width", "400");
     			attr_dev(rect1, "height", "950");
-    			attr_dev(rect1, "x", "-100");
+    			attr_dev(rect1, "x", "90");
     			attr_dev(rect1, "y", "-490");
-    			attr_dev(rect1, "fill", rect1_fill_value = /*hovered*/ ctx[1] === 1 ? hovered_color : "white");
+    			attr_dev(rect1, "fill", rect1_fill_value = /*hovered*/ ctx[1] === 2 ? hovered_color : "lightgray");
     			attr_dev(rect1, "stroke", "black");
     			attr_dev(rect1, "stroke-width", "5");
     			attr_dev(rect1, "class", "svelte-1lqswlk");
-    			add_location(rect1, file$3, 93, 16, 4011);
-    			attr_dev(rect2, "id", "cathode");
-    			attr_dev(rect2, "width", "400");
+    			add_location(rect1, file$3, 133, 16, 5722);
+    			attr_dev(path4, "id", "oxygenPath");
+    			attr_dev(path4, "d", "M 490 -400 H 165 V 370 H 490");
+    			attr_dev(path4, "fill", "none");
+    			attr_dev(path4, "stroke", "none");
+    			add_location(path4, file$3, 148, 16, 6301);
+    			attr_dev(rect2, "id", "electrolyte");
+    			attr_dev(rect2, "width", "200");
     			attr_dev(rect2, "height", "950");
-    			attr_dev(rect2, "x", "90");
+    			attr_dev(rect2, "x", "-100");
     			attr_dev(rect2, "y", "-490");
-    			attr_dev(rect2, "fill", rect2_fill_value = /*hovered*/ ctx[1] === 2 ? hovered_color : "lightgray");
+    			attr_dev(rect2, "fill", rect2_fill_value = /*hovered*/ ctx[1] === 1 ? hovered_color : "white");
     			attr_dev(rect2, "stroke", "black");
     			attr_dev(rect2, "stroke-width", "5");
     			attr_dev(rect2, "class", "svelte-1lqswlk");
-    			add_location(rect2, file$3, 106, 16, 4547);
+    			add_location(rect2, file$3, 184, 16, 7930);
     			attr_dev(circle0, "r", "50");
     			attr_dev(circle0, "cx", "-600");
     			attr_dev(circle0, "cy", "-400");
     			attr_dev(circle0, "stroke", "black");
     			attr_dev(circle0, "stroke-width", "5");
     			attr_dev(circle0, "fill", "none");
-    			add_location(circle0, file$3, 134, 16, 5733);
+    			add_location(circle0, file$3, 213, 16, 9136);
     			attr_dev(line0, "x1", "-625");
     			attr_dev(line0, "y1", "-400");
     			attr_dev(line0, "x2", "-575");
     			attr_dev(line0, "y2", "-400");
     			attr_dev(line0, "stroke", "black");
     			attr_dev(line0, "stroke-width", "5");
-    			add_location(line0, file$3, 142, 16, 5968);
+    			add_location(line0, file$3, 221, 16, 9371);
     			attr_dev(circle1, "r", "50");
     			attr_dev(circle1, "cx", "600");
     			attr_dev(circle1, "cy", "-400");
     			attr_dev(circle1, "stroke", "black");
     			attr_dev(circle1, "stroke-width", "5");
     			attr_dev(circle1, "fill", "none");
-    			add_location(circle1, file$3, 151, 16, 6203);
+    			add_location(circle1, file$3, 230, 16, 9606);
     			attr_dev(line1, "x1", "625");
     			attr_dev(line1, "y1", "-400");
     			attr_dev(line1, "x2", "575");
     			attr_dev(line1, "y2", "-400");
     			attr_dev(line1, "stroke", "black");
     			attr_dev(line1, "stroke-width", "5");
-    			add_location(line1, file$3, 159, 16, 6437);
+    			add_location(line1, file$3, 238, 16, 9840);
     			attr_dev(line2, "x1", "600");
     			attr_dev(line2, "y1", "-425");
     			attr_dev(line2, "x2", "600");
     			attr_dev(line2, "y2", "-375");
     			attr_dev(line2, "stroke", "black");
     			attr_dev(line2, "stroke-width", "5");
-    			add_location(line2, file$3, 167, 16, 6668);
-    			attr_dev(path3, "d", "M-450 -700, -450 -800, -350 -800 ");
-    			attr_dev(path3, "marker-end", "url(#head)");
-    			attr_dev(path3, "fill", "none");
-    			attr_dev(path3, "stroke", "black");
-    			attr_dev(path3, "stroke-width", "8px");
-    			add_location(path3, file$3, 175, 16, 6899);
-    			attr_dev(path4, "d", "M350 -800, 450 -800, 450 -700");
-    			attr_dev(path4, "marker-end", "url(#head)");
-    			attr_dev(path4, "fill", "none");
-    			attr_dev(path4, "stroke", "black");
-    			attr_dev(path4, "stroke-width", "8px");
-    			add_location(path4, file$3, 182, 16, 7153);
+    			add_location(line2, file$3, 246, 16, 10071);
+    			attr_dev(path5, "d", "M-450 -700, -450 -800, -350 -800 ");
+    			attr_dev(path5, "marker-end", "url(#head)");
+    			attr_dev(path5, "fill", "none");
+    			attr_dev(path5, "stroke", "black");
+    			attr_dev(path5, "stroke-width", "8px");
+    			add_location(path5, file$3, 254, 16, 10302);
+    			attr_dev(path6, "d", "M350 -800, 450 -800, 450 -700");
+    			attr_dev(path6, "marker-end", "url(#head)");
+    			attr_dev(path6, "fill", "none");
+    			attr_dev(path6, "stroke", "black");
+    			attr_dev(path6, "stroke-width", "8px");
+    			add_location(path6, file$3, 261, 16, 10556);
     			attr_dev(svg, "viewBox", "-1000 -900 2000 1400");
     			attr_dev(svg, "class", "svelte-1lqswlk");
     			add_location(svg, file$3, 32, 12, 1422);
     			attr_dev(div1, "class", "diagram svelte-1lqswlk");
     			add_location(div1, file$3, 31, 8, 1387);
     			attr_dev(div2, "class", "tooltip svelte-1lqswlk");
-    			add_location(div2, file$3, 192, 8, 7433);
+    			add_location(div2, file$3, 271, 8, 10836);
     			attr_dev(div3, "class", "diagram-full svelte-1lqswlk");
     			add_location(div3, file$3, 29, 4, 1349);
     			attr_dev(div4, "class", "container svelte-1lqswlk");
@@ -25914,31 +26178,35 @@ var app = (function () {
     			append_dev(filter, feDropShadow);
     			append_dev(defs, marker);
     			append_dev(marker, path0);
-    			append_dev(svg, path1);
-    			append_dev(svg, path2);
-    			if (if_block0) if_block0.m(svg, null);
     			append_dev(svg, rect0);
+    			append_dev(svg, path1);
+    			if (if_block0) if_block0.m(svg, null);
+    			append_dev(svg, path2);
+    			append_dev(svg, path3);
+    			if (if_block1) if_block1.m(svg, null);
     			append_dev(svg, rect1);
+    			append_dev(svg, path4);
+    			if (if_block2) if_block2.m(svg, null);
     			append_dev(svg, rect2);
     			append_dev(svg, circle0);
     			append_dev(svg, line0);
     			append_dev(svg, circle1);
     			append_dev(svg, line1);
     			append_dev(svg, line2);
-    			append_dev(svg, path3);
-    			append_dev(svg, path4);
+    			append_dev(svg, path5);
+    			append_dev(svg, path6);
     			append_dev(div3, t16);
     			append_dev(div3, div2);
-    			if_block1.m(div2, null);
+    			if_block3.m(div2, null);
 
     			if (!mounted) {
     				dispose = [
-    					listen_dev(path1, "click", /*click_handler*/ ctx[2], false, false, false, false),
-    					listen_dev(path1, "mouseover", /*mouseover_handler*/ ctx[3], false, false, false, false),
-    					listen_dev(path1, "mouseout", /*mouseout_handler*/ ctx[4], false, false, false, false),
-    					listen_dev(rect0, "click", /*click_handler_1*/ ctx[5], false, false, false, false),
-    					listen_dev(rect0, "mouseover", /*mouseover_handler_1*/ ctx[6], false, false, false, false),
-    					listen_dev(rect0, "mouseout", /*mouseout_handler_1*/ ctx[7], false, false, false, false),
+    					listen_dev(rect0, "click", /*click_handler*/ ctx[2], false, false, false, false),
+    					listen_dev(rect0, "mouseover", /*mouseover_handler*/ ctx[3], false, false, false, false),
+    					listen_dev(rect0, "mouseout", /*mouseout_handler*/ ctx[4], false, false, false, false),
+    					listen_dev(path2, "click", /*click_handler_1*/ ctx[5], false, false, false, false),
+    					listen_dev(path2, "mouseover", /*mouseover_handler_1*/ ctx[6], false, false, false, false),
+    					listen_dev(path2, "mouseout", /*mouseout_handler_1*/ ctx[7], false, false, false, false),
     					listen_dev(rect1, "click", /*click_handler_2*/ ctx[8], false, false, false, false),
     					listen_dev(rect1, "mouseover", /*mouseover_handler_2*/ ctx[9], false, false, false, false),
     					listen_dev(rect1, "mouseout", /*mouseout_handler_2*/ ctx[10], false, false, false, false),
@@ -25951,54 +26219,82 @@ var app = (function () {
     			}
     		},
     		p: function update(ctx, [dirty]) {
-    			if (dirty & /*hovered*/ 2 && path1_fill_value !== (path1_fill_value = /*hovered*/ ctx[1] === 3 ? hovered_color : "white")) {
-    				attr_dev(path1, "fill", path1_fill_value);
+    			if (dirty & /*hovered*/ 2 && rect0_fill_value !== (rect0_fill_value = /*hovered*/ ctx[1] === 0 ? hovered_color : "dimgray")) {
+    				attr_dev(rect0, "fill", rect0_fill_value);
     			}
 
-    			if (/*clicked*/ ctx[0] === 3) {
+    			if (/*clicked*/ ctx[0] === 0) {
     				if (if_block0) {
     					if_block0.p(ctx, dirty);
     				} else {
-    					if_block0 = create_if_block_4(ctx);
+    					if_block0 = create_if_block_6(ctx);
     					if_block0.c();
-    					if_block0.m(svg, rect0);
+    					if_block0.m(svg, path2);
     				}
     			} else if (if_block0) {
     				if_block0.d(1);
     				if_block0 = null;
     			}
 
-    			if (dirty & /*hovered*/ 2 && rect0_fill_value !== (rect0_fill_value = /*hovered*/ ctx[1] === 0 ? hovered_color : "dimgray")) {
-    				attr_dev(rect0, "fill", rect0_fill_value);
+    			if (dirty & /*hovered*/ 2 && path2_fill_value !== (path2_fill_value = /*hovered*/ ctx[1] === 3 ? hovered_color : "white")) {
+    				attr_dev(path2, "fill", path2_fill_value);
     			}
 
-    			if (dirty & /*hovered*/ 2 && rect1_fill_value !== (rect1_fill_value = /*hovered*/ ctx[1] === 1 ? hovered_color : "white")) {
+    			if (/*clicked*/ ctx[0] === 3) {
+    				if (if_block1) {
+    					if_block1.p(ctx, dirty);
+    				} else {
+    					if_block1 = create_if_block_5(ctx);
+    					if_block1.c();
+    					if_block1.m(svg, rect1);
+    				}
+    			} else if (if_block1) {
+    				if_block1.d(1);
+    				if_block1 = null;
+    			}
+
+    			if (dirty & /*hovered*/ 2 && rect1_fill_value !== (rect1_fill_value = /*hovered*/ ctx[1] === 2 ? hovered_color : "lightgray")) {
     				attr_dev(rect1, "fill", rect1_fill_value);
     			}
 
-    			if (dirty & /*hovered*/ 2 && rect2_fill_value !== (rect2_fill_value = /*hovered*/ ctx[1] === 2 ? hovered_color : "lightgray")) {
+    			if (/*clicked*/ ctx[0] === 2) {
+    				if (if_block2) {
+    					if_block2.p(ctx, dirty);
+    				} else {
+    					if_block2 = create_if_block_4(ctx);
+    					if_block2.c();
+    					if_block2.m(svg, rect2);
+    				}
+    			} else if (if_block2) {
+    				if_block2.d(1);
+    				if_block2 = null;
+    			}
+
+    			if (dirty & /*hovered*/ 2 && rect2_fill_value !== (rect2_fill_value = /*hovered*/ ctx[1] === 1 ? hovered_color : "white")) {
     				attr_dev(rect2, "fill", rect2_fill_value);
     			}
 
     			if (current_block_type !== (current_block_type = select_block_type(ctx))) {
-    				if_block1.d(1);
-    				if_block1 = current_block_type(ctx);
+    				if_block3.d(1);
+    				if_block3 = current_block_type(ctx);
 
-    				if (if_block1) {
-    					if_block1.c();
-    					transition_in(if_block1, 1);
-    					if_block1.m(div2, null);
+    				if (if_block3) {
+    					if_block3.c();
+    					transition_in(if_block3, 1);
+    					if_block3.m(div2, null);
     				}
     			}
     		},
     		i: function intro(local) {
-    			transition_in(if_block1);
+    			transition_in(if_block3);
     		},
     		o: noop$1,
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div4);
     			if (if_block0) if_block0.d();
-    			if_block1.d();
+    			if (if_block1) if_block1.d();
+    			if (if_block2) if_block2.d();
+    			if_block3.d();
     			mounted = false;
     			run_all(dispose);
     		}
@@ -26029,12 +26325,11 @@ var app = (function () {
     	});
 
     	const click_handler = event => {
-    		$$invalidate(0, clicked = 3);
-    		animateElectrons();
+    		$$invalidate(0, clicked = 0);
     	};
 
     	const mouseover_handler = event => {
-    		$$invalidate(1, hovered = 3);
+    		$$invalidate(1, hovered = 0);
     	};
 
     	const mouseout_handler = event => {
@@ -26042,11 +26337,12 @@ var app = (function () {
     	};
 
     	const click_handler_1 = event => {
-    		$$invalidate(0, clicked = 0);
+    		$$invalidate(0, clicked = 3);
+    		animateElectrons();
     	};
 
     	const mouseover_handler_1 = event => {
-    		$$invalidate(1, hovered = 0);
+    		$$invalidate(1, hovered = 3);
     	};
 
     	const mouseout_handler_1 = event => {
@@ -26054,11 +26350,11 @@ var app = (function () {
     	};
 
     	const click_handler_2 = event => {
-    		$$invalidate(0, clicked = 1);
+    		$$invalidate(0, clicked = 2);
     	};
 
     	const mouseover_handler_2 = event => {
-    		$$invalidate(1, hovered = 1);
+    		$$invalidate(1, hovered = 2);
     	};
 
     	const mouseout_handler_2 = event => {
@@ -26066,11 +26362,11 @@ var app = (function () {
     	};
 
     	const click_handler_3 = event => {
-    		$$invalidate(0, clicked = 2);
+    		$$invalidate(0, clicked = 1);
     	};
 
     	const mouseover_handler_3 = event => {
-    		$$invalidate(1, hovered = 2);
+    		$$invalidate(1, hovered = 1);
     	};
 
     	const mouseout_handler_3 = event => {

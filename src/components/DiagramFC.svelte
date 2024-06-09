@@ -43,6 +43,59 @@
                     </marker>
                 </defs>
 
+                <rect
+                    id="anode"
+                    width="400" 
+                    height="950" 
+                    x="-490"
+                    y="-490"
+                    fill={hovered === 0 ? hovered_color: "dimgray"}
+                    stroke="black"
+                    stroke-width="5"
+                    on:click={(event) => {clicked = 0; }}
+                    on:mouseover={(event) => {hovered = 0; }}
+                    on:mouseout={(event) => { hovered = -1; }}
+                />
+
+                <!-- Hydrogen animation -->
+                <path
+                    id="hydrogenPath"
+                    d="M -490 -400 H -175 V 370 H -490"
+                    fill="none"
+                    stroke="none"
+                />
+                
+                {#if clicked === 0}
+                    {#each Array(10) as _, i}
+                        <g>
+                            <!-- First H2 molecule -->
+                            <circle class="hydrogen-circle" r="20" fill="red">
+                                <animateMotion
+                                    class="hydrogenMotion"
+                                    dur="5s"
+                                    repeatCount="indefinite"
+                                    begin={(i * 0.5) + "s"}
+                                >
+                                    <mpath href="#hydrogenPath"/>
+                                </animateMotion>
+                            </circle>
+                            <!-- Second H2 molecule -->
+                            <circle class="hydrogen-circle" r="20" fill="red" transform="translate(0, 25)">
+                                <animateMotion
+                                    class="hydrogenMotion"
+                                    dur="5s"
+                                    repeatCount="indefinite"
+                                    begin={(i * 0.5) + "s"}
+                                >
+                                    <mpath href="#hydrogenPath"/>
+                                </animateMotion>
+                            </circle>
+                        </g>
+                    {/each}
+                {/if}
+
+
+
                 <path
                     class="hoverable"
                     d="M-400 -490
@@ -79,18 +132,56 @@
                 {/if}
 
                 <rect
-                    id="anode"
+                    id="cathode"
                     width="400" 
                     height="950" 
-                    x="-490"
+                    x="90"
                     y="-490"
-                    fill={hovered === 0 ? hovered_color: "dimgray"}
+                    fill={hovered === 2 ? hovered_color: "lightgray"}
                     stroke="black"
                     stroke-width="5"
-                    on:click={(event) => {clicked = 0; }}
-                    on:mouseover={(event) => {hovered = 0; }}
+                    on:click={(event) => {clicked = 2;}}
+                    on:mouseover={(event) => {hovered = 2; }}
                     on:mouseout={(event) => { hovered = -1; }}
                 />
+
+                <!-- Oxygen animation -->
+                <path
+                    id="oxygenPath"
+                    d="M 490 -400 H 165 V 370 H 490"
+                    fill="none"
+                    stroke="none"
+                />
+
+                {#if clicked === 2}
+                    {#each Array(10) as _, i}
+                        <g>
+                            <!-- First O2 molecule -->
+                            <circle class="oxygen-circle" r="20" fill="blue">
+                                <animateMotion
+                                    class="oxygenMotion"
+                                    dur="5s"
+                                    repeatCount="indefinite"
+                                    begin={(i * 0.5) + "s"}
+                                >
+                                    <mpath href="#oxygenPath"/>
+                                </animateMotion>
+                            </circle>
+                            <!-- Second O2 molecule -->
+                            <circle class="oxygen-circle" r="20" fill="blue" transform="translate(0, 25)">
+                                <animateMotion
+                                    class="oxygenMotion"
+                                    dur="5s"
+                                    repeatCount="indefinite"
+                                    begin={(i * 0.5) + "s"}
+                                >
+                                    <mpath href="#oxygenPath"/>
+                                </animateMotion>
+                            </circle>
+                        </g>
+                    {/each}
+                {/if}
+
                 <rect
                     id="electrolyte"
                     width="200" 
@@ -104,19 +195,7 @@
                     on:mouseover={(event) => {hovered = 1; }}
                     on:mouseout={(event) => { hovered = -1; }}
                 />
-                <rect
-                    id="cathode"
-                    width="400" 
-                    height="950" 
-                    x="90"
-                    y="-490"
-                    fill={hovered === 2 ? hovered_color: "lightgray"}
-                    stroke="black"
-                    stroke-width="5"
-                    on:click={(event) => {clicked = 2;}}
-                    on:mouseover={(event) => {hovered = 2; }}
-                    on:mouseout={(event) => { hovered = -1; }}
-                />
+                
                 
                 <!-- turns out PEM fuel cells have their electrolyte as a membrane... -->
                 <!-- <rect
