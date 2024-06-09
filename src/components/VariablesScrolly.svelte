@@ -15,7 +15,7 @@
     let steps = [];
 
         steps = [
-            { title: 'Activation Losses: E<sub>0</sub>  and b', 
+            { title: 'Activation Losses: E<sub>0</sub> and b', 
             content: "Activation losses arise from the rate of the reaction at each electrode. E<sub>0</sub> encompasses the voltage differential between the reversible voltage and the measured voltage. b comes from the non-linear Tafel equation, which describes the variation in reaction rate at different current densities. A higher b indicates a slower reaction. Together, they form the low current density region." 
             },
             { title: 'Fuel Crossover and Internal Currents', 
@@ -29,8 +29,28 @@
             }
         ];
 
-    let chartParams1 = { E0, b, R, m, n };
-    let chartParams2 = { E0, b, R, m, n };
+    let chartParams = { E0, b, R, m, n };
+
+    let highlightRange = [0, 0];
+    let highlightOpacity = 0;
+
+    $: {
+        if (value === 0 || value === 1) {
+            highlightRange = [0, 200];
+            highlightOpacity = 0.3;
+        }
+        else if (value === 2) {
+            highlightRange = [200, 700];
+            highlightOpacity = 0.3;
+        }
+        else if (value === 3) {
+            highlightRange = [700, 999];
+            highlightOpacity = 0.3;
+        }  else {
+            highlightRange = [0, 0];
+            highlightOpacity = 0;
+        }
+    }
 </script>
 
 <h2 class="body-header">Understanding the Parameters</h2>
@@ -57,46 +77,24 @@
         </div>
         <div class="charts-container">
             {#if value === 0}
-                <div class="chart-one">
-                    <ChartScrolly {...chartParams1} E0={1.2} />
-                </div>
-                <div class="chart-two">
-                    <ChartScrolly {...chartParams2} E0={0.5} />
+                <div class="chart">
+                    <ChartScrolly {...chartParams} E0={1.2} b={0.1} highlightRange={highlightRange} highlightOpacity={highlightOpacity} />
                 </div>
             {:else if value === 1}
-                <div class="chart-one">
-                    <ChartScrolly {...chartParams1} b={0.1} />
-                </div>
-                <div class="chart-two">
-                    <ChartScrolly {...chartParams2} b={0.01} />
+                <div class="chart">
+                    <ChartScrolly {...chartParams} highlightRange={highlightRange} highlightOpacity={highlightOpacity}/>
                 </div>
             {:else if value === 2}
-                <div class="chart-one">
-                    <ChartScrolly {...chartParams1} R={0.001} />
-                </div>
-                <div class="chart-two">
-                    <ChartScrolly {...chartParams2} R={0.00001} />
+                <div class="chart">
+                    <ChartScrolly {...chartParams} R={0.0005} highlightRange={highlightRange} highlightOpacity={highlightOpacity} />
                 </div>
             {:else if value === 3}
-                <div class="chart-one">
-                    <ChartScrolly {...chartParams1} m={0.0001} />
-                </div>
-                <div class="chart-two">
-                    <ChartScrolly {...chartParams2} m={0.00001} />
-                </div>
-            {:else if value === 4}
-                <div class="chart-one">
-                    <ChartScrolly {...chartParams1} n={0.01} />
-                </div>
-                <div class="chart-two">
-                    <ChartScrolly {...chartParams2} n={0.001} />
+                <div class="chart">
+                    <ChartScrolly {...chartParams} m={0.0001} n={0.0085} highlightRange={highlightRange} highlightOpacity={highlightOpacity} />
                 </div>
             {:else}
-                <div class="chart-one">
-                    <ChartScrolly {...chartParams1} />
-                </div>
-                <div class="chart-two">
-                    <ChartScrolly {...chartParams2} />
+                <div class="chart">
+                    <ChartScrolly {...chartParams} highlightRange={highlightRange} highlightOpacity={highlightOpacity} />
                 </div>
             {/if}
         </div>
@@ -117,26 +115,29 @@
         padding: 1% 11%;
     }
 
-    .chart-one, .chart-two {
+    .chart {
         width: 100%;
         height: 85%;
         background-color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .spacer {
         height: 40vh;
     }
+
     .charts-container {
         position: sticky;
         top: 10%;
-        display: grid;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         width: 45%;
-        grid-template-columns: 100%;
-        grid-row-gap: 2rem;
-        grid-column-gap: 0rem;
-        grid-template-rows: repeat(2, 1fr);
         height: 85vh;
     }
+
     .section-container {
         margin-top: 1em;
         text-align: center;
@@ -153,6 +154,7 @@
         place-items: center;
         justify-content: left;
     }
+
     .step-content {
         font-size: 18px;
         background: var(--bg);
@@ -175,9 +177,11 @@
         background: #90E0EF;
         color: var(--squid-ink);
     }
+
     .steps-container {
         height: 100%;
     }
+
     .steps-container {
         flex: 1 1 40%;
         z-index: 10;

@@ -4751,6 +4751,112 @@ var app = (function () {
       return line;
     }
 
+    function area(x0, y0, y1) {
+      var x1 = null,
+          defined = constant(true),
+          context = null,
+          curve = curveLinear,
+          output = null,
+          path = withPath(area);
+
+      x0 = typeof x0 === "function" ? x0 : (x0 === undefined) ? x : constant(+x0);
+      y0 = typeof y0 === "function" ? y0 : (y0 === undefined) ? constant(0) : constant(+y0);
+      y1 = typeof y1 === "function" ? y1 : (y1 === undefined) ? y : constant(+y1);
+
+      function area(data) {
+        var i,
+            j,
+            k,
+            n = (data = array(data)).length,
+            d,
+            defined0 = false,
+            buffer,
+            x0z = new Array(n),
+            y0z = new Array(n);
+
+        if (context == null) output = curve(buffer = path());
+
+        for (i = 0; i <= n; ++i) {
+          if (!(i < n && defined(d = data[i], i, data)) === defined0) {
+            if (defined0 = !defined0) {
+              j = i;
+              output.areaStart();
+              output.lineStart();
+            } else {
+              output.lineEnd();
+              output.lineStart();
+              for (k = i - 1; k >= j; --k) {
+                output.point(x0z[k], y0z[k]);
+              }
+              output.lineEnd();
+              output.areaEnd();
+            }
+          }
+          if (defined0) {
+            x0z[i] = +x0(d, i, data), y0z[i] = +y0(d, i, data);
+            output.point(x1 ? +x1(d, i, data) : x0z[i], y1 ? +y1(d, i, data) : y0z[i]);
+          }
+        }
+
+        if (buffer) return output = null, buffer + "" || null;
+      }
+
+      function arealine() {
+        return line().defined(defined).curve(curve).context(context);
+      }
+
+      area.x = function(_) {
+        return arguments.length ? (x0 = typeof _ === "function" ? _ : constant(+_), x1 = null, area) : x0;
+      };
+
+      area.x0 = function(_) {
+        return arguments.length ? (x0 = typeof _ === "function" ? _ : constant(+_), area) : x0;
+      };
+
+      area.x1 = function(_) {
+        return arguments.length ? (x1 = _ == null ? null : typeof _ === "function" ? _ : constant(+_), area) : x1;
+      };
+
+      area.y = function(_) {
+        return arguments.length ? (y0 = typeof _ === "function" ? _ : constant(+_), y1 = null, area) : y0;
+      };
+
+      area.y0 = function(_) {
+        return arguments.length ? (y0 = typeof _ === "function" ? _ : constant(+_), area) : y0;
+      };
+
+      area.y1 = function(_) {
+        return arguments.length ? (y1 = _ == null ? null : typeof _ === "function" ? _ : constant(+_), area) : y1;
+      };
+
+      area.lineX0 =
+      area.lineY0 = function() {
+        return arealine().x(x0).y(y0);
+      };
+
+      area.lineY1 = function() {
+        return arealine().x(x0).y(y1);
+      };
+
+      area.lineX1 = function() {
+        return arealine().x(x1).y(y0);
+      };
+
+      area.defined = function(_) {
+        return arguments.length ? (defined = typeof _ === "function" ? _ : constant(!!_), area) : defined;
+      };
+
+      area.curve = function(_) {
+        return arguments.length ? (curve = _, context != null && (output = curve(context)), area) : curve;
+      };
+
+      area.context = function(_) {
+        return arguments.length ? (_ == null ? context = output = null : output = curve(context = _), area) : context;
+      };
+
+      return area;
+    }
+
     function Transform(k, x, y) {
       this.k = k;
       this.x = x;
@@ -5416,10 +5522,10 @@ var app = (function () {
     			div = element("div");
     			svg_1 = svg_element("svg");
     			attr_dev(svg_1, "class", "svelte-uvxlpj");
-    			add_location(svg_1, file$5, 108, 4, 3246);
+    			add_location(svg_1, file$5, 132, 4, 4205);
     			set_style(div, "width", "100%");
     			set_style(div, "height", "100%");
-    			add_location(div, file$5, 107, 0, 3178);
+    			add_location(div, file$5, 131, 0, 4137);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -5427,16 +5533,16 @@ var app = (function () {
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
     			append_dev(div, svg_1);
-    			/*svg_1_binding*/ ctx[7](svg_1);
-    			/*div_binding*/ ctx[8](div);
+    			/*svg_1_binding*/ ctx[9](svg_1);
+    			/*div_binding*/ ctx[10](div);
     		},
     		p: noop$1,
     		i: noop$1,
     		o: noop$1,
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div);
-    			/*svg_1_binding*/ ctx[7](null);
-    			/*div_binding*/ ctx[8](null);
+    			/*svg_1_binding*/ ctx[9](null);
+    			/*div_binding*/ ctx[10](null);
     		}
     	};
 
@@ -5459,6 +5565,8 @@ var app = (function () {
     	let { R } = $$props;
     	let { m } = $$props;
     	let { n } = $$props;
+    	let { highlightRange = [0, 0] } = $$props;
+    	let { highlightOpacity = 0 } = $$props;
     	let svg;
     	let container;
     	let margin = { top: 20, right: 10, bottom: 40, left: 50 };
@@ -5488,11 +5596,19 @@ var app = (function () {
     		const xAxis = axisBottom(xScale).tickSizeOuter(0).tickPadding(5).tickFormat(d => `${d}`);
     		const yAxis = axisLeft(yScale).tickSizeOuter(0).tickPadding(5).tickFormat(d => `${d}`);
     		const lineGenerator = line().x(d => xScale(d.i)).y(d => yScale(d.E));
+    		const highlightAreaAbove = area().x(d => xScale(d.i)).y0(0).y1(d => yScale(d.E));
+    		const highlightAreaBelow = area().x(d => xScale(d.i)).y0(height).y1(d => yScale(d.E));
     		select(svg).selectAll('*').remove();
     		const g = select(svg).attr('width', width + margin.left + margin.right).attr('height', height + margin.top + margin.bottom).append('g').attr('transform', `translate(${margin.left},${margin.top})`);
     		g.append('g').attr('transform', `translate(0,${height})`).call(xAxis).append('text').attr('x', width / 2).attr('y', margin.bottom - 5).attr('fill', '#000').attr('font-size', '14px').text('Current Density (mA/cm^2)').attr('text-anchor', 'middle');
     		g.append('g').call(yAxis).append('text').attr('transform', 'rotate(-90)').attr('y', -margin.left + 5).attr('x', -height / 2).attr('dy', '0.71em').attr('fill', '#000').attr('font-size', '14px').text('Voltage (V)').attr('text-anchor', 'middle');
     		g.append('path').datum(data).attr('fill', 'none').attr('stroke', 'steelblue').attr('stroke-width', 1.5).attr('d', lineGenerator);
+
+    		if (highlightRange[0] !== highlightRange[1]) {
+    			const highlightData = data.filter(d => d.i >= highlightRange[0] && d.i <= highlightRange[1]);
+    			g.append('path').datum(highlightData).attr('fill', 'rgba(204, 213, 174, ' + highlightOpacity + ')').attr('d', highlightAreaAbove);
+    			g.append('path').datum(highlightData).attr('fill', 'rgba(204, 213, 174, ' + highlightOpacity + ')').attr('d', highlightAreaBelow);
+    		}
     	}
 
     	onMount(() => {
@@ -5528,7 +5644,7 @@ var app = (function () {
     		}
     	});
 
-    	const writable_props = ['E0', 'b', 'R', 'm', 'n'];
+    	const writable_props = ['E0', 'b', 'R', 'm', 'n', 'highlightRange', 'highlightOpacity'];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<ChartScrolly> was created with unknown prop '${key}'`);
@@ -5554,6 +5670,8 @@ var app = (function () {
     		if ('R' in $$props) $$invalidate(4, R = $$props.R);
     		if ('m' in $$props) $$invalidate(5, m = $$props.m);
     		if ('n' in $$props) $$invalidate(6, n = $$props.n);
+    		if ('highlightRange' in $$props) $$invalidate(7, highlightRange = $$props.highlightRange);
+    		if ('highlightOpacity' in $$props) $$invalidate(8, highlightOpacity = $$props.highlightOpacity);
     	};
 
     	$$self.$capture_state = () => ({
@@ -5565,11 +5683,14 @@ var app = (function () {
     		axisBottom,
     		axisLeft,
     		line,
+    		area,
     		E0,
     		b,
     		R,
     		m,
     		n,
+    		highlightRange,
+    		highlightOpacity,
     		svg,
     		container,
     		margin,
@@ -5584,6 +5705,8 @@ var app = (function () {
     		if ('R' in $$props) $$invalidate(4, R = $$props.R);
     		if ('m' in $$props) $$invalidate(5, m = $$props.m);
     		if ('n' in $$props) $$invalidate(6, n = $$props.n);
+    		if ('highlightRange' in $$props) $$invalidate(7, highlightRange = $$props.highlightRange);
+    		if ('highlightOpacity' in $$props) $$invalidate(8, highlightOpacity = $$props.highlightOpacity);
     		if ('svg' in $$props) $$invalidate(0, svg = $$props.svg);
     		if ('container' in $$props) $$invalidate(1, container = $$props.container);
     		if ('margin' in $$props) margin = $$props.margin;
@@ -5597,13 +5720,34 @@ var app = (function () {
     		updateDimensions();
     	}
 
-    	return [svg, container, E0, b, R, m, n, svg_1_binding, div_binding];
+    	return [
+    		svg,
+    		container,
+    		E0,
+    		b,
+    		R,
+    		m,
+    		n,
+    		highlightRange,
+    		highlightOpacity,
+    		svg_1_binding,
+    		div_binding
+    	];
     }
 
     class ChartScrolly extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init$1(this, options, instance$5, create_fragment$5, safe_not_equal, { E0: 2, b: 3, R: 4, m: 5, n: 6 });
+
+    		init$1(this, options, instance$5, create_fragment$5, safe_not_equal, {
+    			E0: 2,
+    			b: 3,
+    			R: 4,
+    			m: 5,
+    			n: 6,
+    			highlightRange: 7,
+    			highlightOpacity: 8
+    		});
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
@@ -5650,6 +5794,22 @@ var app = (function () {
     	}
 
     	set n(value) {
+    		throw new Error("<ChartScrolly>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get highlightRange() {
+    		throw new Error("<ChartScrolly>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set highlightRange(value) {
+    		throw new Error("<ChartScrolly>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get highlightOpacity() {
+    		throw new Error("<ChartScrolly>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set highlightOpacity(value) {
     		throw new Error("<ChartScrolly>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
     }
@@ -24122,20 +24282,20 @@ var app = (function () {
 
     function get_each_context$1(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[5] = list[i];
-    	child_ctx[7] = i;
+    	child_ctx[6] = list[i];
+    	child_ctx[8] = i;
     	return child_ctx;
     }
 
-    // (47:16) {#each steps as step, i}
+    // (67:16) {#each steps as step, i}
     function create_each_block$1(ctx) {
     	let div1;
     	let div0;
     	let h1;
-    	let raw0_value = /*step*/ ctx[5].title + "";
+    	let raw0_value = /*step*/ ctx[6].title + "";
     	let t;
     	let p;
-    	let raw1_value = /*step*/ ctx[5].content + "";
+    	let raw1_value = /*step*/ ctx[6].content + "";
 
     	const block = {
     		c: function create() {
@@ -24145,13 +24305,13 @@ var app = (function () {
     			t = space();
     			p = element("p");
     			attr_dev(h1, "class", "step-title");
-    			add_location(h1, file$4, 49, 28, 3061);
-    			add_location(p, file$4, 50, 28, 3137);
-    			attr_dev(div0, "class", "step-content svelte-uu24v0");
-    			add_location(div0, file$4, 48, 24, 3005);
-    			attr_dev(div1, "class", "step svelte-uu24v0");
-    			toggle_class(div1, "active", /*value*/ ctx[0] === /*i*/ ctx[7]);
-    			add_location(div1, file$4, 47, 20, 2934);
+    			add_location(h1, file$4, 69, 28, 3570);
+    			add_location(p, file$4, 70, 28, 3646);
+    			attr_dev(div0, "class", "step-content svelte-1qgnk4w");
+    			add_location(div0, file$4, 68, 24, 3514);
+    			attr_dev(div1, "class", "step svelte-1qgnk4w");
+    			toggle_class(div1, "active", /*value*/ ctx[0] === /*i*/ ctx[8]);
+    			add_location(div1, file$4, 67, 20, 3443);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div1, anchor);
@@ -24163,9 +24323,9 @@ var app = (function () {
     			p.innerHTML = raw1_value;
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*steps*/ 2 && raw0_value !== (raw0_value = /*step*/ ctx[5].title + "")) h1.innerHTML = raw0_value;			if (dirty & /*steps*/ 2 && raw1_value !== (raw1_value = /*step*/ ctx[5].content + "")) p.innerHTML = raw1_value;
+    			if (dirty & /*steps*/ 2 && raw0_value !== (raw0_value = /*step*/ ctx[6].title + "")) h1.innerHTML = raw0_value;			if (dirty & /*steps*/ 2 && raw1_value !== (raw1_value = /*step*/ ctx[6].content + "")) p.innerHTML = raw1_value;
     			if (dirty & /*value*/ 1) {
-    				toggle_class(div1, "active", /*value*/ ctx[0] === /*i*/ ctx[7]);
+    				toggle_class(div1, "active", /*value*/ ctx[0] === /*i*/ ctx[8]);
     			}
     		},
     		d: function destroy(detaching) {
@@ -24177,14 +24337,14 @@ var app = (function () {
     		block,
     		id: create_each_block$1.name,
     		type: "each",
-    		source: "(47:16) {#each steps as step, i}",
+    		source: "(67:16) {#each steps as step, i}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (46:12) <Scrolly bind:value>
+    // (66:12) <Scrolly bind:value>
     function create_default_slot(ctx) {
     	let t;
     	let div;
@@ -24204,8 +24364,8 @@ var app = (function () {
 
     			t = space();
     			div = element("div");
-    			attr_dev(div, "class", "spacer svelte-uu24v0");
-    			add_location(div, file$4, 54, 16, 3267);
+    			attr_dev(div, "class", "spacer svelte-1qgnk4w");
+    			add_location(div, file$4, 74, 16, 3776);
     		},
     		m: function mount(target, anchor) {
     			for (let i = 0; i < each_blocks.length; i += 1) {
@@ -24253,95 +24413,79 @@ var app = (function () {
     		block,
     		id: create_default_slot.name,
     		type: "slot",
-    		source: "(46:12) <Scrolly bind:value>",
+    		source: "(66:12) <Scrolly bind:value>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (94:12) {:else}
+    // (95:12) {:else}
     function create_else_block$2(ctx) {
-    	let div0;
-    	let chartscrolly0;
-    	let t;
-    	let div1;
-    	let chartscrolly1;
+    	let div;
+    	let chartscrolly;
     	let current;
-    	const chartscrolly0_spread_levels = [/*chartParams1*/ ctx[2]];
-    	let chartscrolly0_props = {};
 
-    	for (let i = 0; i < chartscrolly0_spread_levels.length; i += 1) {
-    		chartscrolly0_props = assign(chartscrolly0_props, chartscrolly0_spread_levels[i]);
+    	const chartscrolly_spread_levels = [
+    		/*chartParams*/ ctx[4],
+    		{
+    			highlightRange: /*highlightRange*/ ctx[2]
+    		},
+    		{
+    			highlightOpacity: /*highlightOpacity*/ ctx[3]
+    		}
+    	];
+
+    	let chartscrolly_props = {};
+
+    	for (let i = 0; i < chartscrolly_spread_levels.length; i += 1) {
+    		chartscrolly_props = assign(chartscrolly_props, chartscrolly_spread_levels[i]);
     	}
 
-    	chartscrolly0 = new ChartScrolly({
-    			props: chartscrolly0_props,
-    			$$inline: true
-    		});
-
-    	const chartscrolly1_spread_levels = [/*chartParams2*/ ctx[3]];
-    	let chartscrolly1_props = {};
-
-    	for (let i = 0; i < chartscrolly1_spread_levels.length; i += 1) {
-    		chartscrolly1_props = assign(chartscrolly1_props, chartscrolly1_spread_levels[i]);
-    	}
-
-    	chartscrolly1 = new ChartScrolly({
-    			props: chartscrolly1_props,
+    	chartscrolly = new ChartScrolly({
+    			props: chartscrolly_props,
     			$$inline: true
     		});
 
     	const block = {
     		c: function create() {
-    			div0 = element("div");
-    			create_component(chartscrolly0.$$.fragment);
-    			t = space();
-    			div1 = element("div");
-    			create_component(chartscrolly1.$$.fragment);
-    			attr_dev(div0, "class", "chart-one svelte-uu24v0");
-    			add_location(div0, file$4, 94, 16, 4892);
-    			attr_dev(div1, "class", "chart-two svelte-uu24v0");
-    			add_location(div1, file$4, 97, 16, 5013);
+    			div = element("div");
+    			create_component(chartscrolly.$$.fragment);
+    			attr_dev(div, "class", "chart svelte-1qgnk4w");
+    			add_location(div, file$4, 95, 16, 4841);
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, div0, anchor);
-    			mount_component(chartscrolly0, div0, null);
-    			insert_dev(target, t, anchor);
-    			insert_dev(target, div1, anchor);
-    			mount_component(chartscrolly1, div1, null);
+    			insert_dev(target, div, anchor);
+    			mount_component(chartscrolly, div, null);
     			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			const chartscrolly0_changes = (dirty & /*chartParams1*/ 4)
-    			? get_spread_update(chartscrolly0_spread_levels, [get_spread_object(/*chartParams1*/ ctx[2])])
+    			const chartscrolly_changes = (dirty & /*chartParams, highlightRange, highlightOpacity*/ 28)
+    			? get_spread_update(chartscrolly_spread_levels, [
+    					dirty & /*chartParams*/ 16 && get_spread_object(/*chartParams*/ ctx[4]),
+    					dirty & /*highlightRange*/ 4 && {
+    						highlightRange: /*highlightRange*/ ctx[2]
+    					},
+    					dirty & /*highlightOpacity*/ 8 && {
+    						highlightOpacity: /*highlightOpacity*/ ctx[3]
+    					}
+    				])
     			: {};
 
-    			chartscrolly0.$set(chartscrolly0_changes);
-
-    			const chartscrolly1_changes = (dirty & /*chartParams2*/ 8)
-    			? get_spread_update(chartscrolly1_spread_levels, [get_spread_object(/*chartParams2*/ ctx[3])])
-    			: {};
-
-    			chartscrolly1.$set(chartscrolly1_changes);
+    			chartscrolly.$set(chartscrolly_changes);
     		},
     		i: function intro(local) {
     			if (current) return;
-    			transition_in(chartscrolly0.$$.fragment, local);
-    			transition_in(chartscrolly1.$$.fragment, local);
+    			transition_in(chartscrolly.$$.fragment, local);
     			current = true;
     		},
     		o: function outro(local) {
-    			transition_out(chartscrolly0.$$.fragment, local);
-    			transition_out(chartscrolly1.$$.fragment, local);
+    			transition_out(chartscrolly.$$.fragment, local);
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div0);
-    			destroy_component(chartscrolly0);
-    			if (detaching) detach_dev(t);
-    			if (detaching) detach_dev(div1);
-    			destroy_component(chartscrolly1);
+    			if (detaching) detach_dev(div);
+    			destroy_component(chartscrolly);
     		}
     	};
 
@@ -24349,7 +24493,91 @@ var app = (function () {
     		block,
     		id: create_else_block$2.name,
     		type: "else",
-    		source: "(94:12) {:else}",
+    		source: "(95:12) {:else}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (91:34) 
+    function create_if_block_3$1(ctx) {
+    	let div;
+    	let chartscrolly;
+    	let current;
+
+    	const chartscrolly_spread_levels = [
+    		/*chartParams*/ ctx[4],
+    		{ m: 0.0001 },
+    		{ n: 0.0085 },
+    		{
+    			highlightRange: /*highlightRange*/ ctx[2]
+    		},
+    		{
+    			highlightOpacity: /*highlightOpacity*/ ctx[3]
+    		}
+    	];
+
+    	let chartscrolly_props = {};
+
+    	for (let i = 0; i < chartscrolly_spread_levels.length; i += 1) {
+    		chartscrolly_props = assign(chartscrolly_props, chartscrolly_spread_levels[i]);
+    	}
+
+    	chartscrolly = new ChartScrolly({
+    			props: chartscrolly_props,
+    			$$inline: true
+    		});
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			create_component(chartscrolly.$$.fragment);
+    			attr_dev(div, "class", "chart svelte-1qgnk4w");
+    			add_location(div, file$4, 91, 16, 4614);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    			mount_component(chartscrolly, div, null);
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			const chartscrolly_changes = (dirty & /*chartParams, highlightRange, highlightOpacity*/ 28)
+    			? get_spread_update(chartscrolly_spread_levels, [
+    					dirty & /*chartParams*/ 16 && get_spread_object(/*chartParams*/ ctx[4]),
+    					chartscrolly_spread_levels[1],
+    					chartscrolly_spread_levels[2],
+    					dirty & /*highlightRange*/ 4 && {
+    						highlightRange: /*highlightRange*/ ctx[2]
+    					},
+    					dirty & /*highlightOpacity*/ 8 && {
+    						highlightOpacity: /*highlightOpacity*/ ctx[3]
+    					}
+    				])
+    			: {};
+
+    			chartscrolly.$set(chartscrolly_changes);
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(chartscrolly.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(chartscrolly.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    			destroy_component(chartscrolly);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_3$1.name,
+    		type: "if",
+    		source: "(91:34) ",
     		ctx
     	});
 
@@ -24357,99 +24585,79 @@ var app = (function () {
     }
 
     // (87:34) 
-    function create_if_block_4$1(ctx) {
-    	let div0;
-    	let chartscrolly0;
-    	let t;
-    	let div1;
-    	let chartscrolly1;
+    function create_if_block_2$1(ctx) {
+    	let div;
+    	let chartscrolly;
     	let current;
-    	const chartscrolly0_spread_levels = [/*chartParams1*/ ctx[2], { n: 0.01 }];
-    	let chartscrolly0_props = {};
 
-    	for (let i = 0; i < chartscrolly0_spread_levels.length; i += 1) {
-    		chartscrolly0_props = assign(chartscrolly0_props, chartscrolly0_spread_levels[i]);
+    	const chartscrolly_spread_levels = [
+    		/*chartParams*/ ctx[4],
+    		{ R: 0.0005 },
+    		{
+    			highlightRange: /*highlightRange*/ ctx[2]
+    		},
+    		{
+    			highlightOpacity: /*highlightOpacity*/ ctx[3]
+    		}
+    	];
+
+    	let chartscrolly_props = {};
+
+    	for (let i = 0; i < chartscrolly_spread_levels.length; i += 1) {
+    		chartscrolly_props = assign(chartscrolly_props, chartscrolly_spread_levels[i]);
     	}
 
-    	chartscrolly0 = new ChartScrolly({
-    			props: chartscrolly0_props,
-    			$$inline: true
-    		});
-
-    	const chartscrolly1_spread_levels = [/*chartParams2*/ ctx[3], { n: 0.001 }];
-    	let chartscrolly1_props = {};
-
-    	for (let i = 0; i < chartscrolly1_spread_levels.length; i += 1) {
-    		chartscrolly1_props = assign(chartscrolly1_props, chartscrolly1_spread_levels[i]);
-    	}
-
-    	chartscrolly1 = new ChartScrolly({
-    			props: chartscrolly1_props,
+    	chartscrolly = new ChartScrolly({
+    			props: chartscrolly_props,
     			$$inline: true
     		});
 
     	const block = {
     		c: function create() {
-    			div0 = element("div");
-    			create_component(chartscrolly0.$$.fragment);
-    			t = space();
-    			div1 = element("div");
-    			create_component(chartscrolly1.$$.fragment);
-    			attr_dev(div0, "class", "chart-one svelte-uu24v0");
-    			add_location(div0, file$4, 87, 16, 4610);
-    			attr_dev(div1, "class", "chart-two svelte-uu24v0");
-    			add_location(div1, file$4, 90, 16, 4740);
+    			div = element("div");
+    			create_component(chartscrolly.$$.fragment);
+    			attr_dev(div, "class", "chart svelte-1qgnk4w");
+    			add_location(div, file$4, 87, 16, 4383);
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, div0, anchor);
-    			mount_component(chartscrolly0, div0, null);
-    			insert_dev(target, t, anchor);
-    			insert_dev(target, div1, anchor);
-    			mount_component(chartscrolly1, div1, null);
+    			insert_dev(target, div, anchor);
+    			mount_component(chartscrolly, div, null);
     			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			const chartscrolly0_changes = (dirty & /*chartParams1*/ 4)
-    			? get_spread_update(chartscrolly0_spread_levels, [
-    					get_spread_object(/*chartParams1*/ ctx[2]),
-    					chartscrolly0_spread_levels[1]
+    			const chartscrolly_changes = (dirty & /*chartParams, highlightRange, highlightOpacity*/ 28)
+    			? get_spread_update(chartscrolly_spread_levels, [
+    					dirty & /*chartParams*/ 16 && get_spread_object(/*chartParams*/ ctx[4]),
+    					chartscrolly_spread_levels[1],
+    					dirty & /*highlightRange*/ 4 && {
+    						highlightRange: /*highlightRange*/ ctx[2]
+    					},
+    					dirty & /*highlightOpacity*/ 8 && {
+    						highlightOpacity: /*highlightOpacity*/ ctx[3]
+    					}
     				])
     			: {};
 
-    			chartscrolly0.$set(chartscrolly0_changes);
-
-    			const chartscrolly1_changes = (dirty & /*chartParams2*/ 8)
-    			? get_spread_update(chartscrolly1_spread_levels, [
-    					get_spread_object(/*chartParams2*/ ctx[3]),
-    					chartscrolly1_spread_levels[1]
-    				])
-    			: {};
-
-    			chartscrolly1.$set(chartscrolly1_changes);
+    			chartscrolly.$set(chartscrolly_changes);
     		},
     		i: function intro(local) {
     			if (current) return;
-    			transition_in(chartscrolly0.$$.fragment, local);
-    			transition_in(chartscrolly1.$$.fragment, local);
+    			transition_in(chartscrolly.$$.fragment, local);
     			current = true;
     		},
     		o: function outro(local) {
-    			transition_out(chartscrolly0.$$.fragment, local);
-    			transition_out(chartscrolly1.$$.fragment, local);
+    			transition_out(chartscrolly.$$.fragment, local);
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div0);
-    			destroy_component(chartscrolly0);
-    			if (detaching) detach_dev(t);
-    			if (detaching) detach_dev(div1);
-    			destroy_component(chartscrolly1);
+    			if (detaching) detach_dev(div);
+    			destroy_component(chartscrolly);
     		}
     	};
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_4$1.name,
+    		id: create_if_block_2$1.name,
     		type: "if",
     		source: "(87:34) ",
     		ctx
@@ -24458,298 +24666,72 @@ var app = (function () {
     	return block;
     }
 
-    // (80:34) 
-    function create_if_block_3$1(ctx) {
-    	let div0;
-    	let chartscrolly0;
-    	let t;
-    	let div1;
-    	let chartscrolly1;
-    	let current;
-    	const chartscrolly0_spread_levels = [/*chartParams1*/ ctx[2], { m: 0.0001 }];
-    	let chartscrolly0_props = {};
-
-    	for (let i = 0; i < chartscrolly0_spread_levels.length; i += 1) {
-    		chartscrolly0_props = assign(chartscrolly0_props, chartscrolly0_spread_levels[i]);
-    	}
-
-    	chartscrolly0 = new ChartScrolly({
-    			props: chartscrolly0_props,
-    			$$inline: true
-    		});
-
-    	const chartscrolly1_spread_levels = [/*chartParams2*/ ctx[3], { m: 0.00001 }];
-    	let chartscrolly1_props = {};
-
-    	for (let i = 0; i < chartscrolly1_spread_levels.length; i += 1) {
-    		chartscrolly1_props = assign(chartscrolly1_props, chartscrolly1_spread_levels[i]);
-    	}
-
-    	chartscrolly1 = new ChartScrolly({
-    			props: chartscrolly1_props,
-    			$$inline: true
-    		});
-
-    	const block = {
-    		c: function create() {
-    			div0 = element("div");
-    			create_component(chartscrolly0.$$.fragment);
-    			t = space();
-    			div1 = element("div");
-    			create_component(chartscrolly1.$$.fragment);
-    			attr_dev(div0, "class", "chart-one svelte-uu24v0");
-    			add_location(div0, file$4, 80, 16, 4309);
-    			attr_dev(div1, "class", "chart-two svelte-uu24v0");
-    			add_location(div1, file$4, 83, 16, 4441);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, div0, anchor);
-    			mount_component(chartscrolly0, div0, null);
-    			insert_dev(target, t, anchor);
-    			insert_dev(target, div1, anchor);
-    			mount_component(chartscrolly1, div1, null);
-    			current = true;
-    		},
-    		p: function update(ctx, dirty) {
-    			const chartscrolly0_changes = (dirty & /*chartParams1*/ 4)
-    			? get_spread_update(chartscrolly0_spread_levels, [
-    					get_spread_object(/*chartParams1*/ ctx[2]),
-    					chartscrolly0_spread_levels[1]
-    				])
-    			: {};
-
-    			chartscrolly0.$set(chartscrolly0_changes);
-
-    			const chartscrolly1_changes = (dirty & /*chartParams2*/ 8)
-    			? get_spread_update(chartscrolly1_spread_levels, [
-    					get_spread_object(/*chartParams2*/ ctx[3]),
-    					chartscrolly1_spread_levels[1]
-    				])
-    			: {};
-
-    			chartscrolly1.$set(chartscrolly1_changes);
-    		},
-    		i: function intro(local) {
-    			if (current) return;
-    			transition_in(chartscrolly0.$$.fragment, local);
-    			transition_in(chartscrolly1.$$.fragment, local);
-    			current = true;
-    		},
-    		o: function outro(local) {
-    			transition_out(chartscrolly0.$$.fragment, local);
-    			transition_out(chartscrolly1.$$.fragment, local);
-    			current = false;
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div0);
-    			destroy_component(chartscrolly0);
-    			if (detaching) detach_dev(t);
-    			if (detaching) detach_dev(div1);
-    			destroy_component(chartscrolly1);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_if_block_3$1.name,
-    		type: "if",
-    		source: "(80:34) ",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (73:34) 
-    function create_if_block_2$1(ctx) {
-    	let div0;
-    	let chartscrolly0;
-    	let t;
-    	let div1;
-    	let chartscrolly1;
-    	let current;
-    	const chartscrolly0_spread_levels = [/*chartParams1*/ ctx[2], { R: 0.001 }];
-    	let chartscrolly0_props = {};
-
-    	for (let i = 0; i < chartscrolly0_spread_levels.length; i += 1) {
-    		chartscrolly0_props = assign(chartscrolly0_props, chartscrolly0_spread_levels[i]);
-    	}
-
-    	chartscrolly0 = new ChartScrolly({
-    			props: chartscrolly0_props,
-    			$$inline: true
-    		});
-
-    	const chartscrolly1_spread_levels = [/*chartParams2*/ ctx[3], { R: 0.00001 }];
-    	let chartscrolly1_props = {};
-
-    	for (let i = 0; i < chartscrolly1_spread_levels.length; i += 1) {
-    		chartscrolly1_props = assign(chartscrolly1_props, chartscrolly1_spread_levels[i]);
-    	}
-
-    	chartscrolly1 = new ChartScrolly({
-    			props: chartscrolly1_props,
-    			$$inline: true
-    		});
-
-    	const block = {
-    		c: function create() {
-    			div0 = element("div");
-    			create_component(chartscrolly0.$$.fragment);
-    			t = space();
-    			div1 = element("div");
-    			create_component(chartscrolly1.$$.fragment);
-    			attr_dev(div0, "class", "chart-one svelte-uu24v0");
-    			add_location(div0, file$4, 73, 16, 4009);
-    			attr_dev(div1, "class", "chart-two svelte-uu24v0");
-    			add_location(div1, file$4, 76, 16, 4140);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, div0, anchor);
-    			mount_component(chartscrolly0, div0, null);
-    			insert_dev(target, t, anchor);
-    			insert_dev(target, div1, anchor);
-    			mount_component(chartscrolly1, div1, null);
-    			current = true;
-    		},
-    		p: function update(ctx, dirty) {
-    			const chartscrolly0_changes = (dirty & /*chartParams1*/ 4)
-    			? get_spread_update(chartscrolly0_spread_levels, [
-    					get_spread_object(/*chartParams1*/ ctx[2]),
-    					chartscrolly0_spread_levels[1]
-    				])
-    			: {};
-
-    			chartscrolly0.$set(chartscrolly0_changes);
-
-    			const chartscrolly1_changes = (dirty & /*chartParams2*/ 8)
-    			? get_spread_update(chartscrolly1_spread_levels, [
-    					get_spread_object(/*chartParams2*/ ctx[3]),
-    					chartscrolly1_spread_levels[1]
-    				])
-    			: {};
-
-    			chartscrolly1.$set(chartscrolly1_changes);
-    		},
-    		i: function intro(local) {
-    			if (current) return;
-    			transition_in(chartscrolly0.$$.fragment, local);
-    			transition_in(chartscrolly1.$$.fragment, local);
-    			current = true;
-    		},
-    		o: function outro(local) {
-    			transition_out(chartscrolly0.$$.fragment, local);
-    			transition_out(chartscrolly1.$$.fragment, local);
-    			current = false;
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div0);
-    			destroy_component(chartscrolly0);
-    			if (detaching) detach_dev(t);
-    			if (detaching) detach_dev(div1);
-    			destroy_component(chartscrolly1);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_if_block_2$1.name,
-    		type: "if",
-    		source: "(73:34) ",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (66:34) 
+    // (83:34) 
     function create_if_block_1$2(ctx) {
-    	let div0;
-    	let chartscrolly0;
-    	let t;
-    	let div1;
-    	let chartscrolly1;
+    	let div;
+    	let chartscrolly;
     	let current;
-    	const chartscrolly0_spread_levels = [/*chartParams1*/ ctx[2], { b: 0.1 }];
-    	let chartscrolly0_props = {};
 
-    	for (let i = 0; i < chartscrolly0_spread_levels.length; i += 1) {
-    		chartscrolly0_props = assign(chartscrolly0_props, chartscrolly0_spread_levels[i]);
+    	const chartscrolly_spread_levels = [
+    		/*chartParams*/ ctx[4],
+    		{
+    			highlightRange: /*highlightRange*/ ctx[2]
+    		},
+    		{
+    			highlightOpacity: /*highlightOpacity*/ ctx[3]
+    		}
+    	];
+
+    	let chartscrolly_props = {};
+
+    	for (let i = 0; i < chartscrolly_spread_levels.length; i += 1) {
+    		chartscrolly_props = assign(chartscrolly_props, chartscrolly_spread_levels[i]);
     	}
 
-    	chartscrolly0 = new ChartScrolly({
-    			props: chartscrolly0_props,
-    			$$inline: true
-    		});
-
-    	const chartscrolly1_spread_levels = [/*chartParams2*/ ctx[3], { b: 0.01 }];
-    	let chartscrolly1_props = {};
-
-    	for (let i = 0; i < chartscrolly1_spread_levels.length; i += 1) {
-    		chartscrolly1_props = assign(chartscrolly1_props, chartscrolly1_spread_levels[i]);
-    	}
-
-    	chartscrolly1 = new ChartScrolly({
-    			props: chartscrolly1_props,
+    	chartscrolly = new ChartScrolly({
+    			props: chartscrolly_props,
     			$$inline: true
     		});
 
     	const block = {
     		c: function create() {
-    			div0 = element("div");
-    			create_component(chartscrolly0.$$.fragment);
-    			t = space();
-    			div1 = element("div");
-    			create_component(chartscrolly1.$$.fragment);
-    			attr_dev(div0, "class", "chart-one svelte-uu24v0");
-    			add_location(div0, file$4, 66, 16, 3714);
-    			attr_dev(div1, "class", "chart-two svelte-uu24v0");
-    			add_location(div1, file$4, 69, 16, 3843);
+    			div = element("div");
+    			create_component(chartscrolly.$$.fragment);
+    			attr_dev(div, "class", "chart svelte-1qgnk4w");
+    			add_location(div, file$4, 83, 16, 4164);
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, div0, anchor);
-    			mount_component(chartscrolly0, div0, null);
-    			insert_dev(target, t, anchor);
-    			insert_dev(target, div1, anchor);
-    			mount_component(chartscrolly1, div1, null);
+    			insert_dev(target, div, anchor);
+    			mount_component(chartscrolly, div, null);
     			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			const chartscrolly0_changes = (dirty & /*chartParams1*/ 4)
-    			? get_spread_update(chartscrolly0_spread_levels, [
-    					get_spread_object(/*chartParams1*/ ctx[2]),
-    					chartscrolly0_spread_levels[1]
+    			const chartscrolly_changes = (dirty & /*chartParams, highlightRange, highlightOpacity*/ 28)
+    			? get_spread_update(chartscrolly_spread_levels, [
+    					dirty & /*chartParams*/ 16 && get_spread_object(/*chartParams*/ ctx[4]),
+    					dirty & /*highlightRange*/ 4 && {
+    						highlightRange: /*highlightRange*/ ctx[2]
+    					},
+    					dirty & /*highlightOpacity*/ 8 && {
+    						highlightOpacity: /*highlightOpacity*/ ctx[3]
+    					}
     				])
     			: {};
 
-    			chartscrolly0.$set(chartscrolly0_changes);
-
-    			const chartscrolly1_changes = (dirty & /*chartParams2*/ 8)
-    			? get_spread_update(chartscrolly1_spread_levels, [
-    					get_spread_object(/*chartParams2*/ ctx[3]),
-    					chartscrolly1_spread_levels[1]
-    				])
-    			: {};
-
-    			chartscrolly1.$set(chartscrolly1_changes);
+    			chartscrolly.$set(chartscrolly_changes);
     		},
     		i: function intro(local) {
     			if (current) return;
-    			transition_in(chartscrolly0.$$.fragment, local);
-    			transition_in(chartscrolly1.$$.fragment, local);
+    			transition_in(chartscrolly.$$.fragment, local);
     			current = true;
     		},
     		o: function outro(local) {
-    			transition_out(chartscrolly0.$$.fragment, local);
-    			transition_out(chartscrolly1.$$.fragment, local);
+    			transition_out(chartscrolly.$$.fragment, local);
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div0);
-    			destroy_component(chartscrolly0);
-    			if (detaching) detach_dev(t);
-    			if (detaching) detach_dev(div1);
-    			destroy_component(chartscrolly1);
+    			if (detaching) detach_dev(div);
+    			destroy_component(chartscrolly);
     		}
     	};
 
@@ -24757,101 +24739,83 @@ var app = (function () {
     		block,
     		id: create_if_block_1$2.name,
     		type: "if",
-    		source: "(66:34) ",
+    		source: "(83:34) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (59:12) {#if value === 0}
+    // (79:12) {#if value === 0}
     function create_if_block$2(ctx) {
-    	let div0;
-    	let chartscrolly0;
-    	let t;
-    	let div1;
-    	let chartscrolly1;
+    	let div;
+    	let chartscrolly;
     	let current;
-    	const chartscrolly0_spread_levels = [/*chartParams1*/ ctx[2], { E0: 1.2 }];
-    	let chartscrolly0_props = {};
 
-    	for (let i = 0; i < chartscrolly0_spread_levels.length; i += 1) {
-    		chartscrolly0_props = assign(chartscrolly0_props, chartscrolly0_spread_levels[i]);
+    	const chartscrolly_spread_levels = [
+    		/*chartParams*/ ctx[4],
+    		{ E0: 1.2 },
+    		{ b: 0.1 },
+    		{
+    			highlightRange: /*highlightRange*/ ctx[2]
+    		},
+    		{
+    			highlightOpacity: /*highlightOpacity*/ ctx[3]
+    		}
+    	];
+
+    	let chartscrolly_props = {};
+
+    	for (let i = 0; i < chartscrolly_spread_levels.length; i += 1) {
+    		chartscrolly_props = assign(chartscrolly_props, chartscrolly_spread_levels[i]);
     	}
 
-    	chartscrolly0 = new ChartScrolly({
-    			props: chartscrolly0_props,
-    			$$inline: true
-    		});
-
-    	const chartscrolly1_spread_levels = [/*chartParams2*/ ctx[3], { E0: 0.5 }];
-    	let chartscrolly1_props = {};
-
-    	for (let i = 0; i < chartscrolly1_spread_levels.length; i += 1) {
-    		chartscrolly1_props = assign(chartscrolly1_props, chartscrolly1_spread_levels[i]);
-    	}
-
-    	chartscrolly1 = new ChartScrolly({
-    			props: chartscrolly1_props,
+    	chartscrolly = new ChartScrolly({
+    			props: chartscrolly_props,
     			$$inline: true
     		});
 
     	const block = {
     		c: function create() {
-    			div0 = element("div");
-    			create_component(chartscrolly0.$$.fragment);
-    			t = space();
-    			div1 = element("div");
-    			create_component(chartscrolly1.$$.fragment);
-    			attr_dev(div0, "class", "chart-one svelte-uu24v0");
-    			add_location(div0, file$4, 59, 16, 3418);
-    			attr_dev(div1, "class", "chart-two svelte-uu24v0");
-    			add_location(div1, file$4, 62, 16, 3548);
+    			div = element("div");
+    			create_component(chartscrolly.$$.fragment);
+    			attr_dev(div, "class", "chart svelte-1qgnk4w");
+    			add_location(div, file$4, 79, 16, 3927);
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, div0, anchor);
-    			mount_component(chartscrolly0, div0, null);
-    			insert_dev(target, t, anchor);
-    			insert_dev(target, div1, anchor);
-    			mount_component(chartscrolly1, div1, null);
+    			insert_dev(target, div, anchor);
+    			mount_component(chartscrolly, div, null);
     			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			const chartscrolly0_changes = (dirty & /*chartParams1*/ 4)
-    			? get_spread_update(chartscrolly0_spread_levels, [
-    					get_spread_object(/*chartParams1*/ ctx[2]),
-    					chartscrolly0_spread_levels[1]
+    			const chartscrolly_changes = (dirty & /*chartParams, highlightRange, highlightOpacity*/ 28)
+    			? get_spread_update(chartscrolly_spread_levels, [
+    					dirty & /*chartParams*/ 16 && get_spread_object(/*chartParams*/ ctx[4]),
+    					chartscrolly_spread_levels[1],
+    					chartscrolly_spread_levels[2],
+    					dirty & /*highlightRange*/ 4 && {
+    						highlightRange: /*highlightRange*/ ctx[2]
+    					},
+    					dirty & /*highlightOpacity*/ 8 && {
+    						highlightOpacity: /*highlightOpacity*/ ctx[3]
+    					}
     				])
     			: {};
 
-    			chartscrolly0.$set(chartscrolly0_changes);
-
-    			const chartscrolly1_changes = (dirty & /*chartParams2*/ 8)
-    			? get_spread_update(chartscrolly1_spread_levels, [
-    					get_spread_object(/*chartParams2*/ ctx[3]),
-    					chartscrolly1_spread_levels[1]
-    				])
-    			: {};
-
-    			chartscrolly1.$set(chartscrolly1_changes);
+    			chartscrolly.$set(chartscrolly_changes);
     		},
     		i: function intro(local) {
     			if (current) return;
-    			transition_in(chartscrolly0.$$.fragment, local);
-    			transition_in(chartscrolly1.$$.fragment, local);
+    			transition_in(chartscrolly.$$.fragment, local);
     			current = true;
     		},
     		o: function outro(local) {
-    			transition_out(chartscrolly0.$$.fragment, local);
-    			transition_out(chartscrolly1.$$.fragment, local);
+    			transition_out(chartscrolly.$$.fragment, local);
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div0);
-    			destroy_component(chartscrolly0);
-    			if (detaching) detach_dev(t);
-    			if (detaching) detach_dev(div1);
-    			destroy_component(chartscrolly1);
+    			if (detaching) detach_dev(div);
+    			destroy_component(chartscrolly);
     		}
     	};
 
@@ -24859,7 +24823,7 @@ var app = (function () {
     		block,
     		id: create_if_block$2.name,
     		type: "if",
-    		source: "(59:12) {#if value === 0}",
+    		source: "(79:12) {#if value === 0}",
     		ctx
     	});
 
@@ -24888,7 +24852,7 @@ var app = (function () {
     	let current;
 
     	function scrolly_value_binding(value) {
-    		/*scrolly_value_binding*/ ctx[4](value);
+    		/*scrolly_value_binding*/ ctx[5](value);
     	}
 
     	let scrolly_props = {
@@ -24908,7 +24872,6 @@ var app = (function () {
     		create_if_block_1$2,
     		create_if_block_2$1,
     		create_if_block_3$1,
-    		create_if_block_4$1,
     		create_else_block$2
     	];
 
@@ -24919,8 +24882,7 @@ var app = (function () {
     		if (/*value*/ ctx[0] === 1) return 1;
     		if (/*value*/ ctx[0] === 2) return 2;
     		if (/*value*/ ctx[0] === 3) return 3;
-    		if (/*value*/ ctx[0] === 4) return 4;
-    		return 5;
+    		return 4;
     	}
 
     	current_block_type_index = select_block_type(ctx);
@@ -24947,21 +24909,21 @@ var app = (function () {
     			t6 = space();
     			p1 = element("p");
     			p1.textContent = "In conclusion, each source of voltage loss plays a role in the effectiveness of the fuel cell. \r\n        From the current-density versus voltage curve, these parameters can be fitted from collected data, and key sources of fuel cell losses can be determined.\r\n        Therefore, with a solid understanding of this characterization method, better fuel cells can be designed for an energy efficient future.\r\n        (Note: this website provides a simplified view of this curve; lots of active research is still being done to accurately model a fuel cell's behavior, especially at extreme temperatures and pressures.)";
-    			attr_dev(h2, "class", "body-header svelte-uu24v0");
-    			add_location(h2, file$4, 35, 0, 2215);
-    			attr_dev(p0, "class", "body-text svelte-uu24v0");
-    			add_location(p0, file$4, 36, 0, 2274);
-    			attr_dev(div0, "class", "steps-container svelte-uu24v0");
-    			add_location(div0, file$4, 44, 8, 2807);
-    			attr_dev(div1, "class", "charts-container svelte-uu24v0");
-    			add_location(div1, file$4, 57, 8, 3339);
-    			attr_dev(div2, "class", "section-container svelte-uu24v0");
-    			add_location(div2, file$4, 43, 4, 2766);
-    			add_location(br0, file$4, 104, 4, 5175);
-    			add_location(br1, file$4, 104, 10, 5181);
-    			attr_dev(p1, "class", "body-text svelte-uu24v0");
-    			add_location(p1, file$4, 105, 4, 5193);
-    			add_location(section, file$4, 41, 0, 2720);
+    			attr_dev(h2, "class", "body-header svelte-1qgnk4w");
+    			add_location(h2, file$4, 55, 0, 2724);
+    			attr_dev(p0, "class", "body-text svelte-1qgnk4w");
+    			add_location(p0, file$4, 56, 0, 2783);
+    			attr_dev(div0, "class", "steps-container svelte-1qgnk4w");
+    			add_location(div0, file$4, 64, 8, 3316);
+    			attr_dev(div1, "class", "charts-container svelte-1qgnk4w");
+    			add_location(div1, file$4, 77, 8, 3848);
+    			attr_dev(div2, "class", "section-container svelte-1qgnk4w");
+    			add_location(div2, file$4, 63, 4, 3275);
+    			add_location(br0, file$4, 102, 4, 5066);
+    			add_location(br1, file$4, 102, 10, 5072);
+    			attr_dev(p1, "class", "body-text svelte-1qgnk4w");
+    			add_location(p1, file$4, 103, 4, 5084);
+    			add_location(section, file$4, 61, 0, 3229);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -24988,7 +24950,7 @@ var app = (function () {
     		p: function update(ctx, [dirty]) {
     			const scrolly_changes = {};
 
-    			if (dirty & /*$$scope, steps, value*/ 259) {
+    			if (dirty & /*$$scope, steps, value*/ 515) {
     				scrolly_changes.$$scope = { dirty, ctx };
     			}
 
@@ -25072,7 +25034,7 @@ var app = (function () {
 
     	steps = [
     		{
-    			title: 'Activation Losses: E<sub>0</sub>  and b',
+    			title: 'Activation Losses: E<sub>0</sub> and b',
     			content: "Activation losses arise from the rate of the reaction at each electrode. E<sub>0</sub> encompasses the voltage differential between the reversible voltage and the measured voltage. b comes from the non-linear Tafel equation, which describes the variation in reaction rate at different current densities. A higher b indicates a slower reaction. Together, they form the low current density region."
     		},
     		{
@@ -25089,8 +25051,9 @@ var app = (function () {
     		}
     	];
 
-    	let chartParams1 = { E0, b, R, m, n };
-    	let chartParams2 = { E0, b, R, m, n };
+    	let chartParams = { E0, b, R, m, n };
+    	let highlightRange = [0, 0];
+    	let highlightOpacity = 0;
 
     	$$self.$$.on_mount.push(function () {
     		if (value === undefined && !('value' in $$props || $$self.$$.bound[$$self.$$.props['value']])) {
@@ -25124,22 +25087,51 @@ var app = (function () {
     		m,
     		n,
     		steps,
-    		chartParams1,
-    		chartParams2
+    		chartParams,
+    		highlightRange,
+    		highlightOpacity
     	});
 
     	$$self.$inject_state = $$props => {
     		if ('value' in $$props) $$invalidate(0, value = $$props.value);
     		if ('steps' in $$props) $$invalidate(1, steps = $$props.steps);
-    		if ('chartParams1' in $$props) $$invalidate(2, chartParams1 = $$props.chartParams1);
-    		if ('chartParams2' in $$props) $$invalidate(3, chartParams2 = $$props.chartParams2);
+    		if ('chartParams' in $$props) $$invalidate(4, chartParams = $$props.chartParams);
+    		if ('highlightRange' in $$props) $$invalidate(2, highlightRange = $$props.highlightRange);
+    		if ('highlightOpacity' in $$props) $$invalidate(3, highlightOpacity = $$props.highlightOpacity);
     	};
 
     	if ($$props && "$$inject" in $$props) {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	return [value, steps, chartParams1, chartParams2, scrolly_value_binding];
+    	$$self.$$.update = () => {
+    		if ($$self.$$.dirty & /*value*/ 1) {
+    			{
+    				if (value === 0 || value === 1) {
+    					$$invalidate(2, highlightRange = [0, 200]);
+    					$$invalidate(3, highlightOpacity = 0.3);
+    				} else if (value === 2) {
+    					$$invalidate(2, highlightRange = [200, 700]);
+    					$$invalidate(3, highlightOpacity = 0.3);
+    				} else if (value === 3) {
+    					$$invalidate(2, highlightRange = [700, 999]);
+    					$$invalidate(3, highlightOpacity = 0.3);
+    				} else {
+    					$$invalidate(2, highlightRange = [0, 0]);
+    					$$invalidate(3, highlightOpacity = 0);
+    				}
+    			}
+    		}
+    	};
+
+    	return [
+    		value,
+    		steps,
+    		highlightRange,
+    		highlightOpacity,
+    		chartParams,
+    		scrolly_value_binding
+    	];
     }
 
     class VariablesScrolly extends SvelteComponentDev {
@@ -25217,10 +25209,231 @@ var app = (function () {
     	return child_ctx;
     }
 
-    // (67:16) {#if clicked === 3}
+    function get_each_context_1(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[14] = list[i];
+    	child_ctx[16] = i;
+    	return child_ctx;
+    }
+
+    function get_each_context_2(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[14] = list[i];
+    	child_ctx[16] = i;
+    	return child_ctx;
+    }
+
+    // (68:16) {#if clicked === 0}
+    function create_if_block_6(ctx) {
+    	let each_1_anchor;
+    	let each_value_2 = Array(10);
+    	validate_each_argument(each_value_2);
+    	let each_blocks = [];
+
+    	for (let i = 0; i < each_value_2.length; i += 1) {
+    		each_blocks[i] = create_each_block_2(get_each_context_2(ctx, each_value_2, i));
+    	}
+
+    	const block = {
+    		c: function create() {
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			each_1_anchor = empty$1();
+    		},
+    		m: function mount(target, anchor) {
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				if (each_blocks[i]) {
+    					each_blocks[i].m(target, anchor);
+    				}
+    			}
+
+    			insert_dev(target, each_1_anchor, anchor);
+    		},
+    		p: noop$1,
+    		d: function destroy(detaching) {
+    			destroy_each(each_blocks, detaching);
+    			if (detaching) detach_dev(each_1_anchor);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_6.name,
+    		type: "if",
+    		source: "(68:16) {#if clicked === 0}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (69:20) {#each Array(10) as _, i}
+    function create_each_block_2(ctx) {
+    	let g;
+    	let circle0;
+    	let animateMotion0;
+    	let mpath0;
+    	let circle1;
+    	let animateMotion1;
+    	let mpath1;
+
+    	const block = {
+    		c: function create() {
+    			g = svg_element("g");
+    			circle0 = svg_element("circle");
+    			animateMotion0 = svg_element("animateMotion");
+    			mpath0 = svg_element("mpath");
+    			circle1 = svg_element("circle");
+    			animateMotion1 = svg_element("animateMotion");
+    			mpath1 = svg_element("mpath");
+    			attr_dev(mpath0, "href", "#hydrogenPath");
+    			add_location(mpath0, file$3, 78, 36, 3358);
+    			attr_dev(animateMotion0, "class", "hydrogenMotion");
+    			attr_dev(animateMotion0, "dur", "5s");
+    			attr_dev(animateMotion0, "repeatCount", "indefinite");
+    			attr_dev(animateMotion0, "begin", /*i*/ ctx[16] * 0.5 + "s");
+    			add_location(animateMotion0, file$3, 72, 32, 3042);
+    			attr_dev(circle0, "class", "hydrogen-circle");
+    			attr_dev(circle0, "r", "20");
+    			attr_dev(circle0, "fill", "red");
+    			add_location(circle0, file$3, 71, 28, 2958);
+    			attr_dev(mpath1, "href", "#hydrogenPath");
+    			add_location(mpath1, file$3, 89, 36, 3992);
+    			attr_dev(animateMotion1, "class", "hydrogenMotion");
+    			attr_dev(animateMotion1, "dur", "5s");
+    			attr_dev(animateMotion1, "repeatCount", "indefinite");
+    			attr_dev(animateMotion1, "begin", /*i*/ ctx[16] * 0.5 + "s");
+    			add_location(animateMotion1, file$3, 83, 32, 3676);
+    			attr_dev(circle1, "class", "hydrogen-circle");
+    			attr_dev(circle1, "r", "20");
+    			attr_dev(circle1, "fill", "red");
+    			attr_dev(circle1, "transform", "translate(0, 25)");
+    			add_location(circle1, file$3, 82, 28, 3563);
+    			add_location(g, file$3, 69, 24, 2869);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, g, anchor);
+    			append_dev(g, circle0);
+    			append_dev(circle0, animateMotion0);
+    			append_dev(animateMotion0, mpath0);
+    			append_dev(g, circle1);
+    			append_dev(circle1, animateMotion1);
+    			append_dev(animateMotion1, mpath1);
+    		},
+    		p: noop$1,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(g);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_2.name,
+    		type: "each",
+    		source: "(69:20) {#each Array(10) as _, i}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (120:16) {#if clicked === 3}
+    function create_if_block_5(ctx) {
+    	let each_1_anchor;
+    	let each_value_1 = Array(5);
+    	validate_each_argument(each_value_1);
+    	let each_blocks = [];
+
+    	for (let i = 0; i < each_value_1.length; i += 1) {
+    		each_blocks[i] = create_each_block_1(get_each_context_1(ctx, each_value_1, i));
+    	}
+
+    	const block = {
+    		c: function create() {
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			each_1_anchor = empty$1();
+    		},
+    		m: function mount(target, anchor) {
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				if (each_blocks[i]) {
+    					each_blocks[i].m(target, anchor);
+    				}
+    			}
+
+    			insert_dev(target, each_1_anchor, anchor);
+    		},
+    		p: noop$1,
+    		d: function destroy(detaching) {
+    			destroy_each(each_blocks, detaching);
+    			if (detaching) detach_dev(each_1_anchor);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_5.name,
+    		type: "if",
+    		source: "(120:16) {#if clicked === 3}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (121:20) {#each Array(5) as _, i}
+    function create_each_block_1(ctx) {
+    	let circle;
+    	let animateMotion;
+    	let mpath;
+
+    	const block = {
+    		c: function create() {
+    			circle = svg_element("circle");
+    			animateMotion = svg_element("animateMotion");
+    			mpath = svg_element("mpath");
+    			attr_dev(mpath, "href", "#circuitPath");
+    			add_location(mpath, file$3, 127, 32, 5541);
+    			attr_dev(animateMotion, "class", "electronMotion");
+    			attr_dev(animateMotion, "dur", "5s");
+    			attr_dev(animateMotion, "repeatCount", "indefinite");
+    			attr_dev(animateMotion, "begin", /*i*/ ctx[16] * 1 + "s; anim" + /*i*/ ctx[16] + ".begin");
+    			add_location(animateMotion, file$3, 122, 28, 5260);
+    			attr_dev(circle, "class", "electron svelte-1lqswlk");
+    			attr_dev(circle, "r", "15");
+    			attr_dev(circle, "fill", "#ffb703");
+    			add_location(circle, file$3, 121, 24, 5183);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, circle, anchor);
+    			append_dev(circle, animateMotion);
+    			append_dev(animateMotion, mpath);
+    		},
+    		p: noop$1,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(circle);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_1.name,
+    		type: "each",
+    		source: "(121:20) {#each Array(5) as _, i}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (156:16) {#if clicked === 2}
     function create_if_block_4(ctx) {
     	let each_1_anchor;
-    	let each_value = Array(5);
+    	let each_value = Array(10);
     	validate_each_argument(each_value);
     	let each_blocks = [];
 
@@ -25256,44 +25469,69 @@ var app = (function () {
     		block,
     		id: create_if_block_4.name,
     		type: "if",
-    		source: "(67:16) {#if clicked === 3}",
+    		source: "(156:16) {#if clicked === 2}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (68:20) {#each Array(5) as _, i}
+    // (157:20) {#each Array(10) as _, i}
     function create_each_block(ctx) {
-    	let circle;
-    	let animateMotion;
-    	let mpath;
+    	let g;
+    	let circle0;
+    	let animateMotion0;
+    	let mpath0;
+    	let circle1;
+    	let animateMotion1;
+    	let mpath1;
 
     	const block = {
     		c: function create() {
-    			circle = svg_element("circle");
-    			animateMotion = svg_element("animateMotion");
-    			mpath = svg_element("mpath");
-    			attr_dev(mpath, "href", "#circuitPath");
-    			add_location(mpath, file$3, 74, 32, 3297);
-    			attr_dev(animateMotion, "class", "electronMotion");
-    			attr_dev(animateMotion, "dur", "5s");
-    			attr_dev(animateMotion, "repeatCount", "indefinite");
-    			attr_dev(animateMotion, "begin", /*i*/ ctx[16] * 1 + "s; anim" + /*i*/ ctx[16] + ".begin");
-    			add_location(animateMotion, file$3, 69, 28, 3016);
-    			attr_dev(circle, "class", "electron svelte-1lqswlk");
-    			attr_dev(circle, "r", "15");
-    			attr_dev(circle, "fill", "#ffb703");
-    			add_location(circle, file$3, 68, 24, 2939);
+    			g = svg_element("g");
+    			circle0 = svg_element("circle");
+    			animateMotion0 = svg_element("animateMotion");
+    			mpath0 = svg_element("mpath");
+    			circle1 = svg_element("circle");
+    			animateMotion1 = svg_element("animateMotion");
+    			mpath1 = svg_element("mpath");
+    			attr_dev(mpath0, "href", "#oxygenPath");
+    			add_location(mpath0, file$3, 166, 36, 7083);
+    			attr_dev(animateMotion0, "class", "oxygenMotion");
+    			attr_dev(animateMotion0, "dur", "5s");
+    			attr_dev(animateMotion0, "repeatCount", "indefinite");
+    			attr_dev(animateMotion0, "begin", /*i*/ ctx[16] * 0.5 + "s");
+    			add_location(animateMotion0, file$3, 160, 32, 6769);
+    			attr_dev(circle0, "class", "oxygen-circle");
+    			attr_dev(circle0, "r", "20");
+    			attr_dev(circle0, "fill", "blue");
+    			add_location(circle0, file$3, 159, 28, 6686);
+    			attr_dev(mpath1, "href", "#oxygenPath");
+    			add_location(mpath1, file$3, 177, 36, 7712);
+    			attr_dev(animateMotion1, "class", "oxygenMotion");
+    			attr_dev(animateMotion1, "dur", "5s");
+    			attr_dev(animateMotion1, "repeatCount", "indefinite");
+    			attr_dev(animateMotion1, "begin", /*i*/ ctx[16] * 0.5 + "s");
+    			add_location(animateMotion1, file$3, 171, 32, 7398);
+    			attr_dev(circle1, "class", "oxygen-circle");
+    			attr_dev(circle1, "r", "20");
+    			attr_dev(circle1, "fill", "blue");
+    			attr_dev(circle1, "transform", "translate(0, 25)");
+    			add_location(circle1, file$3, 170, 28, 7286);
+    			add_location(g, file$3, 157, 24, 6597);
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, circle, anchor);
-    			append_dev(circle, animateMotion);
-    			append_dev(animateMotion, mpath);
+    			insert_dev(target, g, anchor);
+    			append_dev(g, circle0);
+    			append_dev(circle0, animateMotion0);
+    			append_dev(animateMotion0, mpath0);
+    			append_dev(g, circle1);
+    			append_dev(circle1, animateMotion1);
+    			append_dev(animateMotion1, mpath1);
     		},
     		p: noop$1,
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(circle);
+    			if (detaching) detach_dev(g);
     		}
     	};
 
@@ -25301,14 +25539,14 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(68:20) {#each Array(5) as _, i}",
+    		source: "(157:20) {#each Array(10) as _, i}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (235:12) {:else}
+    // (314:12) {:else}
     function create_else_block$1(ctx) {
     	let p;
 
@@ -25317,7 +25555,7 @@ var app = (function () {
     			p = element("p");
     			p.textContent = "Click any component of the fuel cell!";
     			set_style(p, "text-align", "center");
-    			add_location(p, file$3, 235, 12, 10431);
+    			add_location(p, file$3, 314, 12, 13834);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -25333,14 +25571,14 @@ var app = (function () {
     		block,
     		id: create_else_block$1.name,
     		type: "else",
-    		source: "(235:12) {:else}",
+    		source: "(314:12) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (223:36) 
+    // (302:36) 
     function create_if_block_3(ctx) {
     	let div;
     	let header;
@@ -25359,9 +25597,9 @@ var app = (function () {
     			i.textContent = "opposite";
     			t3 = text$2(" to the direction of current. The arrows drawn in this diagram portray the movement of electrons, not current flow.");
     			attr_dev(header, "class", "svelte-1lqswlk");
-    			add_location(header, file$3, 224, 16, 9584);
-    			add_location(i, file$3, 226, 62, 9848);
-    			add_location(div, file$3, 223, 12, 9553);
+    			add_location(header, file$3, 303, 16, 12987);
+    			add_location(i, file$3, 305, 62, 13251);
+    			add_location(div, file$3, 302, 12, 12956);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -25388,14 +25626,14 @@ var app = (function () {
     		block,
     		id: create_if_block_3.name,
     		type: "if",
-    		source: "(223:36) ",
+    		source: "(302:36) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (213:36) 
+    // (292:36) 
     function create_if_block_2(ctx) {
     	let div;
     	let header;
@@ -25438,15 +25676,15 @@ var app = (function () {
     			t11 = text$2("O");
     			t12 = text$2("\r\n                    receiving electrons from the circuit and producing water from the oxygen. \r\n                    On this side, both atmospheric air or pure oxygen can be inputted, and water vapor is released into the atmosphere.");
     			attr_dev(header, "class", "svelte-1lqswlk");
-    			add_location(header, file$3, 214, 16, 8937);
-    			add_location(sub0, file$3, 217, 25, 9142);
-    			add_location(i, file$3, 217, 41, 9158);
-    			add_location(sup0, file$3, 217, 49, 9166);
-    			add_location(sup1, file$3, 217, 66, 9183);
-    			add_location(sub1, file$3, 217, 88, 9205);
+    			add_location(header, file$3, 293, 16, 12340);
+    			add_location(sub0, file$3, 296, 25, 12545);
+    			add_location(i, file$3, 296, 41, 12561);
+    			add_location(sup0, file$3, 296, 49, 12569);
+    			add_location(sup1, file$3, 296, 66, 12586);
+    			add_location(sub1, file$3, 296, 88, 12608);
     			attr_dev(p, "class", "equation svelte-1lqswlk");
-    			add_location(p, file$3, 216, 20, 9095);
-    			add_location(div, file$3, 213, 12, 8906);
+    			add_location(p, file$3, 295, 20, 12498);
+    			add_location(div, file$3, 292, 12, 12309);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -25483,14 +25721,14 @@ var app = (function () {
     		block,
     		id: create_if_block_2.name,
     		type: "if",
-    		source: "(213:36) ",
+    		source: "(292:36) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (206:36) 
+    // (285:36) 
     function create_if_block_1$1(ctx) {
     	let header;
     	let header_intro;
@@ -25506,8 +25744,8 @@ var app = (function () {
     			p = element("p");
     			p.textContent = "The electrolyte is typically an ionic solution which enables the transfer of charged ions between electrodes. It also separates the two electrodes to prevent short circuiting.\r\n                However, in PEM fuel cells, the electrolyte is a semi-conductive polymer membrane, solely allowing the movement of hydrogen ions.\r\n                Once oxidized, hydrogen ions bond with the membrane, in which they can be used at the cathode for its reduction half-reaction.";
     			attr_dev(header, "class", "svelte-1lqswlk");
-    			add_location(header, file$3, 206, 12, 8291);
-    			add_location(p, file$3, 207, 12, 8341);
+    			add_location(header, file$3, 285, 12, 11694);
+    			add_location(p, file$3, 286, 12, 11744);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, header, anchor);
@@ -25541,14 +25779,14 @@ var app = (function () {
     		block,
     		id: create_if_block_1$1.name,
     		type: "if",
-    		source: "(206:36) ",
+    		source: "(285:36) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (194:12) {#if clicked === 0}
+    // (273:12) {#if clicked === 0}
     function create_if_block$1(ctx) {
     	let div;
     	let header;
@@ -25584,14 +25822,14 @@ var app = (function () {
     			sup1.textContent = "-";
     			t9 = text$2("\r\n                releasing electrons which do electrical work through the connected circuit. \r\n                The anode takes in pure hydrogen gas, and ionizes the hydrogen. \r\n                The electrode itself is a conductive material to easily transfer electrons to the circuit.\r\n                Typically, both electrodes use a catalyst such as platinum to speed up the reaction process, generating more energy.");
     			attr_dev(header, "class", "svelte-1lqswlk");
-    			add_location(header, file$3, 195, 12, 7528);
-    			add_location(sub, file$3, 198, 22, 7721);
-    			add_location(sup0, file$3, 198, 44, 7743);
-    			add_location(i, file$3, 198, 60, 7759);
-    			add_location(sup1, file$3, 198, 68, 7767);
+    			add_location(header, file$3, 274, 12, 10931);
+    			add_location(sub, file$3, 277, 22, 11124);
+    			add_location(sup0, file$3, 277, 44, 11146);
+    			add_location(i, file$3, 277, 60, 11162);
+    			add_location(sup1, file$3, 277, 68, 11170);
     			attr_dev(p, "class", "equation svelte-1lqswlk");
-    			add_location(p, file$3, 197, 16, 7677);
-    			add_location(div, file$3, 194, 12, 7501);
+    			add_location(p, file$3, 276, 16, 11080);
+    			add_location(div, file$3, 273, 12, 10904);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -25625,7 +25863,7 @@ var app = (function () {
     		block,
     		id: create_if_block$1.name,
     		type: "if",
-    		source: "(194:12) {#if clicked === 0}",
+    		source: "(273:12) {#if clicked === 0}",
     		ctx
     	});
 
@@ -25664,13 +25902,15 @@ var app = (function () {
     	let feDropShadow;
     	let marker;
     	let path0;
-    	let path1;
-    	let path1_fill_value;
-    	let path2;
     	let rect0;
     	let rect0_fill_value;
+    	let path1;
+    	let path2;
+    	let path2_fill_value;
+    	let path3;
     	let rect1;
     	let rect1_fill_value;
+    	let path4;
     	let rect2;
     	let rect2_fill_value;
     	let circle0;
@@ -25678,13 +25918,15 @@ var app = (function () {
     	let circle1;
     	let line1;
     	let line2;
-    	let path3;
-    	let path4;
+    	let path5;
+    	let path6;
     	let t16;
     	let div2;
     	let mounted;
     	let dispose;
-    	let if_block0 = /*clicked*/ ctx[0] === 3 && create_if_block_4(ctx);
+    	let if_block0 = /*clicked*/ ctx[0] === 0 && create_if_block_6(ctx);
+    	let if_block1 = /*clicked*/ ctx[0] === 3 && create_if_block_5(ctx);
+    	let if_block2 = /*clicked*/ ctx[0] === 2 && create_if_block_4(ctx);
 
     	function select_block_type(ctx, dirty) {
     		if (/*clicked*/ ctx[0] === 0) return create_if_block$1;
@@ -25695,7 +25937,7 @@ var app = (function () {
     	}
 
     	let current_block_type = select_block_type(ctx);
-    	let if_block1 = current_block_type(ctx);
+    	let if_block3 = current_block_type(ctx);
 
     	const block = {
     		c: function create() {
@@ -25736,22 +25978,26 @@ var app = (function () {
     			feDropShadow = svg_element("feDropShadow");
     			marker = svg_element("marker");
     			path0 = svg_element("path");
-    			path1 = svg_element("path");
-    			path2 = svg_element("path");
-    			if (if_block0) if_block0.c();
     			rect0 = svg_element("rect");
+    			path1 = svg_element("path");
+    			if (if_block0) if_block0.c();
+    			path2 = svg_element("path");
+    			path3 = svg_element("path");
+    			if (if_block1) if_block1.c();
     			rect1 = svg_element("rect");
+    			path4 = svg_element("path");
+    			if (if_block2) if_block2.c();
     			rect2 = svg_element("rect");
     			circle0 = svg_element("circle");
     			line0 = svg_element("line");
     			circle1 = svg_element("circle");
     			line1 = svg_element("line");
     			line2 = svg_element("line");
-    			path3 = svg_element("path");
-    			path4 = svg_element("path");
+    			path5 = svg_element("path");
+    			path6 = svg_element("path");
     			t16 = space();
     			div2 = element("div");
-    			if_block1.c();
+    			if_block3.c();
     			add_location(h2, file$3, 12, 8, 261);
     			add_location(b0, file$3, 16, 12, 683);
     			attr_dev(a0, "href", "https://chem.libretexts.org/Bookshelves/Analytical_Chemistry/Supplemental_Modules_(Analytical_Chemistry)/Electrochemistry/Redox_Chemistry/Half-Reactions");
@@ -25787,17 +26033,6 @@ var app = (function () {
     			attr_dev(marker, "refY", "2");
     			add_location(marker, file$3, 37, 20, 1668);
     			add_location(defs, file$3, 33, 16, 1476);
-    			attr_dev(path1, "class", "hoverable svelte-1lqswlk");
-    			attr_dev(path1, "d", "M-400 -490\r\n                    L-400 -740\r\n                    L 400 -740\r\n                    L 400 -490\r\n                    L 350 -490\r\n                    L 350 -690\r\n                    L-350 -690\r\n                    L-350 -490\r\n                    Z");
-    			attr_dev(path1, "fill", path1_fill_value = /*hovered*/ ctx[1] === 3 ? hovered_color : "white");
-    			attr_dev(path1, "stroke", "black");
-    			attr_dev(path1, "stroke-width", "5px");
-    			add_location(path1, file$3, 45, 16, 1972);
-    			attr_dev(path2, "id", "circuitPath");
-    			attr_dev(path2, "d", "M-400 -490 V -740 H 400 V -490");
-    			attr_dev(path2, "fill", "none");
-    			attr_dev(path2, "stroke", "none");
-    			add_location(path2, file$3, 65, 16, 2745);
     			attr_dev(rect0, "id", "anode");
     			attr_dev(rect0, "width", "400");
     			attr_dev(rect0, "height", "950");
@@ -25807,81 +26042,102 @@ var app = (function () {
     			attr_dev(rect0, "stroke", "black");
     			attr_dev(rect0, "stroke-width", "5");
     			attr_dev(rect0, "class", "svelte-1lqswlk");
-    			add_location(rect0, file$3, 80, 16, 3478);
-    			attr_dev(rect1, "id", "electrolyte");
-    			attr_dev(rect1, "width", "200");
+    			add_location(rect0, file$3, 45, 16, 1972);
+    			attr_dev(path1, "id", "hydrogenPath");
+    			attr_dev(path1, "d", "M -490 -400 H -175 V 370 H -490");
+    			attr_dev(path1, "fill", "none");
+    			attr_dev(path1, "stroke", "none");
+    			add_location(path1, file$3, 60, 16, 2552);
+    			attr_dev(path2, "class", "hoverable svelte-1lqswlk");
+    			attr_dev(path2, "d", "M-400 -490\r\n                    L-400 -740\r\n                    L 400 -740\r\n                    L 400 -490\r\n                    L 350 -490\r\n                    L 350 -690\r\n                    L-350 -690\r\n                    L-350 -490\r\n                    Z");
+    			attr_dev(path2, "fill", path2_fill_value = /*hovered*/ ctx[1] === 3 ? hovered_color : "white");
+    			attr_dev(path2, "stroke", "black");
+    			attr_dev(path2, "stroke-width", "5px");
+    			add_location(path2, file$3, 98, 16, 4216);
+    			attr_dev(path3, "id", "circuitPath");
+    			attr_dev(path3, "d", "M-400 -490 V -740 H 400 V -490");
+    			attr_dev(path3, "fill", "none");
+    			attr_dev(path3, "stroke", "none");
+    			add_location(path3, file$3, 118, 16, 4989);
+    			attr_dev(rect1, "id", "cathode");
+    			attr_dev(rect1, "width", "400");
     			attr_dev(rect1, "height", "950");
-    			attr_dev(rect1, "x", "-100");
+    			attr_dev(rect1, "x", "90");
     			attr_dev(rect1, "y", "-490");
-    			attr_dev(rect1, "fill", rect1_fill_value = /*hovered*/ ctx[1] === 1 ? hovered_color : "white");
+    			attr_dev(rect1, "fill", rect1_fill_value = /*hovered*/ ctx[1] === 2 ? hovered_color : "lightgray");
     			attr_dev(rect1, "stroke", "black");
     			attr_dev(rect1, "stroke-width", "5");
     			attr_dev(rect1, "class", "svelte-1lqswlk");
-    			add_location(rect1, file$3, 93, 16, 4011);
-    			attr_dev(rect2, "id", "cathode");
-    			attr_dev(rect2, "width", "400");
+    			add_location(rect1, file$3, 133, 16, 5722);
+    			attr_dev(path4, "id", "oxygenPath");
+    			attr_dev(path4, "d", "M 490 -400 H 165 V 370 H 490");
+    			attr_dev(path4, "fill", "none");
+    			attr_dev(path4, "stroke", "none");
+    			add_location(path4, file$3, 148, 16, 6301);
+    			attr_dev(rect2, "id", "electrolyte");
+    			attr_dev(rect2, "width", "200");
     			attr_dev(rect2, "height", "950");
-    			attr_dev(rect2, "x", "90");
+    			attr_dev(rect2, "x", "-100");
     			attr_dev(rect2, "y", "-490");
-    			attr_dev(rect2, "fill", rect2_fill_value = /*hovered*/ ctx[1] === 2 ? hovered_color : "lightgray");
+    			attr_dev(rect2, "fill", rect2_fill_value = /*hovered*/ ctx[1] === 1 ? hovered_color : "white");
     			attr_dev(rect2, "stroke", "black");
     			attr_dev(rect2, "stroke-width", "5");
     			attr_dev(rect2, "class", "svelte-1lqswlk");
-    			add_location(rect2, file$3, 106, 16, 4547);
+    			add_location(rect2, file$3, 184, 16, 7930);
     			attr_dev(circle0, "r", "50");
     			attr_dev(circle0, "cx", "-600");
     			attr_dev(circle0, "cy", "-400");
     			attr_dev(circle0, "stroke", "black");
     			attr_dev(circle0, "stroke-width", "5");
     			attr_dev(circle0, "fill", "none");
-    			add_location(circle0, file$3, 134, 16, 5733);
+    			add_location(circle0, file$3, 213, 16, 9136);
     			attr_dev(line0, "x1", "-625");
     			attr_dev(line0, "y1", "-400");
     			attr_dev(line0, "x2", "-575");
     			attr_dev(line0, "y2", "-400");
     			attr_dev(line0, "stroke", "black");
     			attr_dev(line0, "stroke-width", "5");
-    			add_location(line0, file$3, 142, 16, 5968);
+    			add_location(line0, file$3, 221, 16, 9371);
     			attr_dev(circle1, "r", "50");
     			attr_dev(circle1, "cx", "600");
     			attr_dev(circle1, "cy", "-400");
     			attr_dev(circle1, "stroke", "black");
     			attr_dev(circle1, "stroke-width", "5");
     			attr_dev(circle1, "fill", "none");
-    			add_location(circle1, file$3, 151, 16, 6203);
+    			add_location(circle1, file$3, 230, 16, 9606);
     			attr_dev(line1, "x1", "625");
     			attr_dev(line1, "y1", "-400");
     			attr_dev(line1, "x2", "575");
     			attr_dev(line1, "y2", "-400");
     			attr_dev(line1, "stroke", "black");
     			attr_dev(line1, "stroke-width", "5");
-    			add_location(line1, file$3, 159, 16, 6437);
+    			add_location(line1, file$3, 238, 16, 9840);
     			attr_dev(line2, "x1", "600");
     			attr_dev(line2, "y1", "-425");
     			attr_dev(line2, "x2", "600");
     			attr_dev(line2, "y2", "-375");
     			attr_dev(line2, "stroke", "black");
     			attr_dev(line2, "stroke-width", "5");
-    			add_location(line2, file$3, 167, 16, 6668);
-    			attr_dev(path3, "d", "M-450 -700, -450 -800, -350 -800 ");
-    			attr_dev(path3, "marker-end", "url(#head)");
-    			attr_dev(path3, "fill", "none");
-    			attr_dev(path3, "stroke", "black");
-    			attr_dev(path3, "stroke-width", "8px");
-    			add_location(path3, file$3, 175, 16, 6899);
-    			attr_dev(path4, "d", "M350 -800, 450 -800, 450 -700");
-    			attr_dev(path4, "marker-end", "url(#head)");
-    			attr_dev(path4, "fill", "none");
-    			attr_dev(path4, "stroke", "black");
-    			attr_dev(path4, "stroke-width", "8px");
-    			add_location(path4, file$3, 182, 16, 7153);
+    			add_location(line2, file$3, 246, 16, 10071);
+    			attr_dev(path5, "d", "M-450 -700, -450 -800, -350 -800 ");
+    			attr_dev(path5, "marker-end", "url(#head)");
+    			attr_dev(path5, "fill", "none");
+    			attr_dev(path5, "stroke", "black");
+    			attr_dev(path5, "stroke-width", "8px");
+    			add_location(path5, file$3, 254, 16, 10302);
+    			attr_dev(path6, "d", "M350 -800, 450 -800, 450 -700");
+    			attr_dev(path6, "marker-end", "url(#head)");
+    			attr_dev(path6, "fill", "none");
+    			attr_dev(path6, "stroke", "black");
+    			attr_dev(path6, "stroke-width", "8px");
+    			add_location(path6, file$3, 261, 16, 10556);
     			attr_dev(svg, "viewBox", "-1000 -900 2000 1400");
     			attr_dev(svg, "class", "svelte-1lqswlk");
     			add_location(svg, file$3, 32, 12, 1422);
     			attr_dev(div1, "class", "diagram svelte-1lqswlk");
     			add_location(div1, file$3, 31, 8, 1387);
     			attr_dev(div2, "class", "tooltip svelte-1lqswlk");
-    			add_location(div2, file$3, 192, 8, 7433);
+    			add_location(div2, file$3, 271, 8, 10836);
     			attr_dev(div3, "class", "diagram-full svelte-1lqswlk");
     			add_location(div3, file$3, 29, 4, 1349);
     			attr_dev(div4, "class", "container svelte-1lqswlk");
@@ -25922,31 +26178,35 @@ var app = (function () {
     			append_dev(filter, feDropShadow);
     			append_dev(defs, marker);
     			append_dev(marker, path0);
-    			append_dev(svg, path1);
-    			append_dev(svg, path2);
-    			if (if_block0) if_block0.m(svg, null);
     			append_dev(svg, rect0);
+    			append_dev(svg, path1);
+    			if (if_block0) if_block0.m(svg, null);
+    			append_dev(svg, path2);
+    			append_dev(svg, path3);
+    			if (if_block1) if_block1.m(svg, null);
     			append_dev(svg, rect1);
+    			append_dev(svg, path4);
+    			if (if_block2) if_block2.m(svg, null);
     			append_dev(svg, rect2);
     			append_dev(svg, circle0);
     			append_dev(svg, line0);
     			append_dev(svg, circle1);
     			append_dev(svg, line1);
     			append_dev(svg, line2);
-    			append_dev(svg, path3);
-    			append_dev(svg, path4);
+    			append_dev(svg, path5);
+    			append_dev(svg, path6);
     			append_dev(div3, t16);
     			append_dev(div3, div2);
-    			if_block1.m(div2, null);
+    			if_block3.m(div2, null);
 
     			if (!mounted) {
     				dispose = [
-    					listen_dev(path1, "click", /*click_handler*/ ctx[2], false, false, false, false),
-    					listen_dev(path1, "mouseover", /*mouseover_handler*/ ctx[3], false, false, false, false),
-    					listen_dev(path1, "mouseout", /*mouseout_handler*/ ctx[4], false, false, false, false),
-    					listen_dev(rect0, "click", /*click_handler_1*/ ctx[5], false, false, false, false),
-    					listen_dev(rect0, "mouseover", /*mouseover_handler_1*/ ctx[6], false, false, false, false),
-    					listen_dev(rect0, "mouseout", /*mouseout_handler_1*/ ctx[7], false, false, false, false),
+    					listen_dev(rect0, "click", /*click_handler*/ ctx[2], false, false, false, false),
+    					listen_dev(rect0, "mouseover", /*mouseover_handler*/ ctx[3], false, false, false, false),
+    					listen_dev(rect0, "mouseout", /*mouseout_handler*/ ctx[4], false, false, false, false),
+    					listen_dev(path2, "click", /*click_handler_1*/ ctx[5], false, false, false, false),
+    					listen_dev(path2, "mouseover", /*mouseover_handler_1*/ ctx[6], false, false, false, false),
+    					listen_dev(path2, "mouseout", /*mouseout_handler_1*/ ctx[7], false, false, false, false),
     					listen_dev(rect1, "click", /*click_handler_2*/ ctx[8], false, false, false, false),
     					listen_dev(rect1, "mouseover", /*mouseover_handler_2*/ ctx[9], false, false, false, false),
     					listen_dev(rect1, "mouseout", /*mouseout_handler_2*/ ctx[10], false, false, false, false),
@@ -25959,54 +26219,82 @@ var app = (function () {
     			}
     		},
     		p: function update(ctx, [dirty]) {
-    			if (dirty & /*hovered*/ 2 && path1_fill_value !== (path1_fill_value = /*hovered*/ ctx[1] === 3 ? hovered_color : "white")) {
-    				attr_dev(path1, "fill", path1_fill_value);
+    			if (dirty & /*hovered*/ 2 && rect0_fill_value !== (rect0_fill_value = /*hovered*/ ctx[1] === 0 ? hovered_color : "dimgray")) {
+    				attr_dev(rect0, "fill", rect0_fill_value);
     			}
 
-    			if (/*clicked*/ ctx[0] === 3) {
+    			if (/*clicked*/ ctx[0] === 0) {
     				if (if_block0) {
     					if_block0.p(ctx, dirty);
     				} else {
-    					if_block0 = create_if_block_4(ctx);
+    					if_block0 = create_if_block_6(ctx);
     					if_block0.c();
-    					if_block0.m(svg, rect0);
+    					if_block0.m(svg, path2);
     				}
     			} else if (if_block0) {
     				if_block0.d(1);
     				if_block0 = null;
     			}
 
-    			if (dirty & /*hovered*/ 2 && rect0_fill_value !== (rect0_fill_value = /*hovered*/ ctx[1] === 0 ? hovered_color : "dimgray")) {
-    				attr_dev(rect0, "fill", rect0_fill_value);
+    			if (dirty & /*hovered*/ 2 && path2_fill_value !== (path2_fill_value = /*hovered*/ ctx[1] === 3 ? hovered_color : "white")) {
+    				attr_dev(path2, "fill", path2_fill_value);
     			}
 
-    			if (dirty & /*hovered*/ 2 && rect1_fill_value !== (rect1_fill_value = /*hovered*/ ctx[1] === 1 ? hovered_color : "white")) {
+    			if (/*clicked*/ ctx[0] === 3) {
+    				if (if_block1) {
+    					if_block1.p(ctx, dirty);
+    				} else {
+    					if_block1 = create_if_block_5(ctx);
+    					if_block1.c();
+    					if_block1.m(svg, rect1);
+    				}
+    			} else if (if_block1) {
+    				if_block1.d(1);
+    				if_block1 = null;
+    			}
+
+    			if (dirty & /*hovered*/ 2 && rect1_fill_value !== (rect1_fill_value = /*hovered*/ ctx[1] === 2 ? hovered_color : "lightgray")) {
     				attr_dev(rect1, "fill", rect1_fill_value);
     			}
 
-    			if (dirty & /*hovered*/ 2 && rect2_fill_value !== (rect2_fill_value = /*hovered*/ ctx[1] === 2 ? hovered_color : "lightgray")) {
+    			if (/*clicked*/ ctx[0] === 2) {
+    				if (if_block2) {
+    					if_block2.p(ctx, dirty);
+    				} else {
+    					if_block2 = create_if_block_4(ctx);
+    					if_block2.c();
+    					if_block2.m(svg, rect2);
+    				}
+    			} else if (if_block2) {
+    				if_block2.d(1);
+    				if_block2 = null;
+    			}
+
+    			if (dirty & /*hovered*/ 2 && rect2_fill_value !== (rect2_fill_value = /*hovered*/ ctx[1] === 1 ? hovered_color : "white")) {
     				attr_dev(rect2, "fill", rect2_fill_value);
     			}
 
     			if (current_block_type !== (current_block_type = select_block_type(ctx))) {
-    				if_block1.d(1);
-    				if_block1 = current_block_type(ctx);
+    				if_block3.d(1);
+    				if_block3 = current_block_type(ctx);
 
-    				if (if_block1) {
-    					if_block1.c();
-    					transition_in(if_block1, 1);
-    					if_block1.m(div2, null);
+    				if (if_block3) {
+    					if_block3.c();
+    					transition_in(if_block3, 1);
+    					if_block3.m(div2, null);
     				}
     			}
     		},
     		i: function intro(local) {
-    			transition_in(if_block1);
+    			transition_in(if_block3);
     		},
     		o: noop$1,
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div4);
     			if (if_block0) if_block0.d();
-    			if_block1.d();
+    			if (if_block1) if_block1.d();
+    			if (if_block2) if_block2.d();
+    			if_block3.d();
     			mounted = false;
     			run_all(dispose);
     		}
@@ -26037,12 +26325,11 @@ var app = (function () {
     	});
 
     	const click_handler = event => {
-    		$$invalidate(0, clicked = 3);
-    		animateElectrons();
+    		$$invalidate(0, clicked = 0);
     	};
 
     	const mouseover_handler = event => {
-    		$$invalidate(1, hovered = 3);
+    		$$invalidate(1, hovered = 0);
     	};
 
     	const mouseout_handler = event => {
@@ -26050,11 +26337,12 @@ var app = (function () {
     	};
 
     	const click_handler_1 = event => {
-    		$$invalidate(0, clicked = 0);
+    		$$invalidate(0, clicked = 3);
+    		animateElectrons();
     	};
 
     	const mouseover_handler_1 = event => {
-    		$$invalidate(1, hovered = 0);
+    		$$invalidate(1, hovered = 3);
     	};
 
     	const mouseout_handler_1 = event => {
@@ -26062,11 +26350,11 @@ var app = (function () {
     	};
 
     	const click_handler_2 = event => {
-    		$$invalidate(0, clicked = 1);
+    		$$invalidate(0, clicked = 2);
     	};
 
     	const mouseover_handler_2 = event => {
-    		$$invalidate(1, hovered = 1);
+    		$$invalidate(1, hovered = 2);
     	};
 
     	const mouseout_handler_2 = event => {
@@ -26074,11 +26362,11 @@ var app = (function () {
     	};
 
     	const click_handler_3 = event => {
-    		$$invalidate(0, clicked = 2);
+    		$$invalidate(0, clicked = 1);
     	};
 
     	const mouseover_handler_3 = event => {
-    		$$invalidate(1, hovered = 2);
+    		$$invalidate(1, hovered = 1);
     	};
 
     	const mouseout_handler_3 = event => {
