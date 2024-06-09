@@ -36,32 +36,38 @@
 
     <VariablesScrolly />
 
+    <p id="desc">
+        {@html katexify("E = " + $E0 + " - " + $b + " \\log(i) - " + 
+        String($R*1000).slice(0,4) + "i - " +
+        $m + "\\exp(" + $n + "i)")}
+    </p>
+
     <div class="chart-container">
         <div class="controls-container">
             <div class="control">
                 <label>{@html katexify("E_0:")} </label>
                 <input type="range" min="0" max="1.2" step="0.01" bind:value={$E0} />
-                <span>{$E0}</span>
+                <span>{$E0} {@html katexify("V")}</span>
             </div>
             <div class="control">
                 <label>{@html katexify("b:")} </label>
                 <input type="range" min="0.01" max="0.1" step="0.001" bind:value={$b} />
-                <span>{$b}</span>
+                <span>{$b} {@html katexify("V")}</span>
             </div>
             <div class="control">
                 <label>{@html katexify("R:")} </label>
                 <input type="range" min="10e-6" max="1000e-6" step="10e-6" bind:value={$R} />
-                <span>{$R}</span>
+                <span>{String($R*1000).slice(0,4)} &Omega;{@html katexify("/cm^2")}</span>
             </div>
             <div class="control">
                 <label>{@html katexify("m:")} </label>
                 <input type="range" min="1e-5" max="10e-5" step="1e-6" bind:value={$m} />
-                <span>{$m}</span>
+                <span>{$m} {@html katexify("V")}</span>
             </div>
             <div class="control">
                 <label>{@html katexify("n:")} </label>
                 <input type="range" min="1e-3" max="10e-3" step="1e-4" bind:value={$n} />
-                <span>{$n}</span>
+                <span>{$n} {@html katexify("cm^2/mA")}</span>
             </div>
         </div>
 

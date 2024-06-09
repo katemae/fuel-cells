@@ -215,6 +215,45 @@ var app = (function () {
         e.initCustomEvent(type, bubbles, cancelable, detail);
         return e;
     }
+    class HtmlTag {
+        constructor(is_svg = false) {
+            this.is_svg = false;
+            this.is_svg = is_svg;
+            this.e = this.n = null;
+        }
+        c(html) {
+            this.h(html);
+        }
+        m(html, target, anchor = null) {
+            if (!this.e) {
+                if (this.is_svg)
+                    this.e = svg_element(target.nodeName);
+                /** #7364  target for <template> may be provided as #document-fragment(11) */
+                else
+                    this.e = element((target.nodeType === 11 ? 'TEMPLATE' : target.nodeName));
+                this.t = target.tagName !== 'TEMPLATE' ? target : target.content;
+                this.c(html);
+            }
+            this.i(anchor);
+        }
+        h(html) {
+            this.e.innerHTML = html;
+            this.n = Array.from(this.e.nodeName === 'TEMPLATE' ? this.e.content.childNodes : this.e.childNodes);
+        }
+        i(anchor) {
+            for (let i = 0; i < this.n.length; i += 1) {
+                insert(this.t, this.n[i], anchor);
+            }
+        }
+        p(html) {
+            this.d();
+            this.h(html);
+            this.i(this.a);
+        }
+        d() {
+            this.n.forEach(detach);
+        }
+    }
 
     // we need to store the information for multiple documents because a Svelte application could also contain iframes
     // https://github.com/sveltejs/svelte/issues/3624
@@ -26879,61 +26918,80 @@ var app = (function () {
     	let t10;
     	let why;
     	let t11;
-    	let p;
+    	let p0;
     	let raw0_value = katexify("E = E_0 - b \\log(i) - Ri - m \\exp(ni)") + "";
     	let t12;
     	let variablesscrolly;
     	let t13;
+    	let p1;
+    	let raw1_value = katexify("E = " + /*$E0*/ ctx[0] + " - " + /*$b*/ ctx[1] + " \\log(i) - " + String(/*$R*/ ctx[2] * 1000).slice(0, 4) + "i - " + /*$m*/ ctx[3] + "\\exp(" + /*$n*/ ctx[4] + "i)") + "";
+    	let t14;
     	let div8;
     	let div6;
     	let div1;
     	let label0;
-    	let raw1_value = katexify("E_0:") + "";
-    	let t14;
-    	let input0;
+    	let raw2_value = katexify("E_0:") + "";
     	let t15;
-    	let span0;
+    	let input0;
     	let t16;
+    	let span0;
     	let t17;
+    	let t18;
+    	let html_tag;
+    	let raw3_value = katexify("V") + "";
+    	let t19;
     	let div2;
     	let label1;
-    	let raw2_value = katexify("b:") + "";
-    	let t18;
-    	let input1;
-    	let t19;
-    	let span1;
+    	let raw4_value = katexify("b:") + "";
     	let t20;
+    	let input1;
     	let t21;
+    	let span1;
+    	let t22;
+    	let t23;
+    	let html_tag_1;
+    	let raw5_value = katexify("V") + "";
+    	let t24;
     	let div3;
     	let label2;
-    	let raw3_value = katexify("R:") + "";
-    	let t22;
-    	let input2;
-    	let t23;
-    	let span2;
-    	let t24;
+    	let raw6_value = katexify("R:") + "";
     	let t25;
+    	let input2;
+    	let t26;
+    	let span2;
+    	let t27_value = String(/*$R*/ ctx[2] * 1000).slice(0, 4) + "";
+    	let t27;
+    	let t28;
+    	let html_tag_2;
+    	let raw7_value = katexify("/cm^2") + "";
+    	let t29;
     	let div4;
     	let label3;
-    	let raw4_value = katexify("m:") + "";
-    	let t26;
-    	let input3;
-    	let t27;
-    	let span3;
-    	let t28;
-    	let t29;
-    	let div5;
-    	let label4;
-    	let raw5_value = katexify("n:") + "";
+    	let raw8_value = katexify("m:") + "";
     	let t30;
-    	let input4;
+    	let input3;
     	let t31;
-    	let span4;
+    	let span3;
     	let t32;
     	let t33;
+    	let html_tag_3;
+    	let raw9_value = katexify("V") + "";
+    	let t34;
+    	let div5;
+    	let label4;
+    	let raw10_value = katexify("n:") + "";
+    	let t35;
+    	let input4;
+    	let t36;
+    	let span4;
+    	let t37;
+    	let t38;
+    	let html_tag_4;
+    	let raw11_value = katexify("cm^2/mA") + "";
+    	let t39;
     	let div7;
     	let chart;
-    	let t34;
+    	let t40;
     	let references;
     	let current;
     	let mounted;
@@ -26979,55 +27037,67 @@ var app = (function () {
     			t10 = space();
     			create_component(why.$$.fragment);
     			t11 = space();
-    			p = element("p");
+    			p0 = element("p");
     			t12 = space();
     			create_component(variablesscrolly.$$.fragment);
     			t13 = space();
+    			p1 = element("p");
+    			t14 = space();
     			div8 = element("div");
     			div6 = element("div");
     			div1 = element("div");
     			label0 = element("label");
-    			t14 = space();
-    			input0 = element("input");
     			t15 = space();
+    			input0 = element("input");
+    			t16 = space();
     			span0 = element("span");
-    			t16 = text$2(/*$E0*/ ctx[0]);
-    			t17 = space();
+    			t17 = text$2(/*$E0*/ ctx[0]);
+    			t18 = space();
+    			html_tag = new HtmlTag(false);
+    			t19 = space();
     			div2 = element("div");
     			label1 = element("label");
-    			t18 = space();
+    			t20 = space();
     			input1 = element("input");
-    			t19 = space();
-    			span1 = element("span");
-    			t20 = text$2(/*$b*/ ctx[1]);
     			t21 = space();
+    			span1 = element("span");
+    			t22 = text$2(/*$b*/ ctx[1]);
+    			t23 = space();
+    			html_tag_1 = new HtmlTag(false);
+    			t24 = space();
     			div3 = element("div");
     			label2 = element("label");
-    			t22 = space();
-    			input2 = element("input");
-    			t23 = space();
-    			span2 = element("span");
-    			t24 = text$2(/*$R*/ ctx[2]);
     			t25 = space();
+    			input2 = element("input");
+    			t26 = space();
+    			span2 = element("span");
+    			t27 = text$2(t27_value);
+    			t28 = text$2(" Ω");
+    			html_tag_2 = new HtmlTag(false);
+    			t29 = space();
     			div4 = element("div");
     			label3 = element("label");
-    			t26 = space();
+    			t30 = space();
     			input3 = element("input");
-    			t27 = space();
+    			t31 = space();
     			span3 = element("span");
-    			t28 = text$2(/*$m*/ ctx[3]);
-    			t29 = space();
+    			t32 = text$2(/*$m*/ ctx[3]);
+    			t33 = space();
+    			html_tag_3 = new HtmlTag(false);
+    			t34 = space();
     			div5 = element("div");
     			label4 = element("label");
-    			t30 = space();
+    			t35 = space();
     			input4 = element("input");
-    			t31 = space();
+    			t36 = space();
     			span4 = element("span");
-    			t32 = text$2(/*$n*/ ctx[4]);
-    			t33 = space();
+    			t37 = text$2(/*$n*/ ctx[4]);
+    			t38 = space();
+    			html_tag_4 = new HtmlTag(false);
+    			t39 = space();
     			div7 = element("div");
     			create_component(chart.$$.fragment);
-    			t34 = space();
+    			t40 = space();
     			create_component(references.$$.fragment);
     			attr_dev(h1, "id", "intro-hed");
     			attr_dev(h1, "class", "svelte-qcszd5");
@@ -27047,65 +27117,73 @@ var app = (function () {
     			add_location(h3, file, 21, 8, 741);
     			attr_dev(div0, "class", "intro svelte-qcszd5");
     			add_location(div0, file, 18, 4, 577);
-    			attr_dev(p, "id", "desc");
-    			attr_dev(p, "class", "svelte-qcszd5");
-    			add_location(p, file, 32, 4, 1012);
+    			attr_dev(p0, "id", "desc");
+    			attr_dev(p0, "class", "svelte-qcszd5");
+    			add_location(p0, file, 32, 4, 1012);
+    			attr_dev(p1, "id", "desc");
+    			attr_dev(p1, "class", "svelte-qcszd5");
+    			add_location(p1, file, 38, 4, 1140);
     			attr_dev(label0, "class", "svelte-qcszd5");
-    			add_location(label0, file, 41, 16, 1264);
+    			add_location(label0, file, 47, 16, 1450);
     			attr_dev(input0, "type", "range");
     			attr_dev(input0, "min", "0");
     			attr_dev(input0, "max", "1.2");
     			attr_dev(input0, "step", "0.01");
-    			add_location(input0, file, 42, 16, 1322);
-    			add_location(span0, file, 43, 16, 1409);
+    			add_location(input0, file, 48, 16, 1508);
+    			html_tag.a = null;
+    			add_location(span0, file, 49, 16, 1595);
     			attr_dev(div1, "class", "control svelte-qcszd5");
-    			add_location(div1, file, 40, 12, 1225);
+    			add_location(div1, file, 46, 12, 1411);
     			attr_dev(label1, "class", "svelte-qcszd5");
-    			add_location(label1, file, 46, 16, 1500);
+    			add_location(label1, file, 52, 16, 1708);
     			attr_dev(input1, "type", "range");
     			attr_dev(input1, "min", "0.01");
     			attr_dev(input1, "max", "0.1");
     			attr_dev(input1, "step", "0.001");
-    			add_location(input1, file, 47, 16, 1556);
-    			add_location(span1, file, 48, 16, 1646);
+    			add_location(input1, file, 53, 16, 1764);
+    			html_tag_1.a = null;
+    			add_location(span1, file, 54, 16, 1854);
     			attr_dev(div2, "class", "control svelte-qcszd5");
-    			add_location(div2, file, 45, 12, 1461);
+    			add_location(div2, file, 51, 12, 1669);
     			attr_dev(label2, "class", "svelte-qcszd5");
-    			add_location(label2, file, 51, 16, 1736);
+    			add_location(label2, file, 57, 16, 1966);
     			attr_dev(input2, "type", "range");
     			attr_dev(input2, "min", "10e-6");
     			attr_dev(input2, "max", "1000e-6");
     			attr_dev(input2, "step", "10e-6");
-    			add_location(input2, file, 52, 16, 1792);
-    			add_location(span2, file, 53, 16, 1887);
+    			add_location(input2, file, 58, 16, 2022);
+    			html_tag_2.a = null;
+    			add_location(span2, file, 59, 16, 2117);
     			attr_dev(div3, "class", "control svelte-qcszd5");
-    			add_location(div3, file, 50, 12, 1697);
+    			add_location(div3, file, 56, 12, 1927);
     			attr_dev(label3, "class", "svelte-qcszd5");
-    			add_location(label3, file, 56, 16, 1977);
+    			add_location(label3, file, 62, 16, 2264);
     			attr_dev(input3, "type", "range");
     			attr_dev(input3, "min", "1e-5");
     			attr_dev(input3, "max", "10e-5");
     			attr_dev(input3, "step", "1e-6");
-    			add_location(input3, file, 57, 16, 2033);
-    			add_location(span3, file, 58, 16, 2124);
+    			add_location(input3, file, 63, 16, 2320);
+    			html_tag_3.a = null;
+    			add_location(span3, file, 64, 16, 2411);
     			attr_dev(div4, "class", "control svelte-qcszd5");
-    			add_location(div4, file, 55, 12, 1938);
+    			add_location(div4, file, 61, 12, 2225);
     			attr_dev(label4, "class", "svelte-qcszd5");
-    			add_location(label4, file, 61, 16, 2214);
+    			add_location(label4, file, 67, 16, 2523);
     			attr_dev(input4, "type", "range");
     			attr_dev(input4, "min", "1e-3");
     			attr_dev(input4, "max", "10e-3");
     			attr_dev(input4, "step", "1e-4");
-    			add_location(input4, file, 62, 16, 2270);
-    			add_location(span4, file, 63, 16, 2361);
+    			add_location(input4, file, 68, 16, 2579);
+    			html_tag_4.a = null;
+    			add_location(span4, file, 69, 16, 2670);
     			attr_dev(div5, "class", "control svelte-qcszd5");
-    			add_location(div5, file, 60, 12, 2175);
+    			add_location(div5, file, 66, 12, 2484);
     			attr_dev(div6, "class", "controls-container svelte-qcszd5");
-    			add_location(div6, file, 39, 8, 1179);
+    			add_location(div6, file, 45, 8, 1365);
     			attr_dev(div7, "class", "graph-container svelte-qcszd5");
-    			add_location(div7, file, 67, 8, 2426);
+    			add_location(div7, file, 73, 8, 2763);
     			attr_dev(div8, "class", "chart-container svelte-qcszd5");
-    			add_location(div8, file, 38, 4, 1140);
+    			add_location(div8, file, 44, 4, 1326);
     			add_location(main, file, 17, 0, 565);
     		},
     		l: function claim(nodes) {
@@ -27130,66 +27208,79 @@ var app = (function () {
     			append_dev(main, t10);
     			mount_component(why, main, null);
     			append_dev(main, t11);
-    			append_dev(main, p);
-    			p.innerHTML = raw0_value;
+    			append_dev(main, p0);
+    			p0.innerHTML = raw0_value;
     			append_dev(main, t12);
     			mount_component(variablesscrolly, main, null);
     			append_dev(main, t13);
+    			append_dev(main, p1);
+    			p1.innerHTML = raw1_value;
+    			append_dev(main, t14);
     			append_dev(main, div8);
     			append_dev(div8, div6);
     			append_dev(div6, div1);
     			append_dev(div1, label0);
-    			label0.innerHTML = raw1_value;
-    			append_dev(div1, t14);
+    			label0.innerHTML = raw2_value;
+    			append_dev(div1, t15);
     			append_dev(div1, input0);
     			set_input_value(input0, /*$E0*/ ctx[0]);
-    			append_dev(div1, t15);
+    			append_dev(div1, t16);
     			append_dev(div1, span0);
-    			append_dev(span0, t16);
-    			append_dev(div6, t17);
+    			append_dev(span0, t17);
+    			append_dev(span0, t18);
+    			html_tag.m(raw3_value, span0);
+    			append_dev(div6, t19);
     			append_dev(div6, div2);
     			append_dev(div2, label1);
-    			label1.innerHTML = raw2_value;
-    			append_dev(div2, t18);
+    			label1.innerHTML = raw4_value;
+    			append_dev(div2, t20);
     			append_dev(div2, input1);
     			set_input_value(input1, /*$b*/ ctx[1]);
-    			append_dev(div2, t19);
+    			append_dev(div2, t21);
     			append_dev(div2, span1);
-    			append_dev(span1, t20);
-    			append_dev(div6, t21);
+    			append_dev(span1, t22);
+    			append_dev(span1, t23);
+    			html_tag_1.m(raw5_value, span1);
+    			append_dev(div6, t24);
     			append_dev(div6, div3);
     			append_dev(div3, label2);
-    			label2.innerHTML = raw3_value;
-    			append_dev(div3, t22);
+    			label2.innerHTML = raw6_value;
+    			append_dev(div3, t25);
     			append_dev(div3, input2);
     			set_input_value(input2, /*$R*/ ctx[2]);
-    			append_dev(div3, t23);
+    			append_dev(div3, t26);
     			append_dev(div3, span2);
-    			append_dev(span2, t24);
-    			append_dev(div6, t25);
+    			append_dev(span2, t27);
+    			append_dev(span2, t28);
+    			html_tag_2.m(raw7_value, span2);
+    			append_dev(div6, t29);
     			append_dev(div6, div4);
     			append_dev(div4, label3);
-    			label3.innerHTML = raw4_value;
-    			append_dev(div4, t26);
+    			label3.innerHTML = raw8_value;
+    			append_dev(div4, t30);
     			append_dev(div4, input3);
     			set_input_value(input3, /*$m*/ ctx[3]);
-    			append_dev(div4, t27);
+    			append_dev(div4, t31);
     			append_dev(div4, span3);
-    			append_dev(span3, t28);
-    			append_dev(div6, t29);
+    			append_dev(span3, t32);
+    			append_dev(span3, t33);
+    			html_tag_3.m(raw9_value, span3);
+    			append_dev(div6, t34);
     			append_dev(div6, div5);
     			append_dev(div5, label4);
-    			label4.innerHTML = raw5_value;
-    			append_dev(div5, t30);
+    			label4.innerHTML = raw10_value;
+    			append_dev(div5, t35);
     			append_dev(div5, input4);
     			set_input_value(input4, /*$n*/ ctx[4]);
-    			append_dev(div5, t31);
+    			append_dev(div5, t36);
     			append_dev(div5, span4);
-    			append_dev(span4, t32);
-    			append_dev(div8, t33);
+    			append_dev(span4, t37);
+    			append_dev(span4, t38);
+    			html_tag_4.m(raw11_value, span4);
+    			append_dev(div8, t39);
     			append_dev(div8, div7);
     			mount_component(chart, div7, null);
-    			append_dev(main, t34);
+    			append_dev(main, t40);
     			mount_component(references, main, null);
     			current = true;
 
@@ -27211,35 +27302,36 @@ var app = (function () {
     			}
     		},
     		p: function update(ctx, [dirty]) {
+    			if ((!current || dirty & /*$E0, $b, $R, $m, $n*/ 31) && raw1_value !== (raw1_value = katexify("E = " + /*$E0*/ ctx[0] + " - " + /*$b*/ ctx[1] + " \\log(i) - " + String(/*$R*/ ctx[2] * 1000).slice(0, 4) + "i - " + /*$m*/ ctx[3] + "\\exp(" + /*$n*/ ctx[4] + "i)") + "")) p1.innerHTML = raw1_value;
     			if (dirty & /*$E0*/ 1) {
     				set_input_value(input0, /*$E0*/ ctx[0]);
     			}
 
-    			if (!current || dirty & /*$E0*/ 1) set_data_dev(t16, /*$E0*/ ctx[0]);
+    			if (!current || dirty & /*$E0*/ 1) set_data_dev(t17, /*$E0*/ ctx[0]);
 
     			if (dirty & /*$b*/ 2) {
     				set_input_value(input1, /*$b*/ ctx[1]);
     			}
 
-    			if (!current || dirty & /*$b*/ 2) set_data_dev(t20, /*$b*/ ctx[1]);
+    			if (!current || dirty & /*$b*/ 2) set_data_dev(t22, /*$b*/ ctx[1]);
 
     			if (dirty & /*$R*/ 4) {
     				set_input_value(input2, /*$R*/ ctx[2]);
     			}
 
-    			if (!current || dirty & /*$R*/ 4) set_data_dev(t24, /*$R*/ ctx[2]);
+    			if ((!current || dirty & /*$R*/ 4) && t27_value !== (t27_value = String(/*$R*/ ctx[2] * 1000).slice(0, 4) + "")) set_data_dev(t27, t27_value);
 
     			if (dirty & /*$m*/ 8) {
     				set_input_value(input3, /*$m*/ ctx[3]);
     			}
 
-    			if (!current || dirty & /*$m*/ 8) set_data_dev(t28, /*$m*/ ctx[3]);
+    			if (!current || dirty & /*$m*/ 8) set_data_dev(t32, /*$m*/ ctx[3]);
 
     			if (dirty & /*$n*/ 16) {
     				set_input_value(input4, /*$n*/ ctx[4]);
     			}
 
-    			if (!current || dirty & /*$n*/ 16) set_data_dev(t32, /*$n*/ ctx[4]);
+    			if (!current || dirty & /*$n*/ 16) set_data_dev(t37, /*$n*/ ctx[4]);
     		},
     		i: function intro(local) {
     			if (current) return;
